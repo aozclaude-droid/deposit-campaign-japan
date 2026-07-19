@@ -1,6 +1,6 @@
 "use strict";
 
-const DATA_URL = "./campaign_all.json";
+const DATA_URL = "campaign_all.json";
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
@@ -479,7 +479,7 @@ function deactivateQuickDatePreset() {
     button.setAttribute("aria-pressed", "false");
   });
   const status = $("#quickPeriodStatus");
-  if (status) status.textContent = "期間ボタンを押すと、指定期間と重なるキャンペーンを抽出します。";
+  if (status) status.textContent = "期間ボタンを押すと、開始日と終了日の条件を自動設定します。";
 }
 function setQuickDateRange(months, label, activeButton) {
   if (!Number.isFinite(months) || months <= 0) return;
@@ -488,11 +488,11 @@ function setQuickDateRange(months, label, activeButton) {
   state.quickDateRange = { from, to };
   state.quickDateLabel = label;
 
-  // 期間重複条件: campaign_start_date <= to AND (campaign_end_date >= from OR 終了日未設定)
-  $("#startFrom").value = "";
-  $("#startTo").value = to;
-  $("#endFrom").value = from;
-  $("#endTo").value = "";
+  // 直感的な期間指定: キャンペーン開始日「以上」に期間初日、終了日「以下」に今日を設定。
+  $("#startFrom").value = from;
+  $("#startTo").value = "";
+  $("#endFrom").value = "";
+  $("#endTo").value = to;
 
   $$(".date-preset").forEach((button) => {
     const active = button === activeButton;
@@ -500,7 +500,7 @@ function setQuickDateRange(months, label, activeButton) {
     button.setAttribute("aria-pressed", active ? "true" : "false");
   });
   setSelectedValues("#statusFilter", []);
-  $("#quickPeriodStatus").textContent = `${label}: ${from} ～ ${to}（期間が重なるキャンペーン／開催状況は全件）`;
+  $("#quickPeriodStatus").textContent = `${label}: 開始日 ${from} 以降／終了日 ${to} 以前（終了日未設定を含む・開催状況は全件）`;
   state.focusKey = null;
   applyFilters();
 }
@@ -551,8 +551,9 @@ function applyFilters() {
     if (f.rate && !r._searchRate.includes(f.rate)) return false;
     if (state.quickDateRange) {
       const { from, to } = state.quickDateRange;
-      if (!r.campaign_start_date || r.campaign_start_date > to) return false;
-      if (r.campaign_end_date && r.campaign_end_date < from) return false;
+      // 指定期間内に開始し、今日までに終了したキャンペーンを抽出。終了日未設定は継続中として含める。
+      if (!r.campaign_start_date || r.campaign_start_date < from || r.campaign_start_date > to) return false;
+      if (r.campaign_end_date && r.campaign_end_date > to) return false;
     } else {
       if (f.startFrom && (!r.campaign_start_date || r.campaign_start_date < f.startFrom)) return false;
       if (f.startTo && (!r.campaign_start_date || r.campaign_start_date > f.startTo)) return false;
