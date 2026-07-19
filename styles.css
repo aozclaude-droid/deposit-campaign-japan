@@ -138,7 +138,52 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .notes-grid h3 { margin: 0 0 8px; font-size: 14px; }
 .notes-grid ul { margin: 0; padding-left: 1.25em; color: var(--muted); line-height: 1.75; }
 .noscript { padding: 20px; background: #fff0f0; color: #8b2525; text-align: center; }
+
+
+/* 期間別金利ランキング */
+.analytics-controls { display: grid; grid-template-columns: minmax(270px, 1.25fr) minmax(190px, .8fr) minmax(190px, .8fr) minmax(165px, .55fr); gap: 13px; align-items: stretch; }
+.analytics-controls > label { display: flex; flex-direction: column; gap: 6px; color: var(--muted); font-size: 12px; }
+.analytics-controls input, .analytics-controls select { width: 100%; border: 1px solid #cbd5e3; background: #fff; border-radius: 9px; color: var(--ink); padding: 9px 10px; }
+.analytics-controls select[multiple] { min-height: 125px; padding: 5px; }
+.analytics-controls select[multiple] option { padding: 4px 6px; border-radius: 4px; }
+.analytics-period { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; border: 1px solid var(--line); border-radius: 11px; padding: 9px 10px 11px; min-width: 0; }
+.analytics-period legend { color: var(--muted); font-size: 12px; padding: 0 5px; }
+.analytics-period label { display: flex; flex-direction: column; gap: 5px; color: var(--muted); font-size: 11px; }
+.analytics-actions { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; }
+.analytics-help { margin: 13px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.analytics-results { margin-top: 15px; }
+.analytics-data-summary { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 13px; padding: 10px 12px; border: 1px solid #d8e4f3; border-radius: 10px; background: #f5f9ff; color: #486078; font-size: 12px; }
+.analytics-data-summary strong { color: #203f70; font-size: 13px; }
+.product-analytics { margin-top: 15px; border: 1px solid var(--line); border-radius: 13px; overflow: hidden; background: #fff; }
+.product-analytics:first-of-type { margin-top: 0; }
+.product-analytics-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; background: #f7f9fd; border-bottom: 1px solid var(--line); }
+.product-analytics-heading h3 { margin: 0; font-size: 15px; color: #203b66; }
+.average-grid { display: grid; grid-template-columns: repeat(4, minmax(145px, 1fr)); gap: 10px; padding: 13px 14px; background: #fbfcff; border-bottom: 1px solid var(--line); }
+.average-card { padding: 11px 12px; border: 1px solid #dfe6f0; border-radius: 10px; background: #fff; }
+.average-term { color: var(--muted); font-size: 11px; }
+.average-rate { margin-top: 3px; color: var(--blue-dark); font-size: 22px; font-weight: 850; font-variant-numeric: tabular-nums; }
+.average-count { margin-top: 2px; color: #8490a2; font-size: 10px; }
+.matrix-scroll { overflow: auto; }
+.ranking-matrix { width: 100%; min-width: 780px; border-collapse: separate; border-spacing: 0; }
+.ranking-matrix th, .ranking-matrix td { padding: 10px 12px; border-bottom: 1px solid var(--line-soft); border-right: 1px solid var(--line-soft); text-align: center; vertical-align: middle; }
+.ranking-matrix thead th { position: sticky; top: 0; z-index: 3; background: #f4f7fc; color: #3a4c67; white-space: nowrap; }
+.ranking-matrix thead th:first-child, .ranking-matrix tbody th { position: sticky; left: 0; z-index: 4; min-width: 230px; text-align: left; background: #fff; }
+.ranking-matrix thead th:first-child { z-index: 5; background: #f4f7fc; }
+.ranking-matrix tbody tr:hover th, .ranking-matrix tbody tr:hover td { background: #fbfdff; }
+.matrix-rate-cell { min-width: 130px; font-variant-numeric: tabular-nums; }
+.matrix-rate { color: #174e9d; font-size: 15px; font-weight: 850; }
+.rank-badge { display: inline-block; margin-left: 7px; padding: 2px 6px; border-radius: 999px; background: #e8eef8; color: #3d5579; font-size: 10px; font-weight: 800; }
+.matrix-rate-cell.rank-1 { background: #fff9df; }
+.matrix-rate-cell.rank-1 .rank-badge { background: #f4cf55; color: #5d4500; }
+.matrix-rate-cell.rank-2 { background: #f4f6f9; }
+.matrix-rate-cell.rank-2 .rank-badge { background: #cfd5dd; color: #42505e; }
+.matrix-rate-cell.rank-3 { background: #fff2e8; }
+.matrix-rate-cell.rank-3 .rank-badge { background: #d9a16e; color: #563118; }
+.matrix-empty { color: #a3adbb; }
+.analytics-empty { padding: 28px; border: 1px dashed #ccd6e3; border-radius: 11px; color: var(--muted); text-align: center; }
+
 @media (max-width: 1400px) {
+  .analytics-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stat-grid { grid-template-columns: repeat(4, 1fr); }
   .filter-grid { grid-template-columns: repeat(4, minmax(150px, 1fr)); }
 }
@@ -150,6 +195,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .date-fieldset { grid-column: span 2; }
   .notes-grid { grid-template-columns: 1fr; }
+  .average-grid { grid-template-columns: repeat(2, 1fr); }
+  .analytics-controls { grid-template-columns: 1fr 1fr; }
   .panel-header { align-items: flex-start; }
 }
 @media (max-width: 560px) {
@@ -157,6 +204,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   .date-fieldset { grid-column: span 1; }
   .stat-card { padding: 13px; }
   .stat-number { font-size: 20px; }
+  .analytics-controls { grid-template-columns: 1fr; }
+  .analytics-period { grid-template-columns: 1fr; }
+  .average-grid { grid-template-columns: 1fr; }
   .toolbar { align-items: stretch; flex-direction: column; width: 100%; }
   .toolbar .btn { width: 100%; }
 }

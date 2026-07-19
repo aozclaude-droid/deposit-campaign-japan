@@ -1,8 +1,14 @@
 "use strict";
 
-const DATA_URL = "./campaign_all.json";
+const DATA_URL = "campaign_all.json";
 const TODAY_ISO = new Date().toISOString().slice(0, 10);
 const DATE_ISSUE_PAGE_SIZE = 50;
+const ANALYTICS_TERMS = [
+  { key: "6m", label: "6か月", months: 6 },
+  { key: "1y", label: "1年", months: 12 },
+  { key: "3y", label: "3年", months: 36 },
+  { key: "5y", label: "5年", months: 60 }
+];
 
 const state = {
   metadata: {},
@@ -16,7 +22,8 @@ const state = {
   ganttPageSize: 20,
   dateIssuePage: 1,
   focusKey: null,
-  debounceTimer: null
+  debounceTimer: null,
+  analyticsTimer: null
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -145,6 +152,172 @@ function estimateMaturity(record) {
   return { start: startIso, end: endIso, period, note: [parsed.note, ...extraNotes].join("／"), years };
 }
 
+
+function classifyAnalyticsTerm(term) {
+  const parsed = parseTermDurations(term);
+  if (!parsed || parsed.kind !== "exact" || parsed.durations.length !== 1) return "";
+  const duration = parsed.durations[0];
+  if (duration.days || !duration.months) return "";
+  const matched = ANALYTICS_TERMS.find((item) => item.months === duration.months);
+  return matched ? matched.key : "";
+}
+function parseComparableInterestRate(rateText) {
+  const original = text(rateText).trim();
+  if (!original) return { value: null, reason: "金利記載なし", source: "" };
+  const normalized = original
+    .replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+    .replace(/．/g, ".")
+    .replace(/，/g, ",")
+    .replace(/％/g, "%")
+    .replace(/＋/g, "+")
+    .replace(/×/g, "x")
+    .replace(/＝/g, "=");
+  const formulaLike = /店頭金利|上乗せ|加算|プラス|\+|\bx\s*\d|倍/.test(normalized);
+  const percentRegex = /([0-9]+(?:\.[0-9]+)?)\s*%/g;
+  if (formulaLike) {
+    const equalIndex = normalized.lastIndexOf("=");
+    if (equalIndex >= 0) {
+      const resolved = normalized.slice(equalIndex + 1);
+      const matches = [...resolved.matchAll(percentRegex)];
+      if (matches.length) {
+        const value = Number(matches[matches.length - 1][1]);
+        if (Number.isFinite(value)) return { value, reason: "", source: `${value}%（算式の明示結果）` };
+      }
+    }
+    return { value: null, reason: "店頭金利への上乗せ・倍率式で絶対金利不明", source: "" };
+  }
+  const first = percentRegex.exec(normalized);
+  if (!first) return { value: null, reason: "年率％を数値化できない", source: "" };
+  const value = Number(first[1]);
+  if (!Number.isFinite(value)) return { value: null, reason: "金利数値が不正", source: "" };
+  return { value, reason: "", source: `${value}%` };
+}
+function recordOverlapsPeriod(record, fromIso, toIso) {
+  const start = parseIso(record.campaign_start_date);
+  if (!start) return false;
+  const rawEnd = parseIso(record.campaign_end_date);
+  if (rawEnd && rawEnd < start) return false;
+  const from = parseIso(fromIso);
+  const to = parseIso(toIso);
+  if (from && to && to < from) return false;
+  if (to && start > to) return false;
+  if (from && rawEnd && rawEnd < from) return false;
+  return true;
+}
+function formatRate(value) {
+  if (!Number.isFinite(value)) return "—";
+  return `${value.toFixed(3).replace(/0+$/, "").replace(/\.$/, "")}％`;
+}
+function analyticsDefaultDates() {
+  const year = Number(TODAY_ISO.slice(0, 4));
+  return { from: `${year}-01-01`, to: `${year}-12-31` };
+}
+function resetAnalyticsControls(render = true) {
+  const defaults = analyticsDefaultDates();
+  $("#analyticsDateFrom").value = defaults.from;
+  $("#analyticsDateTo").value = defaults.to;
+  setSelectedValues("#analyticsRegionFilter", []);
+  const products = uniqueSorted("product_type");
+  setSelectedValues("#analyticsProductFilter", products.includes("定期預金") ? ["定期預金"] : products.slice(0, 1));
+  if (render) renderRateAnalytics();
+}
+function scheduleAnalytics() {
+  window.clearTimeout(state.analyticsTimer);
+  state.analyticsTimer = window.setTimeout(renderRateAnalytics, 160);
+}
+function buildProductAnalytics(productType, records) {
+  const byTerm = new Map(ANALYTICS_TERMS.map((term) => [term.key, new Map()]));
+  records.forEach((record) => {
+    if (record.product_type !== productType || !record._analyticsTermKey || !Number.isFinite(record._comparableRate)) return;
+    const institutionMap = byTerm.get(record._analyticsTermKey);
+    const existing = institutionMap.get(record.institution_name);
+    const candidate = {
+      rate: record._comparableRate,
+      record,
+      sourceCount: existing ? existing.sourceCount + 1 : 1
+    };
+    if (!existing || candidate.rate > existing.rate || (candidate.rate === existing.rate && record.campaign_start_date > existing.record.campaign_start_date)) {
+      candidate.sourceCount = existing ? existing.sourceCount + 1 : 1;
+      institutionMap.set(record.institution_name, candidate);
+    } else {
+      existing.sourceCount += 1;
+    }
+  });
+
+  const stats = {};
+  const topRanks = {};
+  const union = new Map();
+  ANALYTICS_TERMS.forEach((term) => {
+    const entries = [...byTerm.get(term.key).entries()].map(([institution, data]) => ({ institution, ...data }));
+    entries.sort((a, b) => b.rate - a.rate || a.institution.localeCompare(b.institution, "ja"));
+    stats[term.key] = {
+      count: entries.length,
+      average: entries.length ? entries.reduce((sum, item) => sum + item.rate, 0) / entries.length : null
+    };
+    topRanks[term.key] = new Map(entries.slice(0, 5).map((item, index) => [item.institution, index + 1]));
+    entries.slice(0, 5).forEach((item, index) => {
+      if (!union.has(item.institution)) union.set(item.institution, { bestRank: index + 1, maxRate: item.rate });
+      else {
+        const current = union.get(item.institution);
+        current.bestRank = Math.min(current.bestRank, index + 1);
+        current.maxRate = Math.max(current.maxRate, item.rate);
+      }
+    });
+  });
+  const institutions = [...union.entries()]
+    .sort((a, b) => a[1].bestRank - b[1].bestRank || b[1].maxRate - a[1].maxRate || a[0].localeCompare(b[0], "ja"))
+    .map(([institution]) => institution);
+  return { productType, byTerm, stats, topRanks, institutions };
+}
+function analyticsCellHtml(analytics, institution, term) {
+  const entry = analytics.byTerm.get(term.key).get(institution);
+  if (!entry) return '<td class="matrix-empty">—</td>';
+  const rank = analytics.topRanks[term.key].get(institution);
+  const r = entry.record;
+  const title = `${r.campaign_name} / ${r.campaign_start_date || "開始日不明"}～${r.campaign_end_date || "終了日未設定"} / ${r.interest_rate}${r.rate_condition ? ` / ${r.rate_condition}` : ""}`;
+  return `<td class="matrix-rate-cell ${rank ? `top-rank rank-${rank}` : ""}" title="${esc(title)}"><span class="matrix-rate">${esc(formatRate(entry.rate))}</span>${rank ? `<span class="rank-badge">${rank}位</span>` : ""}</td>`;
+}
+function productAnalyticsHtml(analytics) {
+  const averageCards = ANALYTICS_TERMS.map((term) => {
+    const stat = analytics.stats[term.key];
+    return `<article class="average-card"><div class="average-term">${esc(term.label)}</div><div class="average-rate">${esc(formatRate(stat.average))}</div><div class="average-count">${fmt(stat.count)}金融機関の平均</div></article>`;
+  }).join("");
+  const body = analytics.institutions.length
+    ? analytics.institutions.map((institution) => `<tr><th scope="row">${esc(institution)}</th>${ANALYTICS_TERMS.map((term) => analyticsCellHtml(analytics, institution, term)).join("")}</tr>`).join("")
+    : `<tr><td colspan="5" class="table-empty">上位5を作成できる比較可能データがありません。</td></tr>`;
+  return `<section class="product-analytics">
+    <div class="product-analytics-heading"><h3>${esc(analytics.productType)}</h3><span class="muted">各列の上位5を表示</span></div>
+    <div class="average-grid">${averageCards}</div>
+    <div class="matrix-scroll"><table class="ranking-matrix"><thead><tr><th>金融機関</th>${ANALYTICS_TERMS.map((term) => `<th>${esc(term.label)}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table></div>
+  </section>`;
+}
+function renderRateAnalytics() {
+  const from = $("#analyticsDateFrom").value;
+  const to = $("#analyticsDateTo").value;
+  if (from && to && to < from) {
+    $("#analyticsSummary").textContent = "期間指定を確認してください";
+    $("#analyticsResults").innerHTML = '<div class="analytics-empty">対象期間の終了日は開始日以後にしてください。</div>';
+    return;
+  }
+  const selectedRegions = new Set(selectedValues("#analyticsRegionFilter"));
+  const selectedProducts = selectedValues("#analyticsProductFilter");
+  const productTypes = selectedProducts.length ? selectedProducts : uniqueSorted("product_type");
+  const periodRecords = state.records.filter((record) => {
+    if (selectedRegions.size && !selectedRegions.has(record.region)) return false;
+    if (!productTypes.includes(record.product_type)) return false;
+    return recordOverlapsPeriod(record, from, to);
+  });
+  const comparable = periodRecords.filter((record) => record._analyticsTermKey && Number.isFinite(record._comparableRate));
+  const noTerm = periodRecords.filter((record) => !record._analyticsTermKey).length;
+  const noRate = periodRecords.filter((record) => record._analyticsTermKey && !Number.isFinite(record._comparableRate)).length;
+  const institutionCount = new Set(comparable.map((record) => record.institution_name).filter(Boolean)).size;
+  const regionLabel = selectedRegions.size ? [...selectedRegions].join("・") : "全国";
+  const periodLabel = `${from || "期間指定なし"} ～ ${to || "期間指定なし"}`;
+  $("#analyticsSummary").textContent = `${regionLabel} / ${periodLabel} / 比較可能 ${fmt(comparable.length)}明細`;
+  const sections = productTypes.map((productType) => buildProductAnalytics(productType, periodRecords)).map(productAnalyticsHtml).join("");
+  $("#analyticsResults").innerHTML = `<div class="analytics-data-summary"><strong>${fmt(institutionCount)}金融機関・${fmt(comparable.length)}比較可能明細</strong><span>対象明細 ${fmt(periodRecords.length)}件</span><span>対象外年限 ${fmt(noTerm)}件</span><span>絶対金利を算出不可 ${fmt(noRate)}件</span></div>${sections || '<div class="analytics-empty">条件に一致するデータがありません。</div>'}`;
+}
+
 function selectedValues(id) {
   return Array.from($(id).selectedOptions).map((o) => o.value);
 }
@@ -167,6 +340,11 @@ function normalizeRecord(record, index) {
   normalized._searchCampaign = normalized.campaign_name.toLocaleLowerCase("ja");
   normalized._searchTerm = normalized.term.toLocaleLowerCase("ja");
   normalized._searchRate = `${normalized.interest_rate} ${normalized.rate_condition}`.toLocaleLowerCase("ja");
+  normalized._analyticsTermKey = classifyAnalyticsTerm(normalized.term);
+  const comparableRate = parseComparableInterestRate(normalized.interest_rate);
+  normalized._comparableRate = comparableRate.value;
+  normalized._rateExclusionReason = comparableRate.reason;
+  normalized._rateSource = comparableRate.source;
   const maturity = estimateMaturity(normalized);
   normalized.estimated_maturity_start_date = maturity.start;
   normalized.estimated_maturity_end_date = maturity.end;
@@ -217,6 +395,9 @@ function initializeUi() {
   $("#maturityYearFilter").innerHTML = `<option value="">指定なし</option>${maturityYears.map((year) => `<option value="${year}">${year}年</option>`).join("")}`;
   const maturityEstimable = state.records.filter((r) => r._maturityYears.length).length;
   $("#maturityCoverage").textContent = `推定可能 ${fmt(maturityEstimable)}件 / ${fmt(state.records.length)}件。年を指定すると開催状況を全件に切り替えます。`;
+  fillSelect("#analyticsRegionFilter", uniqueSorted("region"));
+  fillSelect("#analyticsProductFilter", uniqueSorted("product_type"));
+  resetAnalyticsControls(false);
 
   const notes = Array.isArray(state.metadata.notes) ? state.metadata.notes : [];
   $("#metadataNotes").innerHTML = notes.length ? notes.map((n) => `<li>${esc(n)}</li>`).join("") : "<li>metadata.notes はありません。</li>";
@@ -249,6 +430,9 @@ function bindEvents() {
   $("#dateIssueNext").addEventListener("click", () => { state.dateIssuePage++; renderDateIssues(); });
   $("#csvDownload").addEventListener("click", downloadCsv);
   $("#clearFocus").addEventListener("click", clearFocus);
+  ["#analyticsDateFrom","#analyticsDateTo","#analyticsRegionFilter","#analyticsProductFilter"].forEach((id) => $(id).addEventListener("change", scheduleAnalytics));
+  $("#generateAnalytics").addEventListener("click", renderRateAnalytics);
+  $("#resetAnalytics").addEventListener("click", () => resetAnalyticsControls(true));
   $$("#detailTable th[data-sort]").forEach((th) => th.addEventListener("click", () => changeSort(th.dataset.sort)));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") hideTooltip(); });
 }
@@ -319,6 +503,7 @@ function applyFilters() {
 
 function renderAll() {
   renderStats();
+  renderRateAnalytics();
   renderGantt();
   renderDateIssues();
   renderTable();
@@ -608,7 +793,7 @@ function showFatalError(message) {
   $("#loadStatus").textContent = "データ読込エラー";
   $("#loadStatus").classList.add("error");
   $("#app").setAttribute("aria-busy", "false");
-  ["#gantt","#detailBody","#dateIssueBody"].forEach((id) => { const el = $(id); if (el) el.innerHTML = ""; });
+  ["#gantt","#detailBody","#dateIssueBody","#analyticsResults"].forEach((id) => { const el = $(id); if (el) el.innerHTML = ""; });
 }
 
 document.addEventListener("DOMContentLoaded", loadData);

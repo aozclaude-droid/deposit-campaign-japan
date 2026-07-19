@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="全国の預金キャンペーンを検索・比較できるガントチャート型データベース">
   <title>全国預金キャンペーン・データベース</title>
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="hero">
@@ -105,6 +105,37 @@
           <button class="btn scheduled-btn" id="activeScheduled">開催中＋開催予定</button>
           <button class="btn review-btn" id="reviewOnly">要確認のみ</button>
         </div>
+      </div>
+    </section>
+
+    <section class="panel" id="rateAnalyticsPanel">
+      <div class="panel-header">
+        <div>
+          <p class="section-kicker">RATE ANALYTICS</p>
+          <h2>期間別金利ランキング・マトリクス</h2>
+        </div>
+        <div id="analyticsSummary" class="muted">条件を読み込み中…</div>
+      </div>
+      <div class="panel-body">
+        <div class="analytics-controls">
+          <fieldset class="analytics-period">
+            <legend>対象キャンペーン期間</legend>
+            <label>開始<input id="analyticsDateFrom" type="date"></label>
+            <label>終了<input id="analyticsDateTo" type="date"></label>
+          </fieldset>
+          <label>地域
+            <select id="analyticsRegionFilter" multiple size="5" aria-label="ランキング対象地域（複数選択可）"></select>
+          </label>
+          <label>商品区分
+            <select id="analyticsProductFilter" multiple size="5" aria-label="ランキング対象商品区分（複数選択可）"></select>
+          </label>
+          <div class="analytics-actions">
+            <button class="btn primary" id="generateAnalytics">ランキングを更新</button>
+            <button class="btn" id="resetAnalytics">分析条件を初期化</button>
+          </div>
+        </div>
+        <p class="analytics-help">対象期間とキャンペーン募集期間が1日以上重なる明細を集計します。X軸は6か月・1年・3年・5年、Y軸は各期間の上位5に入った金融機関です。平均は金融機関ごとの最高金利を用いて算出します。</p>
+        <div id="analyticsResults" class="analytics-results" aria-live="polite"></div>
       </div>
     </section>
 
@@ -236,6 +267,8 @@
             <li>ガントチャートのバーをクリックすると、対応する明細だけを明細表に表示します。</li>
             <li>想定満期期間は、キャンペーン期間内に預入したと仮定し、「募集開始日＋年限」から「募集終了日＋年限」までとして計算します。</li>
             <li>実際の満期日は預入日、商品条件、自動継続、中途解約などで異なります。終了日未設定は募集開始日基準、年限を判定できない明細は満期年検索の対象外です。</li>
+            <li>金利ランキングは、絶対金利を数値化できる明細のみを使用します。店頭金利への上乗せ式・倍率式で最終金利が明示されていないものは平均とランキングから除外します。</li>
+            <li>同一金融機関・同一商品区分・同一期間区分に複数明細がある場合は、対象期間内の最高金利を採用します。</li>
           </ul>
         </div>
         <div>
@@ -248,6 +281,6 @@
 
   <div id="tooltip" class="tooltip" role="tooltip"></div>
   <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-  <script src="./app.js" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
