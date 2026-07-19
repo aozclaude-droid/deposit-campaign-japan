@@ -265,8 +265,14 @@ function buildProductAnalytics(productType, records) {
   ANALYTICS_TERMS.forEach((term) => {
     const entries = [...byTerm.get(term.key).entries()].map(([institution, data]) => ({ institution, ...data }));
     entries.sort((a, b) => b.rate - a.rate || a.institution.localeCompare(b.institution, "ja"));
+    const maximum = entries.length ? entries[0].rate : null;
+    const maximumInstitutions = entries.length
+      ? entries.filter((item) => item.rate === maximum).map((item) => item.institution)
+      : [];
     stats[term.key] = {
       count: entries.length,
+      maximum,
+      maximumInstitutions,
       average: entries.length ? entries.reduce((sum, item) => sum + item.rate, 0) / entries.length : null
     };
     topRanks[term.key] = new Map(entries.slice(0, 5).map((item, index) => [item.institution, index + 1]));
@@ -295,7 +301,23 @@ function analyticsCellHtml(analytics, institution, term) {
 function productAnalyticsHtml(analytics) {
   const averageCards = ANALYTICS_TERMS.map((term) => {
     const stat = analytics.stats[term.key];
-    return `<article class="average-card"><div class="average-term">${esc(term.label)}</div><div class="average-rate">${esc(formatRate(stat.average))}</div><div class="average-count">${fmt(stat.count)}金融機関の平均</div></article>`;
+    const maximumInstitutions = stat.maximumInstitutions.length
+      ? stat.maximumInstitutions.slice(0, 2).join("・") + (stat.maximumInstitutions.length > 2 ? `ほか${fmt(stat.maximumInstitutions.length - 2)}先` : "")
+      : "比較可能データなし";
+    return `<article class="average-card">
+      <div class="average-term">${esc(term.label)}</div>
+      <div class="maximum-block">
+        <div class="rate-label">最高</div>
+        <div class="maximum-rate">${esc(formatRate(stat.maximum))}</div>
+        <div class="maximum-institution" title="${esc(stat.maximumInstitutions.join("・"))}">${esc(maximumInstitutions)}</div>
+      </div>
+      <div class="average-divider"></div>
+      <div class="average-block">
+        <div class="rate-label">平均</div>
+        <div class="average-rate">${esc(formatRate(stat.average))}</div>
+        <div class="average-count">${fmt(stat.count)}金融機関</div>
+      </div>
+    </article>`;
   }).join("");
   const body = analytics.institutions.length
     ? analytics.institutions.map((institution) => `<tr><th scope="row">${esc(institution)}</th>${ANALYTICS_TERMS.map((term) => analyticsCellHtml(analytics, institution, term)).join("")}</tr>`).join("")
