@@ -68,6 +68,13 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .date-fieldset { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 9px; min-width: 0; border: 1px solid var(--line); border-radius: 11px; padding: 9px 10px 11px; }
 .date-fieldset legend { color: var(--muted); font-size: 12px; padding: 0 5px; }
 .date-fieldset label { display: flex; flex-direction: column; gap: 5px; color: var(--muted); font-size: 11px; }
+.date-quick-panel { margin-top: 15px; padding: 12px 13px; border: 1px solid #cfdced; border-radius: 12px; background: #f7faff; }
+.date-quick-title { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px 12px; margin-bottom: 9px; }
+.date-quick-title strong { color: #28466f; font-size: 13px; }
+.date-preset-buttons { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.date-preset.is-active { color: #fff; border-color: var(--blue); background: var(--blue); box-shadow: 0 3px 10px rgba(36,88,198,.2); }
+.date-preset-clear { border-style: dashed; }
+.date-quick-help { margin: 8px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
 .quick-actions, .toolbar, .legend { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .quick-actions { margin-top: 15px; }
 .btn { border: 1px solid #c8d3e1; background: #fff; color: #30425e; border-radius: 9px; padding: 8px 12px; cursor: pointer; transition: background .15s, border-color .15s, transform .15s; }
@@ -209,4 +216,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   .average-grid { grid-template-columns: 1fr; }
   .toolbar { align-items: stretch; flex-direction: column; width: 100%; }
   .toolbar .btn { width: 100%; }
+  .date-preset-buttons .btn { flex: 1 1 calc(50% - 8px); }
+  .date-preset-clear { flex-basis: 100% !important; }
 }

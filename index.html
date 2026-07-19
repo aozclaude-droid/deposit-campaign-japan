@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="全国の預金キャンペーンを検索・比較できるガントチャート型データベース">
   <title>全国預金キャンペーン・データベース</title>
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="hero">
@@ -97,6 +97,21 @@
             <label>以上<input id="endFrom" type="date"></label>
             <label>以下<input id="endTo" type="date"></label>
           </fieldset>
+        </div>
+
+        <div class="date-quick-panel" aria-label="キャンペーン期間のクイック設定">
+          <div class="date-quick-title">
+            <strong>表示対象期間を自動設定</strong>
+            <span id="quickPeriodStatus" class="field-help">期間ボタンを押すと、指定期間と重なるキャンペーンを抽出します。</span>
+          </div>
+          <div class="date-preset-buttons">
+            <button type="button" class="btn date-preset" data-months="6" data-label="直近6か月" aria-pressed="false">直近6か月</button>
+            <button type="button" class="btn date-preset" data-months="12" data-label="直近1年" aria-pressed="false">直近1年</button>
+            <button type="button" class="btn date-preset" data-months="36" data-label="直近3年" aria-pressed="false">直近3年</button>
+            <button type="button" class="btn date-preset" data-months="60" data-label="直近5年" aria-pressed="false">直近5年</button>
+            <button type="button" class="btn date-preset-clear" id="clearDatePreset">期間指定を解除</button>
+          </div>
+          <p class="date-quick-help">開始日「以下」に今日、終了日「以上」に期間の初日を設定します。これにより、期間内に1日以上重なるキャンペーンを表示します。終了日未設定は継続中として含め、開催状況は自動的に全件へ切り替えます。</p>
         </div>
 
         <div class="quick-actions">
@@ -281,6 +296,6 @@
 
   <div id="tooltip" class="tooltip" role="tooltip"></div>
   <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-  <script src="./app.js" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>

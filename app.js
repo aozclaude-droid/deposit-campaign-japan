@@ -1,7 +1,7 @@
 "use strict";
 
-const DATA_URL = "./campaign_all.json";
-const TODAY_ISO = new Date().toISOString().slice(0, 10);
+const DATA_URL = "campaign_all.json";
+const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
   { key: "6m", label: "6か月", months: 6 },
@@ -23,6 +23,8 @@ const state = {
   dateIssuePage: 1,
   focusKey: null,
   debounceTimer: null,
+  quickDateRange: null,
+  quickDateLabel: "",
   analyticsTimer: null
 };
 
@@ -31,7 +33,20 @@ const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 const text = (value) => value == null ? "" : String(value);
 const esc = (value) => text(value).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmt = (n) => new Intl.NumberFormat("ja-JP").format(n || 0);
+function localIso(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
 const parseIso = (s) => /^\d{4}-\d{2}-\d{2}$/.test(text(s)) ? new Date(`${s}T00:00:00`) : null;
+function shiftIsoMonths(iso, months) {
+  const source = parseIso(iso);
+  if (!source) return "";
+  const day = source.getDate();
+  source.setDate(1);
+  source.setMonth(source.getMonth() + months);
+  const lastDay = new Date(source.getFullYear(), source.getMonth() + 1, 0).getDate();
+  source.setDate(Math.min(day, lastDay));
+  return localIso(source);
+}
 const dayMs = 86400000;
 const campaignKey = (r) => `${text(r.institution_name)}\u241f${text(r.campaign_name)}`;
 const groupKey = (r) => [r.institution_name, r.campaign_name, r.campaign_start_date, r.campaign_end_date, r.product_type, r.status].map(text).join("\u241f");
@@ -406,8 +421,14 @@ function initializeUi() {
 }
 
 function bindEvents() {
-  ["#regionFilter","#prefectureFilter","#institutionTypeFilter","#productTypeFilter","#statusFilter","#reviewFilter","#startFrom","#startTo","#endFrom","#endTo"].forEach((id) => {
+  ["#regionFilter","#prefectureFilter","#institutionTypeFilter","#productTypeFilter","#statusFilter","#reviewFilter"].forEach((id) => {
     $(id).addEventListener("change", scheduleFilter);
+  });
+  ["#startFrom","#startTo","#endFrom","#endTo"].forEach((id) => {
+    $(id).addEventListener("change", () => {
+      deactivateQuickDatePreset();
+      scheduleFilter();
+    });
   });
   $("#maturityYearFilter").addEventListener("change", () => {
     if ($("#maturityYearFilter").value) setSelectedValues("#statusFilter", []);
@@ -420,6 +441,10 @@ function bindEvents() {
   $("#activeOnly").addEventListener("click", () => quickStatus(["開催中"]));
   $("#activeScheduled").addEventListener("click", () => quickStatus(["開催中","開催予定"]));
   $("#reviewOnly").addEventListener("click", () => { clearFilters(false); $("#reviewFilter").value = "yes"; applyFilters(); });
+  $$(".date-preset").forEach((button) => {
+    button.addEventListener("click", () => setQuickDateRange(Number(button.dataset.months), button.dataset.label || button.textContent.trim(), button));
+  });
+  $("#clearDatePreset").addEventListener("click", clearDatePreset);
   $("#ganttPageSize").addEventListener("change", (e) => { state.ganttPageSize = Number(e.target.value); state.ganttPage = 1; renderGantt(); });
   $("#tablePageSize").addEventListener("change", (e) => { state.tablePageSize = Number(e.target.value); state.tablePage = 1; renderTable(); });
   $("#ganttPrev").addEventListener("click", () => { state.ganttPage--; renderGantt(); });
@@ -446,11 +471,51 @@ function quickStatus(statuses) {
   setSelectedValues("#statusFilter", statuses);
   applyFilters();
 }
+function deactivateQuickDatePreset() {
+  state.quickDateRange = null;
+  state.quickDateLabel = "";
+  $$(".date-preset").forEach((button) => {
+    button.classList.remove("is-active");
+    button.setAttribute("aria-pressed", "false");
+  });
+  const status = $("#quickPeriodStatus");
+  if (status) status.textContent = "期間ボタンを押すと、指定期間と重なるキャンペーンを抽出します。";
+}
+function setQuickDateRange(months, label, activeButton) {
+  if (!Number.isFinite(months) || months <= 0) return;
+  const from = shiftIsoMonths(TODAY_ISO, -months);
+  const to = TODAY_ISO;
+  state.quickDateRange = { from, to };
+  state.quickDateLabel = label;
+
+  // 期間重複条件: campaign_start_date <= to AND (campaign_end_date >= from OR 終了日未設定)
+  $("#startFrom").value = "";
+  $("#startTo").value = to;
+  $("#endFrom").value = from;
+  $("#endTo").value = "";
+
+  $$(".date-preset").forEach((button) => {
+    const active = button === activeButton;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+  setSelectedValues("#statusFilter", []);
+  $("#quickPeriodStatus").textContent = `${label}: ${from} ～ ${to}（期間が重なるキャンペーン／開催状況は全件）`;
+  state.focusKey = null;
+  applyFilters();
+}
+function clearDatePreset() {
+  ["#startFrom","#startTo","#endFrom","#endTo"].forEach((id) => { $(id).value = ""; });
+  deactivateQuickDatePreset();
+  state.focusKey = null;
+  applyFilters();
+}
 function clearFilters(run = true) {
   ["#regionFilter","#prefectureFilter","#institutionTypeFilter","#productTypeFilter","#statusFilter"].forEach((id) => setSelectedValues(id, []));
   ["#institutionSearch","#campaignSearch","#termSearch","#rateSearch","#startFrom","#startTo","#endFrom","#endTo"].forEach((id) => { $(id).value = ""; });
   $("#maturityYearFilter").value = "";
   $("#reviewFilter").value = "all";
+  deactivateQuickDatePreset();
   state.focusKey = null;
   if (run) applyFilters();
 }
@@ -484,10 +549,16 @@ function applyFilters() {
     if (f.campaign && !r._searchCampaign.includes(f.campaign)) return false;
     if (f.term && !r._searchTerm.includes(f.term)) return false;
     if (f.rate && !r._searchRate.includes(f.rate)) return false;
-    if (f.startFrom && (!r.campaign_start_date || r.campaign_start_date < f.startFrom)) return false;
-    if (f.startTo && (!r.campaign_start_date || r.campaign_start_date > f.startTo)) return false;
-    if (f.endFrom && (!r.campaign_end_date || r.campaign_end_date < f.endFrom)) return false;
-    if (f.endTo && (!r.campaign_end_date || r.campaign_end_date > f.endTo)) return false;
+    if (state.quickDateRange) {
+      const { from, to } = state.quickDateRange;
+      if (!r.campaign_start_date || r.campaign_start_date > to) return false;
+      if (r.campaign_end_date && r.campaign_end_date < from) return false;
+    } else {
+      if (f.startFrom && (!r.campaign_start_date || r.campaign_start_date < f.startFrom)) return false;
+      if (f.startTo && (!r.campaign_start_date || r.campaign_start_date > f.startTo)) return false;
+      if (f.endFrom && (!r.campaign_end_date || r.campaign_end_date < f.endFrom)) return false;
+      if (f.endTo && (!r.campaign_end_date || r.campaign_end_date > f.endTo)) return false;
+    }
     if (f.maturityYear && !r._maturityYears.includes(f.maturityYear)) return false;
     if (f.review === "yes" && !r.review_notes.trim()) return false;
     if (f.review === "no" && r.review_notes.trim()) return false;
@@ -523,7 +594,8 @@ function renderStats() {
   $("#statEnded").textContent = fmt(counts["終了済み"]);
   $("#statReview").textContent = fmt(counts["要確認"]);
   const maturityYear = $("#maturityYearFilter").value;
-  $("#filterSummary").textContent = `全${fmt(state.records.length)}件中 ${fmt(records.length)}件を表示${maturityYear ? ` / 想定満期 ${maturityYear}年` : ""}`;
+  const quickRange = state.quickDateRange ? ` / ${state.quickDateLabel} ${state.quickDateRange.from}～${state.quickDateRange.to}` : "";
+  $("#filterSummary").textContent = `全${fmt(state.records.length)}件中 ${fmt(records.length)}件を表示${maturityYear ? ` / 想定満期 ${maturityYear}年` : ""}${quickRange}`;
 }
 
 function buildGanttGroups() {
