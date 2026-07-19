@@ -1,6 +1,6 @@
 "use strict";
 
-const DATA_URL = "campaign_all.json";
+const DATA_URL = "./campaign_all.json";
 const TODAY_ISO = new Date().toISOString().slice(0, 10);
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
