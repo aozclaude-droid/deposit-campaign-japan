@@ -1,302 +1,306 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="description" content="全国の預金キャンペーンを検索・比較できるガントチャート型データベース">
-  <title>全国預金キャンペーン・データベース</title>
-  <link rel="stylesheet" href="./styles.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="全国の預金キャンペーンを検索・比較できるガントチャート型データベース" name="description"/>
+<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<title>全国預金キャンペーン・データベース</title>
+<link href="styles.css?v=20260721-0110" rel="stylesheet"/>
 </head>
 <body>
-  <header class="hero">
-    <div class="hero-inner">
-      <p class="eyebrow">全国定期預金キャンペーン・データベース</p>
-      <h1>全国預金キャンペーン一覧・タイムライン</h1>
-      <p class="hero-copy">定期預金、定期貯金、普通預金、積金などを、地域・金融機関・期間・金利条件から検索できます。</p>
-      <div class="hero-meta">
-        <span id="updatedAt">更新日時を読み込み中…</span>
-        <span id="loadStatus" class="status-dot">データ読込中</span>
-      </div>
-    </div>
-  </header>
-
-  <main id="app" class="container" aria-busy="true">
-    <section id="errorPanel" class="alert error hidden" role="alert"></section>
-    <section id="warningPanel" class="alert warning hidden" role="status"></section>
-
-    <section class="stat-grid" aria-label="集計">
-      <article class="stat-card"><div class="stat-number" id="statInstitutions">—</div><div class="stat-label">金融機関数</div></article>
-      <article class="stat-card"><div class="stat-number" id="statCampaigns">—</div><div class="stat-label">キャンペーン数</div></article>
-      <article class="stat-card"><div class="stat-number" id="statRecords">—</div><div class="stat-label">明細件数</div></article>
-      <article class="stat-card active"><div class="stat-number" id="statActive">—</div><div class="stat-label">開催中件数</div></article>
-      <article class="stat-card scheduled"><div class="stat-number" id="statScheduled">—</div><div class="stat-label">開催予定件数</div></article>
-      <article class="stat-card ended"><div class="stat-number" id="statEnded">—</div><div class="stat-label">終了済み件数</div></article>
-      <article class="stat-card review"><div class="stat-number" id="statReview">—</div><div class="stat-label">要確認件数</div></article>
-    </section>
-
-    <section class="panel" id="filtersPanel">
-      <div class="panel-header">
-        <div>
-          <p class="section-kicker">FILTERS</p>
-          <h2>絞り込み条件</h2>
-        </div>
-        <div id="filterSummary" class="muted">—</div>
-      </div>
-      <div class="panel-body">
-        <div class="filter-grid">
-          <label>地域
-            <select id="regionFilter" multiple size="5" aria-label="地域（複数選択可）"></select>
-          </label>
-          <label>都道府県
-            <select id="prefectureFilter" multiple size="5" aria-label="都道府県（複数選択可）"></select>
-          </label>
-          <label>金融機関種別
-            <select id="institutionTypeFilter" multiple size="5" aria-label="金融機関種別（複数選択可）"></select>
-          </label>
-          <label>商品区分
-            <select id="productTypeFilter" multiple size="5" aria-label="商品区分（複数選択可）"></select>
-          </label>
-          <label>開催状況
-            <select id="statusFilter" multiple size="5" aria-label="開催状況（複数選択可）"></select>
-          </label>
-          <label>要確認事項
+<header class="hero">
+<div class="hero-inner">
+<p class="eyebrow">全国定期預金キャンペーン・データベース</p>
+<h1>全国預金キャンペーン一覧・タイムライン</h1>
+<p class="hero-copy">定期預金、定期貯金、普通預金、積金などを、地域・金融機関・期間・金利条件から検索できます。</p>
+<div class="hero-meta">
+<span id="updatedAt">更新日時を読み込み中…</span>
+<span class="status-dot" id="loadStatus">データ読込中</span>
+<span class="app-version" id="appVersion">画面版 2026.07.21.1</span>
+</div>
+</div>
+</header>
+<main aria-busy="true" class="container" id="app">
+<section class="alert error hidden" id="errorPanel" role="alert"></section>
+<section class="alert warning hidden" id="warningPanel" role="status"></section><section aria-label="表示モード切替" class="workspace-tabs-shell" id="workspaceTabsShell">
+<div aria-label="表示モード" class="workspace-tabs" role="tablist">
+<button aria-controls="timelineTabPanel" aria-selected="true" class="workspace-tab is-active" data-view="timeline" id="timelineTab" role="tab" tabindex="0" type="button">
+<span class="workspace-tab-kicker">TIMELINE</span>
+<span class="workspace-tab-title">キャンペーン検索</span>
+<span class="workspace-tab-description">絞り込み・ガント・明細・日付確認</span>
+</button>
+<button aria-controls="analyticsTabPanel" aria-selected="false" class="workspace-tab" data-view="analytics" id="analyticsTab" role="tab" tabindex="-1" type="button">
+<span class="workspace-tab-kicker">RATE ANALYTICS</span>
+<span class="workspace-tab-title">金利ランキングマトリクス</span>
+<span class="workspace-tab-description">期間・地域・商品区分別の最高・平均・上位5</span>
+</button>
+</div>
+</section><div aria-labelledby="timelineTab" class="workspace-tab-panel" id="timelineTabPanel" role="tabpanel"><section aria-label="集計" class="stat-grid">
+<article class="stat-card"><div class="stat-number" id="statInstitutions">—</div><div class="stat-label">金融機関数</div></article>
+<article class="stat-card"><div class="stat-number" id="statCampaigns">—</div><div class="stat-label">キャンペーン数</div></article>
+<article class="stat-card"><div class="stat-number" id="statRecords">—</div><div class="stat-label">明細件数</div></article>
+<article class="stat-card active"><div class="stat-number" id="statActive">—</div><div class="stat-label">開催中件数</div></article>
+<article class="stat-card scheduled"><div class="stat-number" id="statScheduled">—</div><div class="stat-label">開催予定件数</div></article>
+<article class="stat-card ended"><div class="stat-number" id="statEnded">—</div><div class="stat-label">終了済み件数</div></article>
+<article class="stat-card review"><div class="stat-number" id="statReview">—</div><div class="stat-label">要確認件数</div></article>
+</section><section class="panel" id="filtersPanel">
+<div class="panel-header">
+<div>
+<p class="section-kicker">FILTERS</p>
+<h2>絞り込み条件</h2>
+</div>
+<div class="muted" id="filterSummary">—</div>
+</div>
+<div class="panel-body">
+<div class="filter-grid">
+<label>地域
+            <select aria-label="地域（複数選択可）" id="regionFilter" multiple="" size="5"></select>
+</label>
+<label>都道府県
+            <select aria-label="都道府県（複数選択可）" id="prefectureFilter" multiple="" size="5"></select>
+</label>
+<label>金融機関種別
+            <select aria-label="金融機関種別（複数選択可）" id="institutionTypeFilter" multiple="" size="5"></select>
+</label>
+<label>商品区分
+            <select aria-label="商品区分（複数選択可）" id="productTypeFilter" multiple="" size="5"></select>
+</label>
+<label>開催状況
+            <select aria-label="開催状況（複数選択可）" id="statusFilter" multiple="" size="5"></select>
+</label>
+<label>要確認事項
             <select id="reviewFilter">
-              <option value="all">すべて</option>
-              <option value="yes">要確認事項あり</option>
-              <option value="no">要確認事項なし</option>
-            </select>
-            <span class="field-help">複数選択は Ctrl / Command キーを使用</span>
-          </label>
-
-          <label>金融機関名
-            <input id="institutionSearch" type="search" placeholder="例：静岡銀行、JA、信用金庫">
-          </label>
-          <label>キャンペーン名
-            <input id="campaignSearch" type="search" placeholder="名称の一部を入力">
-          </label>
-          <label>預入期間・年限
-            <input id="termSearch" type="search" placeholder="例：1年、6か月、適用期間">
-          </label>
-          <label>預金金利
-            <input id="rateSearch" type="search" placeholder="例：1.00、店頭金利＋0.20">
-          </label>
-          <label class="maturity-filter">想定満期年
+<option value="all">すべて</option>
+<option value="yes">要確認事項あり</option>
+<option value="no">要確認事項なし</option>
+</select>
+<span class="field-help">複数選択は Ctrl / Command キーを使用</span>
+</label>
+<label>金融機関名
+            <input id="institutionSearch" placeholder="例：静岡銀行、JA、信用金庫" type="search"/>
+</label>
+<label>キャンペーン名
+            <input id="campaignSearch" placeholder="名称の一部を入力" type="search"/>
+</label>
+<label>預入期間・年限
+            <input id="termSearch" placeholder="例：1年、6か月、適用期間" type="search"/>
+</label>
+<label>預金金利
+            <input id="rateSearch" placeholder="例：1.00、店頭金利＋0.20" type="search"/>
+</label>
+<label class="maturity-filter">想定満期年
             <select id="maturityYearFilter">
-              <option value="">指定なし</option>
-            </select>
-            <span id="maturityCoverage" class="field-help">満期推定可能件数を集計中…</span>
-          </label>
-
-          <fieldset class="date-fieldset">
-            <legend>キャンペーン開始日</legend>
-            <label>以上<input id="startFrom" type="date"></label>
-            <label>以下<input id="startTo" type="date"></label>
-          </fieldset>
-          <fieldset class="date-fieldset">
-            <legend>キャンペーン終了日</legend>
-            <label>以上<input id="endFrom" type="date"></label>
-            <label>以下<input id="endTo" type="date"></label>
-          </fieldset>
-        </div>
-
-        <div class="date-quick-panel" aria-label="キャンペーン期間のクイック設定">
-          <div class="date-quick-title">
-            <strong>表示対象期間を自動設定</strong>
-            <span id="quickPeriodStatus" class="field-help">期間ボタンを押すと、開始日と終了日の条件を自動設定します。</span>
-          </div>
-          <div class="date-preset-buttons">
-            <button type="button" class="btn date-preset" data-months="6" data-label="直近6か月" aria-pressed="false">直近6か月</button>
-            <button type="button" class="btn date-preset" data-months="12" data-label="直近1年" aria-pressed="false">直近1年</button>
-            <button type="button" class="btn date-preset" data-months="36" data-label="直近3年" aria-pressed="false">直近3年</button>
-            <button type="button" class="btn date-preset" data-months="60" data-label="直近5年" aria-pressed="false">直近5年</button>
-            <button type="button" class="btn date-preset-clear" id="clearDatePreset">期間指定を解除</button>
-          </div>
-          <p class="date-quick-help">開始日「以上」に期間の初日、終了日「以下」に今日を設定します。たとえば直近3年では、開始日「以上」が3年前、終了日「以下」が今日になります。終了日未設定は継続中として含め、開催状況は自動的に全件へ切り替えます。</p>
-        </div>
-
-        <div class="quick-actions">
-          <button class="btn" id="clearFilters">条件をクリア</button>
-          <button class="btn active-btn" id="activeOnly">開催中のみ</button>
-          <button class="btn scheduled-btn" id="activeScheduled">開催中＋開催予定</button>
-          <button class="btn review-btn" id="reviewOnly">要確認のみ</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="rateAnalyticsPanel">
-      <div class="panel-header">
-        <div>
-          <p class="section-kicker">RATE ANALYTICS</p>
-          <h2>期間別金利ランキング・マトリクス</h2>
-        </div>
-        <div id="analyticsSummary" class="muted">条件を読み込み中…</div>
-      </div>
-      <div class="panel-body">
-        <div class="analytics-controls">
-          <fieldset class="analytics-period">
-            <legend>対象キャンペーン期間</legend>
-            <label>開始<input id="analyticsDateFrom" type="date"></label>
-            <label>終了<input id="analyticsDateTo" type="date"></label>
-          </fieldset>
-          <label>地域
-            <select id="analyticsRegionFilter" multiple size="5" aria-label="ランキング対象地域（複数選択可）"></select>
-          </label>
-          <label>商品区分
-            <select id="analyticsProductFilter" multiple size="5" aria-label="ランキング対象商品区分（複数選択可）"></select>
-          </label>
-          <div class="analytics-actions">
-            <button class="btn primary" id="generateAnalytics">ランキングを更新</button>
-            <button class="btn" id="resetAnalytics">分析条件を初期化</button>
-          </div>
-        </div>
-        <p class="analytics-help">対象期間とキャンペーン募集期間が1日以上重なる明細を集計します。X軸は6か月・1年・3年・5年、Y軸は各期間の上位5に入った金融機関です。各期間の最高金利を平均の上段に表示し、平均は金融機関ごとの最高金利を用いて算出します。</p>
-        <div id="analyticsResults" class="analytics-results" aria-live="polite"></div>
-      </div>
-    </section>
-
-    <section class="panel" id="ganttPanel">
-      <div class="panel-header">
-        <div>
-          <p class="section-kicker">TIMELINE</p>
-          <h2>金融機関別ガントチャート</h2>
-        </div>
-        <div class="toolbar">
-          <label>1ページの金融機関数
+<option value="">指定なし</option>
+</select>
+<span class="field-help" id="maturityCoverage">満期推定可能件数を集計中…</span>
+</label>
+<fieldset class="date-fieldset">
+<legend>キャンペーン開始日</legend>
+<label>以上<input id="startFrom" type="date"/></label>
+<label>以下<input id="startTo" type="date"/></label>
+</fieldset>
+<fieldset class="date-fieldset">
+<legend>キャンペーン終了日</legend>
+<label>以上<input id="endFrom" type="date"/></label>
+<label>以下<input id="endTo" type="date"/></label>
+</fieldset>
+</div>
+<div aria-label="キャンペーン期間のクイック設定" class="date-quick-panel">
+<div class="date-quick-title">
+<strong>表示対象期間を自動設定</strong>
+<span class="field-help" id="quickPeriodStatus">期間ボタンを押すと、開始日と終了日の条件を自動設定します。</span>
+</div>
+<div class="date-preset-buttons">
+<button aria-pressed="false" class="btn date-preset" data-label="直近6か月" data-months="6" type="button">直近6か月</button>
+<button aria-pressed="false" class="btn date-preset" data-label="直近1年" data-months="12" type="button">直近1年</button>
+<button aria-pressed="false" class="btn date-preset" data-label="直近3年" data-months="36" type="button">直近3年</button>
+<button aria-pressed="false" class="btn date-preset" data-label="直近5年" data-months="60" type="button">直近5年</button>
+<button class="btn date-preset-clear" id="clearDatePreset" type="button">期間指定を解除</button>
+</div>
+<p class="date-quick-help">開始日「以上」に期間の初日、終了日「以下」に今日を設定します。たとえば直近3年では、開始日「以上」が3年前、終了日「以下」が今日になります。終了日未設定は継続中として含め、開催状況は自動的に全件へ切り替えます。</p>
+</div>
+<div class="quick-actions">
+<button class="btn" id="clearFilters">条件をクリア</button>
+<button class="btn active-btn" id="activeOnly">開催中のみ</button>
+<button class="btn scheduled-btn" id="activeScheduled">開催中＋開催予定</button>
+<button class="btn review-btn" id="reviewOnly">要確認のみ</button>
+</div>
+</div>
+</section><section class="panel" id="ganttPanel">
+<div class="panel-header">
+<div>
+<p class="section-kicker">TIMELINE</p>
+<h2>金融機関別ガントチャート</h2>
+</div>
+<div class="toolbar">
+<label>1ページの金融機関数
             <select id="ganttPageSize">
-              <option value="10">10</option>
-              <option value="20" selected>20</option>
-              <option value="30">30</option>
-            </select>
-          </label>
-        </div>
-      </div>
-      <div class="panel-body">
-        <div class="legend" aria-label="凡例">
-          <span><i class="legend-bar status-active"></i>開催中</span>
-          <span><i class="legend-bar status-scheduled"></i>開催予定</span>
-          <span><i class="legend-bar status-ended"></i>終了済み</span>
-          <span><i class="legend-bar status-review"></i>要確認</span>
-          <span><i class="legend-bar open-ended"></i>終了日未設定</span>
-        </div>
-        <p id="ganttInfo" class="muted"></p>
-        <div id="ganttWrap" class="gantt-wrap"><div id="gantt" class="gantt"></div></div>
-        <div class="pager">
-          <button class="btn small" id="ganttPrev">前の金融機関</button>
-          <span id="ganttPageInfo" class="muted">—</span>
-          <button class="btn small" id="ganttNext">次の金融機関</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="dateIssuesPanel">
-      <div class="panel-header">
-        <div>
-          <p class="section-kicker">DATE REVIEW</p>
-          <h2>日付要確認</h2>
-        </div>
-        <div id="dateIssueCount" class="muted">—</div>
-      </div>
-      <div class="panel-body no-pad">
-        <div class="table-scroll compact-table-scroll">
-          <table class="data-table compact-table">
-            <thead><tr><th>金融機関名</th><th>キャンペーン名</th><th>開始日</th><th>終了日</th><th>開催状況</th><th>要確認事項</th></tr></thead>
-            <tbody id="dateIssueBody"></tbody>
-          </table>
-        </div>
-        <div class="pager">
-          <button class="btn small" id="dateIssuePrev">前へ</button>
-          <span id="dateIssuePageInfo" class="muted">—</span>
-          <button class="btn small" id="dateIssueNext">次へ</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="tablePanel">
-      <div class="panel-header">
-        <div>
-          <p class="section-kicker">DETAILS</p>
-          <h2>明細一覧</h2>
-        </div>
-        <div class="toolbar">
-          <label>1ページの表示件数
+<option value="10">10</option>
+<option selected="" value="20">20</option>
+<option value="30">30</option>
+</select>
+</label>
+</div>
+</div>
+<div class="panel-body">
+<div aria-label="凡例" class="legend">
+<span><i class="legend-bar status-active"></i>開催中</span>
+<span><i class="legend-bar status-scheduled"></i>開催予定</span>
+<span><i class="legend-bar status-ended"></i>終了済み</span>
+<span><i class="legend-bar status-review"></i>要確認</span>
+<span><i class="legend-bar open-ended"></i>終了日未設定</span>
+</div>
+<p class="muted" id="ganttInfo"></p>
+<div class="gantt-wrap" id="ganttWrap"><div class="gantt" id="gantt"></div></div>
+<div class="pager">
+<button class="btn small" id="ganttPrev">前の金融機関</button>
+<span class="muted" id="ganttPageInfo">—</span>
+<button class="btn small" id="ganttNext">次の金融機関</button>
+</div>
+</div>
+</section><section class="panel" id="tablePanel">
+<div class="panel-header">
+<div>
+<p class="section-kicker">DETAILS</p>
+<h2>明細一覧</h2>
+</div>
+<div class="toolbar">
+<label>1ページの表示件数
             <select id="tablePageSize">
-              <option value="50" selected>50</option>
-              <option value="100">100</option>
-              <option value="200">200</option>
-            </select>
-          </label>
-          <button class="btn primary" id="csvDownload">絞り込み結果をCSVダウンロード</button>
-        </div>
-      </div>
-      <div id="focusBanner" class="focus-banner hidden">
-        <span id="focusText"></span>
-        <button class="btn small" id="clearFocus">ガント選択を解除</button>
-      </div>
-      <div class="panel-body no-pad">
-        <div class="table-scroll">
-          <table class="data-table" id="detailTable">
-            <thead><tr>
-              <th data-sort="region">地域</th>
-              <th data-sort="prefecture">都道府県</th>
-              <th data-sort="institution_name">金融機関名</th>
-              <th data-sort="institution_type">金融機関種別</th>
-              <th data-sort="product_type">商品区分</th>
-              <th data-sort="campaign_name">キャンペーン名</th>
-              <th data-sort="campaign_start_date">開始日</th>
-              <th data-sort="campaign_end_date">終了日</th>
-              <th data-sort="term">預入期間・年限</th>
-              <th data-sort="_maturitySort">想定満期期間</th>
-              <th data-sort="interest_rate">預金金利</th>
-              <th data-sort="rate_condition">金利条件</th>
-              <th data-sort="eligibility_conditions">対象者・条件</th>
-              <th data-sort="deposit_amount">預入金額</th>
-              <th data-sort="status">開催状況</th>
-              <th data-sort="review_notes">要確認事項</th>
-              <th>商品URL</th>
-            </tr></thead>
-            <tbody id="detailBody"></tbody>
-          </table>
-        </div>
-        <div class="pager">
-          <button class="btn small" id="tablePrev">前へ</button>
-          <span id="tablePageInfo" class="muted">—</span>
-          <button class="btn small" id="tableNext">次へ</button>
-        </div>
-      </div>
-    </section>
+<option selected="" value="50">50</option>
+<option value="100">100</option>
+<option value="200">200</option>
+</select>
+</label>
+<button class="btn primary" id="csvDownload">絞り込み結果をCSVダウンロード</button>
+</div>
+</div>
+<div class="focus-banner hidden" id="focusBanner">
+<span id="focusText"></span>
+<button class="btn small" id="clearFocus">ガント選択を解除</button>
+</div>
+<div class="panel-body no-pad">
+<div class="table-scroll">
+<table class="data-table" id="detailTable">
+<thead><tr>
+<th data-sort="region">地域</th>
+<th data-sort="prefecture">都道府県</th>
+<th data-sort="institution_name">金融機関名</th>
+<th data-sort="institution_type">金融機関種別</th>
+<th data-sort="product_type">商品区分</th>
+<th data-sort="campaign_name">キャンペーン名</th>
+<th data-sort="campaign_start_date">開始日</th>
+<th data-sort="campaign_end_date">終了日</th>
+<th data-sort="term">預入期間・年限</th>
+<th data-sort="_maturitySort">想定満期期間</th>
+<th data-sort="interest_rate">預金金利</th>
+<th data-sort="rate_condition">金利条件</th>
+<th data-sort="eligibility_conditions">対象者・条件</th>
+<th data-sort="deposit_amount">預入金額</th>
+<th data-sort="status">開催状況</th>
+<th data-sort="review_notes">要確認事項</th>
+<th>商品URL</th>
+</tr></thead>
+<tbody id="detailBody"></tbody>
+</table>
+</div>
+<div class="pager">
+<button class="btn small" id="tablePrev">前へ</button>
+<span class="muted" id="tablePageInfo">—</span>
+<button class="btn small" id="tableNext">次へ</button>
+</div>
+</div>
+</section><section class="panel" id="dateIssuesPanel">
+<div class="panel-header">
+<div>
+<p class="section-kicker">DATE REVIEW</p>
+<h2>日付要確認</h2>
+</div>
+<div class="muted" id="dateIssueCount">—</div>
+</div>
+<div class="panel-body no-pad">
+<div class="table-scroll compact-table-scroll">
+<table class="data-table compact-table">
+<thead><tr><th>金融機関名</th><th>キャンペーン名</th><th>開始日</th><th>終了日</th><th>開催状況</th><th>要確認事項</th></tr></thead>
+<tbody id="dateIssueBody"></tbody>
+</table>
+</div>
+<div class="pager">
+<button class="btn small" id="dateIssuePrev">前へ</button>
+<span class="muted" id="dateIssuePageInfo">—</span>
+<button class="btn small" id="dateIssueNext">次へ</button>
+</div>
+</div>
+</section><section class="panel" id="notesPanel">
+<div class="panel-header">
+<div>
+<p class="section-kicker">NOTES</p>
+<h2>データ上の注意事項</h2>
+</div>
+</div>
+<div class="panel-body notes-grid">
+<div>
+<h3>表示上の扱い</h3>
+<ul>
+<li>終了日未設定は、ガントチャート上で斜線と矢印を付け、表示範囲の右端まで延長します。</li>
+<li>開始日不明、終了日不明、終了日が開始日より前の明細は「日付要確認」に掲載します。</li>
+<li>ガントチャートは同一キャンペーン・同一期間の明細をまとめ、年限・金利をツールチップに列挙します。</li>
+<li>ガントチャートのバーをクリックすると、対応する明細だけを明細表に表示します。</li>
+<li>想定満期期間は、キャンペーン期間内に預入したと仮定し、「募集開始日＋年限」から「募集終了日＋年限」までとして計算します。</li>
+<li>実際の満期日は預入日、商品条件、自動継続、中途解約などで異なります。終了日未設定は募集開始日基準、年限を判定できない明細は満期年検索の対象外です。</li>
+<li>金利ランキングは、絶対金利を数値化できる明細のみを使用します。店頭金利への上乗せ式・倍率式で最終金利が明示されていないものは平均とランキングから除外します。</li>
+<li>同一金融機関・同一商品区分・同一期間区分に複数明細がある場合は、対象期間内の最高金利を採用します。</li>
+</ul>
+</div>
+<div>
+<h3>元データの注記</h3>
+<ul id="metadataNotes"><li>読み込み中…</li></ul>
+</div>
+</div>
+</section></div><div aria-labelledby="analyticsTab" class="workspace-tab-panel" hidden="" id="analyticsTabPanel" role="tabpanel"><section class="panel" id="rateAnalyticsPanel">
+<div class="panel-header">
+<div>
+<p class="section-kicker">RATE ANALYTICS</p>
+<h2>期間別金利ランキング・マトリクス</h2>
+</div>
+<div class="muted" id="analyticsSummary">条件を読み込み中…</div>
+</div>
+<div class="panel-body">
+<div class="analytics-controls">
+<fieldset class="analytics-period">
+<legend>対象キャンペーン期間</legend>
+<label>開始<input id="analyticsDateFrom" type="date"/></label>
+<label>終了<input id="analyticsDateTo" type="date"/></label>
+</fieldset>
+<label>地域
+            <select aria-label="ランキング対象地域（複数選択可）" id="analyticsRegionFilter" multiple="" size="5"></select>
+</label>
+<label>商品区分
+            <select aria-label="ランキング対象商品区分（複数選択可）" id="analyticsProductFilter" multiple="" size="5"></select>
+</label>
+<div class="analytics-actions">
+<button class="btn primary" id="generateAnalytics">ランキングを更新</button>
+<button class="btn" id="resetAnalytics">分析条件を初期化</button>
+</div>
+</div>
+<p class="analytics-help">対象期間とキャンペーン募集期間が1日以上重なる明細を集計します。X軸は6か月・1年・3年・5年、Y軸は各期間の上位5に入った金融機関です。各期間の最高金利を平均の上段に表示し、平均は金融機関ごとの最高金利を用いて算出します。</p>
+<div aria-live="polite" class="analytics-results" id="analyticsResults"></div>
+</div>
+</section></div>
 
-    <section class="panel" id="notesPanel">
-      <div class="panel-header">
-        <div>
-          <p class="section-kicker">NOTES</p>
-          <h2>データ上の注意事項</h2>
-        </div>
-      </div>
-      <div class="panel-body notes-grid">
-        <div>
-          <h3>表示上の扱い</h3>
-          <ul>
-            <li>終了日未設定は、ガントチャート上で斜線と矢印を付け、表示範囲の右端まで延長します。</li>
-            <li>開始日不明、終了日不明、終了日が開始日より前の明細は「日付要確認」に掲載します。</li>
-            <li>ガントチャートは同一キャンペーン・同一期間の明細をまとめ、年限・金利をツールチップに列挙します。</li>
-            <li>ガントチャートのバーをクリックすると、対応する明細だけを明細表に表示します。</li>
-            <li>想定満期期間は、キャンペーン期間内に預入したと仮定し、「募集開始日＋年限」から「募集終了日＋年限」までとして計算します。</li>
-            <li>実際の満期日は預入日、商品条件、自動継続、中途解約などで異なります。終了日未設定は募集開始日基準、年限を判定できない明細は満期年検索の対象外です。</li>
-            <li>金利ランキングは、絶対金利を数値化できる明細のみを使用します。店頭金利への上乗せ式・倍率式で最終金利が明示されていないものは平均とランキングから除外します。</li>
-            <li>同一金融機関・同一商品区分・同一期間区分に複数明細がある場合は、対象期間内の最高金利を採用します。</li>
-          </ul>
-        </div>
-        <div>
-          <h3>元データの注記</h3>
-          <ul id="metadataNotes"><li>読み込み中…</li></ul>
-        </div>
-      </div>
-    </section>
-  </main>
 
-  <div id="tooltip" class="tooltip" role="tooltip"></div>
-  <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-  <script src="./app.js" defer></script>
+
+
+
+
+
+</main>
+<div class="tooltip" id="tooltip" role="tooltip"></div>
+<noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
+<script defer="" src="app.js?v=20260721-0110"></script>
 </body>
 </html>

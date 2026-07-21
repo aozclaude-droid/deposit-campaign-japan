@@ -1,6 +1,7 @@
 "use strict";
 
-const DATA_URL = "./campaign_all.json";
+const APP_VERSION = "2026.07.21.1";
+const DATA_URL = "campaign_all.json?v=20260721-0110";
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
@@ -25,7 +26,9 @@ const state = {
   debounceTimer: null,
   quickDateRange: null,
   quickDateLabel: "",
-  analyticsTimer: null
+  analyticsTimer: null,
+  activeView: "timeline",
+  analyticsRendered: false
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -51,6 +54,68 @@ const dayMs = 86400000;
 const campaignKey = (r) => `${text(r.institution_name)}\u241f${text(r.campaign_name)}`;
 const groupKey = (r) => [r.institution_name, r.campaign_name, r.campaign_start_date, r.campaign_end_date, r.product_type, r.status].map(text).join("\u241f");
 const statusClass = (status) => ({"開催中":"status-active","開催予定":"status-scheduled","終了済み":"status-ended","要確認":"status-review"}[status] || "status-review");
+
+
+function viewFromHash() {
+  return window.location.hash === "#rate-analytics" ? "analytics" : "timeline";
+}
+function renderTimelineView() {
+  renderStats();
+  renderGantt();
+  renderTable();
+  renderDateIssues();
+}
+function setActiveView(view, options = {}) {
+  const { updateHash = true, focus = false, scroll = false, render = true } = options;
+  const nextView = view === "analytics" ? "analytics" : "timeline";
+  state.activeView = nextView;
+
+  $$(".workspace-tab").forEach((tab) => {
+    const active = tab.dataset.view === nextView;
+    tab.classList.toggle("is-active", active);
+    tab.setAttribute("aria-selected", active ? "true" : "false");
+    tab.tabIndex = active ? 0 : -1;
+    if (active && focus) tab.focus({ preventScroll: true });
+  });
+
+  const timelinePanel = $("#timelineTabPanel");
+  const analyticsPanel = $("#analyticsTabPanel");
+  if (timelinePanel) timelinePanel.hidden = nextView !== "timeline";
+  if (analyticsPanel) analyticsPanel.hidden = nextView !== "analytics";
+  hideTooltip();
+
+  if (updateHash) {
+    const hash = nextView === "analytics" ? "#rate-analytics" : "#timeline";
+    history.replaceState(null, "", `${window.location.pathname}${window.location.search}${hash}`);
+  }
+
+  if (render) {
+    if (nextView === "analytics") {
+      if (!state.analyticsRendered) renderRateAnalytics();
+    } else {
+      renderTimelineView();
+    }
+  }
+
+  if (scroll) {
+    window.requestAnimationFrame(() => {
+      $("#workspaceTabsShell")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+}
+function handleWorkspaceTabKeydown(event) {
+  if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+  event.preventDefault();
+  const tabs = $$(".workspace-tab");
+  if (!tabs.length) return;
+  let index = tabs.indexOf(event.currentTarget);
+  if (event.key === "ArrowLeft") index = (index - 1 + tabs.length) % tabs.length;
+  if (event.key === "ArrowRight") index = (index + 1) % tabs.length;
+  if (event.key === "Home") index = 0;
+  if (event.key === "End") index = tabs.length - 1;
+  const target = tabs[index];
+  setActiveView(target.dataset.view, { focus: true, scroll: false });
+}
 
 const toIso = (date) => date instanceof Date && !Number.isNaN(date.getTime())
   ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
@@ -234,10 +299,13 @@ function resetAnalyticsControls(render = true) {
   setSelectedValues("#analyticsRegionFilter", []);
   const products = uniqueSorted("product_type");
   setSelectedValues("#analyticsProductFilter", products.includes("定期預金") ? ["定期預金"] : products.slice(0, 1));
-  if (render) renderRateAnalytics();
+  if (render && state.activeView === "analytics") renderRateAnalytics();
+  else state.analyticsRendered = false;
 }
 function scheduleAnalytics() {
+  state.analyticsRendered = false;
   window.clearTimeout(state.analyticsTimer);
+  if (state.activeView !== "analytics") return;
   state.analyticsTimer = window.setTimeout(renderRateAnalytics, 160);
 }
 function buildProductAnalytics(productType, records) {
@@ -329,6 +397,7 @@ function productAnalyticsHtml(analytics) {
   </section>`;
 }
 function renderRateAnalytics() {
+  state.analyticsRendered = true;
   const from = $("#analyticsDateFrom").value;
   const to = $("#analyticsDateTo").value;
   if (from && to && to < from) {
@@ -439,10 +508,17 @@ function initializeUi() {
   const notes = Array.isArray(state.metadata.notes) ? state.metadata.notes : [];
   $("#metadataNotes").innerHTML = notes.length ? notes.map((n) => `<li>${esc(n)}</li>`).join("") : "<li>metadata.notes はありません。</li>";
   bindEvents();
+  setActiveView(viewFromHash(), { updateHash: false, render: false });
   applyFilters();
+  if (state.activeView === "analytics") renderRateAnalytics();
 }
 
 function bindEvents() {
+  $$(".workspace-tab").forEach((tab) => {
+    tab.addEventListener("click", () => setActiveView(tab.dataset.view, { scroll: true }));
+    tab.addEventListener("keydown", handleWorkspaceTabKeydown);
+  });
+  window.addEventListener("hashchange", () => setActiveView(viewFromHash(), { updateHash: false, scroll: true }));
   ["#regionFilter","#prefectureFilter","#institutionTypeFilter","#productTypeFilter","#statusFilter","#reviewFilter"].forEach((id) => {
     $(id).addEventListener("change", scheduleFilter);
   });
@@ -596,11 +672,7 @@ function applyFilters() {
 }
 
 function renderAll() {
-  renderStats();
-  renderRateAnalytics();
-  renderGantt();
-  renderDateIssues();
-  renderTable();
+  if (state.activeView === "timeline") renderTimelineView();
 }
 
 function renderStats() {
