@@ -3,13 +3,13 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="全国の預金キャンペーンを検索・比較できるガントチャート型データベース" name="description"/>
 <meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
 <title>全国預金キャンペーン・データベース</title>
-<link href="./styles.css?v=20260721-0110" rel="stylesheet"/>
+<link href="styles.css?v=20260723-1000" rel="stylesheet"/>
 </head>
 <body>
 <header class="hero">
@@ -20,7 +20,7 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.07.21.1</span>
+<span class="app-version" id="appVersion">画面版 2026.07.23.1</span>
 </div>
 </div>
 </header>
@@ -53,9 +53,12 @@
 <p class="section-kicker">FILTERS</p>
 <h2>絞り込み条件</h2>
 </div>
+<div class="panel-header-actions">
 <div class="muted" id="filterSummary">—</div>
+<button aria-controls="filtersBody" aria-expanded="true" class="btn small mobile-panel-toggle" id="mobileFilterToggle" type="button">条件を閉じる</button>
 </div>
-<div class="panel-body">
+</div>
+<div class="panel-body" id="filtersBody">
 <div class="filter-grid">
 <label>地域
             <select aria-label="地域（複数選択可）" id="regionFilter" multiple="" size="5"></select>
@@ -155,6 +158,7 @@
 <span><i class="legend-bar open-ended"></i>終了日未設定</span>
 </div>
 <p class="muted" id="ganttInfo"></p>
+<p class="mobile-scroll-hint">横にスワイプすると期間全体を確認できます。バーをタップすると対応する明細へ移動します。</p>
 <div class="gantt-wrap" id="ganttWrap"><div class="gantt" id="gantt"></div></div>
 <div class="pager">
 <button class="btn small" id="ganttPrev">前の金融機関</button>
@@ -169,8 +173,27 @@
 <h2>明細一覧</h2>
 </div>
 <div class="toolbar">
+<div class="mobile-sort-controls" aria-label="スマートフォン用並べ替え">
+<label>並べ替え
+<select id="mobileSortKey">
+<option value="campaign_start_date">開始日</option>
+<option value="campaign_end_date">終了日</option>
+<option value="institution_name">金融機関名</option>
+<option value="interest_rate">預金金利</option>
+<option value="term">預入期間・年限</option>
+<option value="status">開催状況</option>
+</select>
+</label>
+<label>順序
+<select id="mobileSortDir">
+<option value="desc">降順</option>
+<option value="asc">昇順</option>
+</select>
+</label>
+</div>
 <label>1ページの表示件数
             <select id="tablePageSize">
+<option value="20">20</option>
 <option selected="" value="50">50</option>
 <option value="100">100</option>
 <option value="200">200</option>
@@ -288,6 +311,7 @@
 </div>
 </div>
 <p class="analytics-help">対象期間とキャンペーン募集期間が1日以上重なる明細を集計します。X軸は6か月・1年・3年・5年、Y軸は各期間の上位5に入った金融機関です。各期間の最高金利を平均の上段に表示し、平均は金融機関ごとの最高金利を用いて算出します。</p>
+<p class="mobile-scroll-hint analytics-scroll-hint">平均・最高カードとランキング表は横にスワイプできます。</p>
 <div aria-live="polite" class="analytics-results" id="analyticsResults"></div>
 </div>
 </section></div>
@@ -301,6 +325,6 @@
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="./app.js?v=20260721-0110"></script>
+<script defer="" src="app.js?v=20260723-1000"></script>
 </body>
 </html>

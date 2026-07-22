@@ -1,7 +1,7 @@
 "use strict";
 
-const APP_VERSION = "2026.07.21.1";
-const DATA_URL = "campaign_all.json?v=20260721-0110";
+const APP_VERSION = "2026.07.23.1";
+const DATA_URL = "campaign_all.json?v=20260723-1000";
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
@@ -54,6 +54,7 @@ const dayMs = 86400000;
 const campaignKey = (r) => `${text(r.institution_name)}\u241f${text(r.campaign_name)}`;
 const groupKey = (r) => [r.institution_name, r.campaign_name, r.campaign_start_date, r.campaign_end_date, r.product_type, r.status].map(text).join("\u241f");
 const statusClass = (status) => ({"開催中":"status-active","開催予定":"status-scheduled","終了済み":"status-ended","要確認":"status-review"}[status] || "status-review");
+const isCompactViewport = () => window.matchMedia("(max-width: 760px)").matches;
 
 
 function viewFromHash() {
@@ -393,7 +394,7 @@ function productAnalyticsHtml(analytics) {
   return `<section class="product-analytics">
     <div class="product-analytics-heading"><h3>${esc(analytics.productType)}</h3><span class="muted">各列の上位5を表示</span></div>
     <div class="average-grid">${averageCards}</div>
-    <div class="matrix-scroll"><table class="ranking-matrix"><thead><tr><th>金融機関</th>${ANALYTICS_TERMS.map((term) => `<th>${esc(term.label)}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table></div>
+    <p class="mobile-scroll-hint matrix-inline-hint">横にスワイプして6か月・1年・3年・5年を比較できます。</p><div class="matrix-scroll"><table class="ranking-matrix"><thead><tr><th>金融機関</th>${ANALYTICS_TERMS.map((term) => `<th>${esc(term.label)}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table></div>
   </section>`;
 }
 function renderRateAnalytics() {
@@ -507,6 +508,14 @@ function initializeUi() {
 
   const notes = Array.isArray(state.metadata.notes) ? state.metadata.notes : [];
   $("#metadataNotes").innerHTML = notes.length ? notes.map((n) => `<li>${esc(n)}</li>`).join("") : "<li>metadata.notes はありません。</li>";
+
+  if (isCompactViewport()) {
+    state.ganttPageSize = 10;
+    state.tablePageSize = 20;
+    $("#ganttPageSize").value = "10";
+    $("#tablePageSize").value = "20";
+  }
+  syncMobileSortControls();
   bindEvents();
   setActiveView(viewFromHash(), { updateHash: false, render: false });
   applyFilters();
@@ -556,8 +565,34 @@ function bindEvents() {
   ["#analyticsDateFrom","#analyticsDateTo","#analyticsRegionFilter","#analyticsProductFilter"].forEach((id) => $(id).addEventListener("change", scheduleAnalytics));
   $("#generateAnalytics").addEventListener("click", renderRateAnalytics);
   $("#resetAnalytics").addEventListener("click", () => resetAnalyticsControls(true));
+  $("#mobileFilterToggle")?.addEventListener("click", toggleMobileFilters);
+  $("#mobileSortKey")?.addEventListener("change", (event) => {
+    state.sortKey = event.target.value;
+    state.tablePage = 1;
+    renderTable();
+  });
+  $("#mobileSortDir")?.addEventListener("change", (event) => {
+    state.sortDir = event.target.value === "asc" ? "asc" : "desc";
+    state.tablePage = 1;
+    renderTable();
+  });
   $$("#detailTable th[data-sort]").forEach((th) => th.addEventListener("click", () => changeSort(th.dataset.sort)));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") hideTooltip(); });
+}
+
+function toggleMobileFilters() {
+  const panel = $("#filtersPanel");
+  const button = $("#mobileFilterToggle");
+  if (!panel || !button) return;
+  const collapsed = panel.classList.toggle("is-collapsed");
+  button.setAttribute("aria-expanded", collapsed ? "false" : "true");
+  button.textContent = collapsed ? "条件を開く" : "条件を閉じる";
+}
+function syncMobileSortControls() {
+  const key = $("#mobileSortKey");
+  const dir = $("#mobileSortDir");
+  if (key) key.value = state.sortKey;
+  if (dir) dir.value = state.sortDir;
 }
 
 function scheduleFilter() {
@@ -769,7 +804,9 @@ function renderGantt() {
   const spanDays = Math.max(1, (maxDate - minDate) / dayMs);
   const months = Math.max(1, Math.round(spanDays / 30.44));
   const tickStep = months <= 24 ? 1 : months <= 72 ? 3 : months <= 180 ? 12 : 24;
-  const chartWidth = Math.min(4200, Math.max(1100, months * (months <= 36 ? 54 : months <= 120 ? 24 : 12)));
+  const minChartWidth = isCompactViewport() ? 760 : 1100;
+  const monthScale = isCompactViewport() ? (months <= 36 ? 38 : months <= 120 ? 18 : 10) : (months <= 36 ? 54 : months <= 120 ? 24 : 12);
+  const chartWidth = Math.min(4200, Math.max(minChartWidth, months * monthScale));
 
   const ticks = [];
   let cursor = new Date(minDate);
@@ -884,9 +921,9 @@ function renderDateIssues() {
   $("#dateIssuePrev").disabled = state.dateIssuePage <= 1;
   $("#dateIssueNext").disabled = state.dateIssuePage >= totalPages;
   $("#dateIssueBody").innerHTML = page.length ? page.map((r) => `<tr>
-    <td>${esc(r.institution_name)}</td><td>${esc(r.campaign_name)}</td><td>${esc(r.campaign_start_date || "不明")}</td><td>${esc(r.campaign_end_date || "未設定")}</td>
-    <td><span class="tag ${statusClass(r.status)}">${esc(r.status || "要確認")}</span></td><td class="review-text">${esc([dateIssueReason(r), r.review_notes].filter(Boolean).join(" / "))}</td>
-  </tr>`).join("") : `<tr><td colspan="6" class="table-empty">日付要確認データはありません。</td></tr>`;
+    <td data-label="金融機関名">${esc(r.institution_name)}</td><td data-label="キャンペーン名">${esc(r.campaign_name)}</td><td data-label="開始日">${esc(r.campaign_start_date || "不明")}</td><td data-label="終了日">${esc(r.campaign_end_date || "未設定")}</td>
+    <td data-label="開催状況"><span class="tag ${statusClass(r.status)}">${esc(r.status || "要確認")}</span></td><td data-label="要確認事項" class="review-text">${esc([dateIssueReason(r), r.review_notes].filter(Boolean).join(" / "))}</td>
+  </tr>`).join("") : `<tr class="empty-row"><td colspan="6" class="table-empty">日付要確認データはありません。</td></tr>`;
 }
 
 function sortedRecords(records) {
@@ -901,9 +938,11 @@ function changeSort(key) {
   if (state.sortKey === key) state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
   else { state.sortKey = key; state.sortDir = "asc"; }
   state.tablePage = 1;
+  syncMobileSortControls();
   renderTable();
 }
 function renderTable() {
+  syncMobileSortControls();
   const base = state.focusKey ? state.filtered.filter((r) => r._groupKey === state.focusKey) : state.filtered;
   const records = sortedRecords(base);
   const totalPages = Math.max(1, Math.ceil(records.length / state.tablePageSize));
@@ -918,16 +957,16 @@ function renderTable() {
     th.classList.toggle("sort-asc", th.dataset.sort === state.sortKey && state.sortDir === "asc");
     th.classList.toggle("sort-desc", th.dataset.sort === state.sortKey && state.sortDir === "desc");
   });
-  $("#detailBody").innerHTML = page.length ? page.map(detailRowHtml).join("") : `<tr><td colspan="17" class="table-empty">条件に一致する明細がありません。</td></tr>`;
+  $("#detailBody").innerHTML = page.length ? page.map(detailRowHtml).join("") : `<tr class="empty-row"><td colspan="17" class="table-empty">条件に一致する明細がありません。</td></tr>`;
 }
 function detailRowHtml(r) {
   const url = r.product_url ? `<a class="url-link" href="${esc(r.product_url)}" target="_blank" rel="noopener noreferrer">開く ↗</a>` : "—";
   return `<tr>
-    <td>${esc(r.region)}</td><td>${esc(r.prefecture)}</td><td>${esc(r.institution_name)}</td><td>${esc(r.institution_type)}</td><td>${esc(r.product_type)}</td>
-    <td>${esc(r.campaign_name)}</td><td>${esc(r.campaign_start_date || "不明")}</td><td>${esc(r.campaign_end_date || "未設定")}</td><td>${esc(r.term)}</td>
-    <td class="maturity-text ${r.estimated_maturity_period ? "" : "unavailable"}" title="${esc(r.maturity_estimation_note)}">${esc(r.estimated_maturity_period || "推定不可")}</td>
-    <td class="rate">${esc(r.interest_rate)}</td><td>${esc(r.rate_condition)}</td><td>${esc(r.eligibility_conditions)}</td><td>${esc(r.deposit_amount)}</td>
-    <td><span class="tag ${statusClass(r.status)}">${esc(r.status || "要確認")}</span></td><td class="review-text">${esc(r.review_notes)}</td><td>${url}</td>
+    <td data-label="地域">${esc(r.region)}</td><td data-label="都道府県">${esc(r.prefecture)}</td><td data-label="金融機関名">${esc(r.institution_name)}</td><td data-label="金融機関種別">${esc(r.institution_type)}</td><td data-label="商品区分">${esc(r.product_type)}</td>
+    <td data-label="キャンペーン名">${esc(r.campaign_name)}</td><td data-label="開始日">${esc(r.campaign_start_date || "不明")}</td><td data-label="終了日">${esc(r.campaign_end_date || "未設定")}</td><td data-label="預入期間・年限">${esc(r.term)}</td>
+    <td data-label="想定満期期間" class="maturity-text ${r.estimated_maturity_period ? "" : "unavailable"}" title="${esc(r.maturity_estimation_note)}">${esc(r.estimated_maturity_period || "推定不可")}</td>
+    <td data-label="預金金利" class="rate">${esc(r.interest_rate)}</td><td data-label="金利条件">${esc(r.rate_condition)}</td><td data-label="対象者・条件">${esc(r.eligibility_conditions)}</td><td data-label="預入金額">${esc(r.deposit_amount)}</td>
+    <td data-label="開催状況"><span class="tag ${statusClass(r.status)}">${esc(r.status || "要確認")}</span></td><td data-label="要確認事項" class="review-text">${esc(r.review_notes)}</td><td data-label="商品URL">${url}</td>
   </tr>`;
 }
 
