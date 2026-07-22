@@ -9,7 +9,7 @@
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
 <title>全国預金キャンペーン・データベース</title>
-<link href="styles.css?v=20260723-1000" rel="stylesheet"/>
+<link href="styles.css?v=20260723-1400" rel="stylesheet"/>
 </head>
 <body>
 <header class="hero">
@@ -20,7 +20,7 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.07.23.1</span>
+<span class="app-version" id="appVersion">画面版 2026.07.23.2</span>
 </div>
 </div>
 </header>
@@ -158,7 +158,7 @@
 <span><i class="legend-bar open-ended"></i>終了日未設定</span>
 </div>
 <p class="muted" id="ganttInfo"></p>
-<p class="mobile-scroll-hint">横にスワイプすると期間全体を確認できます。バーをタップすると対応する明細へ移動します。</p>
+<p class="mobile-scroll-hint">横にスワイプしても左端の金融機関名・キャンペーン名は固定表示されます。バーをタップすると対応する明細へ移動します。</p>
 <div class="gantt-wrap" id="ganttWrap"><div class="gantt" id="gantt"></div></div>
 <div class="pager">
 <button class="btn small" id="ganttPrev">前の金融機関</button>
@@ -305,12 +305,19 @@
 <label>商品区分
             <select aria-label="ランキング対象商品区分（複数選択可）" id="analyticsProductFilter" multiple="" size="5"></select>
 </label>
+<label>マトリクスのY軸
+            <select aria-label="金利マトリクスに表示する金融機関の範囲" id="analyticsDisplayMode">
+<option selected="" value="top5">各期間の上位5のみ</option>
+<option value="all">全金融機関</option>
+</select>
+<span class="field-help">全金融機関では、いずれかの期間に比較可能な金利がある金融機関を表示します。</span>
+</label>
 <div class="analytics-actions">
 <button class="btn primary" id="generateAnalytics">ランキングを更新</button>
 <button class="btn" id="resetAnalytics">分析条件を初期化</button>
 </div>
 </div>
-<p class="analytics-help">対象期間とキャンペーン募集期間が1日以上重なる明細を集計します。X軸は6か月・1年・3年・5年、Y軸は各期間の上位5に入った金融機関です。各期間の最高金利を平均の上段に表示し、平均は金融機関ごとの最高金利を用いて算出します。</p>
+<p class="analytics-help">対象期間とキャンペーン募集期間が1日以上重なる明細を集計します。X軸は6か月・1年・3年・5年、Y軸は「各期間の上位5」または「全金融機関」を切り替えられます。各期間の最高金利を平均の上段に表示し、平均は金融機関ごとの最高金利を用いて算出します。</p>
 <p class="mobile-scroll-hint analytics-scroll-hint">平均・最高カードとランキング表は横にスワイプできます。</p>
 <div aria-live="polite" class="analytics-results" id="analyticsResults"></div>
 </div>
@@ -325,6 +332,6 @@
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="app.js?v=20260723-1000"></script>
+<script defer="" src="app.js?v=20260723-1400"></script>
 </body>
 </html>

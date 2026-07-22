@@ -1,7 +1,7 @@
 "use strict";
 
-const APP_VERSION = "2026.07.23.1";
-const DATA_URL = "campaign_all.json?v=20260723-1000";
+const APP_VERSION = "2026.07.23.2";
+const DATA_URL = "campaign_all.json?v=20260723-1400";
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
@@ -300,6 +300,7 @@ function resetAnalyticsControls(render = true) {
   setSelectedValues("#analyticsRegionFilter", []);
   const products = uniqueSorted("product_type");
   setSelectedValues("#analyticsProductFilter", products.includes("定期預金") ? ["定期預金"] : products.slice(0, 1));
+  $("#analyticsDisplayMode").value = "top5";
   if (render && state.activeView === "analytics") renderRateAnalytics();
   else state.analyticsRendered = false;
 }
@@ -330,7 +331,8 @@ function buildProductAnalytics(productType, records) {
 
   const stats = {};
   const topRanks = {};
-  const union = new Map();
+  const topUnion = new Map();
+  const allUnion = new Map();
   ANALYTICS_TERMS.forEach((term) => {
     const entries = [...byTerm.get(term.key).entries()].map(([institution, data]) => ({ institution, ...data }));
     entries.sort((a, b) => b.rate - a.rate || a.institution.localeCompare(b.institution, "ja"));
@@ -345,19 +347,30 @@ function buildProductAnalytics(productType, records) {
       average: entries.length ? entries.reduce((sum, item) => sum + item.rate, 0) / entries.length : null
     };
     topRanks[term.key] = new Map(entries.slice(0, 5).map((item, index) => [item.institution, index + 1]));
-    entries.slice(0, 5).forEach((item, index) => {
-      if (!union.has(item.institution)) union.set(item.institution, { bestRank: index + 1, maxRate: item.rate });
+    entries.forEach((item) => {
+      if (!allUnion.has(item.institution)) allUnion.set(item.institution, { maxRate: item.rate, coverage: 1 });
       else {
-        const current = union.get(item.institution);
+        const current = allUnion.get(item.institution);
+        current.maxRate = Math.max(current.maxRate, item.rate);
+        current.coverage += 1;
+      }
+    });
+    entries.slice(0, 5).forEach((item, index) => {
+      if (!topUnion.has(item.institution)) topUnion.set(item.institution, { bestRank: index + 1, maxRate: item.rate });
+      else {
+        const current = topUnion.get(item.institution);
         current.bestRank = Math.min(current.bestRank, index + 1);
         current.maxRate = Math.max(current.maxRate, item.rate);
       }
     });
   });
-  const institutions = [...union.entries()]
+  const topInstitutions = [...topUnion.entries()]
     .sort((a, b) => a[1].bestRank - b[1].bestRank || b[1].maxRate - a[1].maxRate || a[0].localeCompare(b[0], "ja"))
     .map(([institution]) => institution);
-  return { productType, byTerm, stats, topRanks, institutions };
+  const allInstitutions = [...allUnion.entries()]
+    .sort((a, b) => b[1].maxRate - a[1].maxRate || b[1].coverage - a[1].coverage || a[0].localeCompare(b[0], "ja"))
+    .map(([institution]) => institution);
+  return { productType, byTerm, stats, topRanks, topInstitutions, allInstitutions };
 }
 function analyticsCellHtml(analytics, institution, term) {
   const entry = analytics.byTerm.get(term.key).get(institution);
@@ -367,7 +380,9 @@ function analyticsCellHtml(analytics, institution, term) {
   const title = `${r.campaign_name} / ${r.campaign_start_date || "開始日不明"}～${r.campaign_end_date || "終了日未設定"} / ${r.interest_rate}${r.rate_condition ? ` / ${r.rate_condition}` : ""}`;
   return `<td class="matrix-rate-cell ${rank ? `top-rank rank-${rank}` : ""}" title="${esc(title)}"><span class="matrix-rate">${esc(formatRate(entry.rate))}</span>${rank ? `<span class="rank-badge">${rank}位</span>` : ""}</td>`;
 }
-function productAnalyticsHtml(analytics) {
+function productAnalyticsHtml(analytics, displayMode = "top5") {
+  const showAll = displayMode === "all";
+  const institutions = showAll ? analytics.allInstitutions : analytics.topInstitutions;
   const averageCards = ANALYTICS_TERMS.map((term) => {
     const stat = analytics.stats[term.key];
     const maximumInstitutions = stat.maximumInstitutions.length
@@ -388,13 +403,16 @@ function productAnalyticsHtml(analytics) {
       </div>
     </article>`;
   }).join("");
-  const body = analytics.institutions.length
-    ? analytics.institutions.map((institution) => `<tr><th scope="row">${esc(institution)}</th>${ANALYTICS_TERMS.map((term) => analyticsCellHtml(analytics, institution, term)).join("")}</tr>`).join("")
-    : `<tr><td colspan="5" class="table-empty">上位5を作成できる比較可能データがありません。</td></tr>`;
+  const body = institutions.length
+    ? institutions.map((institution) => `<tr><th scope="row">${esc(institution)}</th>${ANALYTICS_TERMS.map((term) => analyticsCellHtml(analytics, institution, term)).join("")}</tr>`).join("")
+    : `<tr><td colspan="5" class="table-empty">比較可能データがありません。</td></tr>`;
+  const modeLabel = showAll
+    ? `全${fmt(institutions.length)}金融機関を表示（行内最高金利順）`
+    : "各列の上位5を表示";
   return `<section class="product-analytics">
-    <div class="product-analytics-heading"><h3>${esc(analytics.productType)}</h3><span class="muted">各列の上位5を表示</span></div>
+    <div class="product-analytics-heading"><h3>${esc(analytics.productType)}</h3><span class="muted">${esc(modeLabel)}</span></div>
     <div class="average-grid">${averageCards}</div>
-    <p class="mobile-scroll-hint matrix-inline-hint">横にスワイプして6か月・1年・3年・5年を比較できます。</p><div class="matrix-scroll"><table class="ranking-matrix"><thead><tr><th>金融機関</th>${ANALYTICS_TERMS.map((term) => `<th>${esc(term.label)}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table></div>
+    <p class="mobile-scroll-hint matrix-inline-hint">横にスワイプして6か月・1年・3年・5年を比較できます。金融機関名は左端に固定されます。</p><div class="matrix-scroll ${showAll ? "all-institutions" : ""}"><table class="ranking-matrix"><thead><tr><th>金融機関</th>${ANALYTICS_TERMS.map((term) => `<th>${esc(term.label)}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table></div>
   </section>`;
 }
 function renderRateAnalytics() {
@@ -420,8 +438,13 @@ function renderRateAnalytics() {
   const institutionCount = new Set(comparable.map((record) => record.institution_name).filter(Boolean)).size;
   const regionLabel = selectedRegions.size ? [...selectedRegions].join("・") : "全国";
   const periodLabel = `${from || "期間指定なし"} ～ ${to || "期間指定なし"}`;
-  $("#analyticsSummary").textContent = `${regionLabel} / ${periodLabel} / 比較可能 ${fmt(comparable.length)}明細`;
-  const sections = productTypes.map((productType) => buildProductAnalytics(productType, periodRecords)).map(productAnalyticsHtml).join("");
+  const displayMode = $("#analyticsDisplayMode").value === "all" ? "all" : "top5";
+  const displayLabel = displayMode === "all" ? "全金融機関" : "上位5";
+  $("#analyticsSummary").textContent = `${regionLabel} / ${periodLabel} / ${displayLabel} / 比較可能 ${fmt(comparable.length)}明細`;
+  const sections = productTypes
+    .map((productType) => buildProductAnalytics(productType, periodRecords))
+    .map((analytics) => productAnalyticsHtml(analytics, displayMode))
+    .join("");
   $("#analyticsResults").innerHTML = `<div class="analytics-data-summary"><strong>${fmt(institutionCount)}金融機関・${fmt(comparable.length)}比較可能明細</strong><span>対象明細 ${fmt(periodRecords.length)}件</span><span>対象外年限 ${fmt(noTerm)}件</span><span>絶対金利を算出不可 ${fmt(noRate)}件</span></div>${sections || '<div class="analytics-empty">条件に一致するデータがありません。</div>'}`;
 }
 
@@ -562,7 +585,7 @@ function bindEvents() {
   $("#dateIssueNext").addEventListener("click", () => { state.dateIssuePage++; renderDateIssues(); });
   $("#csvDownload").addEventListener("click", downloadCsv);
   $("#clearFocus").addEventListener("click", clearFocus);
-  ["#analyticsDateFrom","#analyticsDateTo","#analyticsRegionFilter","#analyticsProductFilter"].forEach((id) => $(id).addEventListener("change", scheduleAnalytics));
+  ["#analyticsDateFrom","#analyticsDateTo","#analyticsRegionFilter","#analyticsProductFilter","#analyticsDisplayMode"].forEach((id) => $(id).addEventListener("change", scheduleAnalytics));
   $("#generateAnalytics").addEventListener("click", renderRateAnalytics);
   $("#resetAnalytics").addEventListener("click", () => resetAnalyticsControls(true));
   $("#mobileFilterToggle")?.addEventListener("click", toggleMobileFilters);
