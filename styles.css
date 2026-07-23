@@ -597,3 +597,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   .ranking-matrix thead th:first-child, .ranking-matrix tbody th { min-width: 122px; max-width: 122px; }
   .matrix-rate-cell { min-width: 108px; }
 }
+
+
+.analytics-auto-update-note {
+  align-self: center;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+@media (max-width: 760px) {
+  .analytics-auto-update-note {
+    width: 100%;
+    line-height: 1.5;
+  }
+}

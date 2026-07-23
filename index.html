@@ -9,7 +9,7 @@
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
 <title>全国預金キャンペーン・データベース</title>
-<link href="styles.css?v=20260723-1400" rel="stylesheet"/>
+<link href="styles.css?v=20260723-1800" rel="stylesheet"/>
 </head>
 <body>
 <header class="hero">
@@ -20,7 +20,7 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.07.23.2</span>
+<span class="app-version" id="appVersion">画面版 2026.07.23.4</span>
 </div>
 </div>
 </header>
@@ -112,19 +112,19 @@
 <label>以下<input id="endTo" type="date"/></label>
 </fieldset>
 </div>
-<div aria-label="キャンペーン期間のクイック設定" class="date-quick-panel">
+<div aria-label="キャンペーン開始年のクイック設定" class="date-quick-panel">
 <div class="date-quick-title">
-<strong>表示対象期間を自動設定</strong>
-<span class="field-help" id="quickPeriodStatus">期間ボタンを押すと、開始日と終了日の条件を自動設定します。</span>
+<strong>キャンペーン開始年を自動設定</strong>
+<span class="field-help" id="quickPeriodStatus">年のボタンを押すと、キャンペーン開始日「以上」だけをその年の1月1日に設定します。</span>
 </div>
 <div class="date-preset-buttons">
-<button aria-pressed="false" class="btn date-preset" data-label="直近6か月" data-months="6" type="button">直近6か月</button>
-<button aria-pressed="false" class="btn date-preset" data-label="直近1年" data-months="12" type="button">直近1年</button>
-<button aria-pressed="false" class="btn date-preset" data-label="直近3年" data-months="36" type="button">直近3年</button>
-<button aria-pressed="false" class="btn date-preset" data-label="直近5年" data-months="60" type="button">直近5年</button>
-<button class="btn date-preset-clear" id="clearDatePreset" type="button">期間指定を解除</button>
+<button aria-pressed="false" class="btn date-preset" data-label="2026年から" data-year="2026" type="button">2026年から</button>
+<button aria-pressed="false" class="btn date-preset" data-label="2025年から" data-year="2025" type="button">2025年から</button>
+<button aria-pressed="false" class="btn date-preset" data-label="2024年から" data-year="2024" type="button">2024年から</button>
+<button aria-pressed="false" class="btn date-preset" data-label="2023年から" data-year="2023" type="button">2023年から</button>
+<button class="btn date-preset-clear" id="clearDatePreset" type="button">開始年指定を解除</button>
 </div>
-<p class="date-quick-help">開始日「以上」に期間の初日、終了日「以下」に今日を設定します。たとえば直近3年では、開始日「以上」が3年前、終了日「以下」が今日になります。終了日未設定は継続中として含め、開催状況は自動的に全件へ切り替えます。</p>
+<p class="date-quick-help">選択した年の1月1日を、キャンペーン開始日「以上」に設定します。開始日「以下」とキャンペーン終了日の2項目は空欄のままです。過去の終了済みキャンペーンも確認できるよう、開催状況は自動的に全件へ切り替えます。</p>
 </div>
 <div class="quick-actions">
 <button class="btn" id="clearFilters">条件をクリア</button>
@@ -313,8 +313,8 @@
 <span class="field-help">全金融機関では、いずれかの期間に比較可能な金利がある金融機関を表示します。</span>
 </label>
 <div class="analytics-actions">
-<button class="btn primary" id="generateAnalytics">ランキングを更新</button>
 <button class="btn" id="resetAnalytics">分析条件を初期化</button>
+<span class="analytics-auto-update-note">条件を変更すると自動的に更新されます。</span>
 </div>
 </div>
 <p class="analytics-help">対象期間とキャンペーン募集期間が1日以上重なる明細を集計します。X軸は6か月・1年・3年・5年、Y軸は「各期間の上位5」または「全金融機関」を切り替えられます。各期間の最高金利を平均の上段に表示し、平均は金融機関ごとの最高金利を用いて算出します。</p>
@@ -332,6 +332,6 @@
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="app.js?v=20260723-1400"></script>
+<script defer="" src="app.js?v=20260723-1800"></script>
 </body>
 </html>

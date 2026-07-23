@@ -1,7 +1,7 @@
 "use strict";
 
-const APP_VERSION = "2026.07.23.2";
-const DATA_URL = "campaign_all.json?v=20260723-1400";
+const APP_VERSION = "2026.07.23.4";
+const DATA_URL = "campaign_all.json?v=20260723-1800";
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
@@ -40,16 +40,6 @@ function localIso(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 const parseIso = (s) => /^\d{4}-\d{2}-\d{2}$/.test(text(s)) ? new Date(`${s}T00:00:00`) : null;
-function shiftIsoMonths(iso, months) {
-  const source = parseIso(iso);
-  if (!source) return "";
-  const day = source.getDate();
-  source.setDate(1);
-  source.setMonth(source.getMonth() + months);
-  const lastDay = new Date(source.getFullYear(), source.getMonth() + 1, 0).getDate();
-  source.setDate(Math.min(day, lastDay));
-  return localIso(source);
-}
 const dayMs = 86400000;
 const campaignKey = (r) => `${text(r.institution_name)}\u241f${text(r.campaign_name)}`;
 const groupKey = (r) => [r.institution_name, r.campaign_name, r.campaign_start_date, r.campaign_end_date, r.product_type, r.status].map(text).join("\u241f");
@@ -572,7 +562,7 @@ function bindEvents() {
   $("#activeScheduled").addEventListener("click", () => quickStatus(["開催中","開催予定"]));
   $("#reviewOnly").addEventListener("click", () => { clearFilters(false); $("#reviewFilter").value = "yes"; applyFilters(); });
   $$(".date-preset").forEach((button) => {
-    button.addEventListener("click", () => setQuickDateRange(Number(button.dataset.months), button.dataset.label || button.textContent.trim(), button));
+    button.addEventListener("click", () => setQuickStartYear(Number(button.dataset.year), button.dataset.label || button.textContent.trim(), button));
   });
   $("#clearDatePreset").addEventListener("click", clearDatePreset);
   $("#ganttPageSize").addEventListener("change", (e) => { state.ganttPageSize = Number(e.target.value); state.ganttPage = 1; renderGantt(); });
@@ -586,7 +576,6 @@ function bindEvents() {
   $("#csvDownload").addEventListener("click", downloadCsv);
   $("#clearFocus").addEventListener("click", clearFocus);
   ["#analyticsDateFrom","#analyticsDateTo","#analyticsRegionFilter","#analyticsProductFilter","#analyticsDisplayMode"].forEach((id) => $(id).addEventListener("change", scheduleAnalytics));
-  $("#generateAnalytics").addEventListener("click", renderRateAnalytics);
   $("#resetAnalytics").addEventListener("click", () => resetAnalyticsControls(true));
   $("#mobileFilterToggle")?.addEventListener("click", toggleMobileFilters);
   $("#mobileSortKey")?.addEventListener("change", (event) => {
@@ -635,28 +624,28 @@ function deactivateQuickDatePreset() {
     button.setAttribute("aria-pressed", "false");
   });
   const status = $("#quickPeriodStatus");
-  if (status) status.textContent = "期間ボタンを押すと、開始日と終了日の条件を自動設定します。";
+  if (status) status.textContent = "年のボタンを押すと、キャンペーン開始日「以上」だけをその年の1月1日に設定します。";
 }
-function setQuickDateRange(months, label, activeButton) {
-  if (!Number.isFinite(months) || months <= 0) return;
-  const from = shiftIsoMonths(TODAY_ISO, -months);
-  const to = TODAY_ISO;
-  state.quickDateRange = { from, to };
+function setQuickStartYear(year, label, activeButton) {
+  if (!Number.isInteger(year) || year < 1900 || year > 9999) return;
+  const from = `${year}-01-01`;
+  state.quickDateRange = { from };
   state.quickDateLabel = label;
 
-  // 直感的な期間指定: キャンペーン開始日「以上」に期間初日、終了日「以下」に今日を設定。
+  // 年始基準の指定: キャンペーン開始日「以上」だけを設定し、終了日の条件は設定しない。
   $("#startFrom").value = from;
   $("#startTo").value = "";
   $("#endFrom").value = "";
-  $("#endTo").value = to;
+  $("#endTo").value = "";
 
   $$(".date-preset").forEach((button) => {
     const active = button === activeButton;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-pressed", active ? "true" : "false");
   });
+  // 過去の終了済みキャンペーンも含めて確認できるよう、開催状況は全件に切り替える。
   setSelectedValues("#statusFilter", []);
-  $("#quickPeriodStatus").textContent = `${label}: 開始日 ${from} 以降／終了日 ${to} 以前（終了日未設定を含む・開催状況は全件）`;
+  $("#quickPeriodStatus").textContent = `${label}: キャンペーン開始日 ${from} 以降（終了日の条件なし・開催状況は全件）`;
   state.focusKey = null;
   applyFilters();
 }
@@ -706,10 +695,9 @@ function applyFilters() {
     if (f.term && !r._searchTerm.includes(f.term)) return false;
     if (f.rate && !r._searchRate.includes(f.rate)) return false;
     if (state.quickDateRange) {
-      const { from, to } = state.quickDateRange;
-      // 指定期間内に開始し、今日までに終了したキャンペーンを抽出。終了日未設定は継続中として含める。
-      if (!r.campaign_start_date || r.campaign_start_date < from || r.campaign_start_date > to) return false;
-      if (r.campaign_end_date && r.campaign_end_date > to) return false;
+      const { from } = state.quickDateRange;
+      // 指定年の1月1日以降に開始したキャンペーンを抽出。終了日は条件に使用しない。
+      if (!r.campaign_start_date || r.campaign_start_date < from) return false;
     } else {
       if (f.startFrom && (!r.campaign_start_date || r.campaign_start_date < f.startFrom)) return false;
       if (f.startTo && (!r.campaign_start_date || r.campaign_start_date > f.startTo)) return false;
@@ -747,7 +735,7 @@ function renderStats() {
   $("#statEnded").textContent = fmt(counts["終了済み"]);
   $("#statReview").textContent = fmt(counts["要確認"]);
   const maturityYear = $("#maturityYearFilter").value;
-  const quickRange = state.quickDateRange ? ` / ${state.quickDateLabel} ${state.quickDateRange.from}～${state.quickDateRange.to}` : "";
+  const quickRange = state.quickDateRange ? ` / ${state.quickDateLabel} ${state.quickDateRange.from}以降` : "";
   $("#filterSummary").textContent = `全${fmt(state.records.length)}件中 ${fmt(records.length)}件を表示${maturityYear ? ` / 想定満期 ${maturityYear}年` : ""}${quickRange}`;
 }
 
