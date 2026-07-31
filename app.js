@@ -573,7 +573,6 @@ function bindEvents() {
   $("#tableNext").addEventListener("click", () => { state.tablePage++; renderTable(); });
   $("#dateIssuePrev").addEventListener("click", () => { state.dateIssuePage--; renderDateIssues(); });
   $("#dateIssueNext").addEventListener("click", () => { state.dateIssuePage++; renderDateIssues(); });
-  $("#csvDownload").addEventListener("click", downloadCsv);
   $("#clearFocus").addEventListener("click", clearFocus);
   ["#analyticsDateFrom","#analyticsDateTo","#analyticsRegionFilter","#analyticsProductFilter","#analyticsDisplayMode"].forEach((id) => $(id).addEventListener("change", scheduleAnalytics));
   $("#resetAnalytics").addEventListener("click", () => resetAnalyticsControls(true));
@@ -979,25 +978,6 @@ function detailRowHtml(r) {
     <td data-label="預金金利" class="rate">${esc(r.interest_rate)}</td><td data-label="金利条件">${esc(r.rate_condition)}</td><td data-label="対象者・条件">${esc(r.eligibility_conditions)}</td><td data-label="預入金額">${esc(r.deposit_amount)}</td>
     <td data-label="開催状況"><span class="tag ${statusClass(r.status)}">${esc(r.status || "要確認")}</span></td><td data-label="要確認事項" class="review-text">${esc(r.review_notes)}</td><td data-label="商品URL">${url}</td>
   </tr>`;
-}
-
-function csvEscape(value) {
-  const s = text(value).replace(/\r?\n/g, "\n");
-  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-}
-function downloadCsv() {
-  const headers = ["地域","都道府県","金融機関名","金融機関種別","商品区分","キャンペーン名","キャンペーン開始日","キャンペーン終了日","預入期間・年限","想定満期開始日","想定満期終了日","満期推定注記","預金金利","金利条件","対象者・条件","預入金額","商品URL","開催中／終了済み","要確認事項"];
-  const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","campaign_end_date","term","estimated_maturity_start_date","estimated_maturity_end_date","maturity_estimation_note","interest_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes"];
-  const lines = [headers.map(csvEscape).join(","), ...state.filtered.map((r) => fields.map((f) => csvEscape(r[f])).join(","))];
-  const blob = new Blob(["\ufeff", lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `campaign_filtered_${TODAY_ISO.replaceAll("-", "")}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
 }
 
 function showWarning(message) {
