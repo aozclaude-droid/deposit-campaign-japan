@@ -9,12 +9,9 @@
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
 <title>全国預金キャンペーン・データベース</title>
-<link href="favicon_C_rate.svg?v=20260727-1" rel="icon" type="image/svg+xml"/>
-<link href="favicon-32x32.png?v=20260727-1" rel="icon" sizes="32x32" type="image/png"/>
-<link href="favicon.ico?v=20260727-1" rel="shortcut icon"/>
-<link href="apple-touch-icon.png?v=20260727-1" rel="apple-touch-icon" sizes="180x180"/>
+<link href="favicon_C_rate.svg?v=20260803-1" rel="icon" type="image/svg+xml"/>
 <meta content="#0B7C93" name="theme-color"/>
-<link href="styles.css?v=20260727-1" rel="stylesheet"/>
+<link href="styles.css?v=20260803-1" rel="stylesheet"/>
 </head>
 <body>
 <header class="hero">
@@ -25,7 +22,7 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.07.27.1</span>
+<span class="app-version" id="appVersion">画面版 2026.08.03.1</span>
 </div>
 </div>
 </header>
@@ -306,6 +303,10 @@
 <label>地域
             <select aria-label="ランキング対象地域（複数選択可）" id="analyticsRegionFilter" multiple="" size="5"></select>
 </label>
+<label>都道府県
+            <select aria-label="ランキング対象都道府県（複数選択可）" id="analyticsPrefectureFilter" multiple="" size="5"></select>
+<span class="field-help">地域を選択すると、該当する都道府県だけを表示します。</span>
+</label>
 <label>商品区分
             <select aria-label="ランキング対象商品区分（複数選択可）" id="analyticsProductFilter" multiple="" size="5"></select>
 </label>
@@ -321,7 +322,7 @@
 <span class="analytics-auto-update-note">条件を変更すると自動的に更新されます。</span>
 </div>
 </div>
-<p class="analytics-help">対象期間とキャンペーン募集期間が1日以上重なる明細を集計します。X軸は6か月・1年・3年・5年、Y軸は「各期間の上位5」または「全金融機関」を切り替えられます。各期間の最高金利を平均の上段に表示し、平均は金融機関ごとの最高金利を用いて算出します。</p>
+<p class="analytics-help">対象期間とキャンペーン募集期間が1日以上重なる明細を集計します。地域・都道府県は複数選択できます。X軸は6か月・1年・3年・5年、Y軸は「各期間の上位5」または「全金融機関」を切り替えられます。各期間の最高金利を平均の上段に表示し、平均は金融機関ごとの最高金利を用いて算出します。</p>
 <p class="mobile-scroll-hint analytics-scroll-hint">平均・最高カードとランキング表は横にスワイプできます。</p>
 <div aria-live="polite" class="analytics-results" id="analyticsResults"></div>
 </div>
@@ -336,6 +337,6 @@
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="app.js?v=20260727-1"></script>
+<script defer="" src="app.js?v=20260803-1"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 "use strict";
 
-const APP_VERSION = "2026.07.23.4";
-const DATA_URL = "campaign_all.json?v=20260723-1800";
+const APP_VERSION = "2026.08.03.1";
+const DATA_URL = "campaign_all.json?v=20260803-1";
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
@@ -288,11 +288,26 @@ function resetAnalyticsControls(render = true) {
   $("#analyticsDateFrom").value = defaults.from;
   $("#analyticsDateTo").value = defaults.to;
   setSelectedValues("#analyticsRegionFilter", []);
+  updateAnalyticsPrefectureOptions([]);
   const products = uniqueSorted("product_type");
   setSelectedValues("#analyticsProductFilter", products.includes("定期預金") ? ["定期預金"] : products.slice(0, 1));
   $("#analyticsDisplayMode").value = "top5";
   if (render && state.activeView === "analytics") renderRateAnalytics();
   else state.analyticsRendered = false;
+}
+function updateAnalyticsPrefectureOptions(preferredValues = null) {
+  const select = $("#analyticsPrefectureFilter");
+  if (!select) return;
+  const selectedRegions = new Set(selectedValues("#analyticsRegionFilter"));
+  const previous = preferredValues === null ? selectedValues("#analyticsPrefectureFilter") : preferredValues;
+  const available = [...new Set(state.records
+    .filter((record) => !selectedRegions.size || selectedRegions.has(record.region))
+    .map((record) => text(record.prefecture).trim())
+    .filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, "ja"));
+  fillSelect("#analyticsPrefectureFilter", available);
+  const availableSet = new Set(available);
+  setSelectedValues("#analyticsPrefectureFilter", previous.filter((value) => availableSet.has(value)));
 }
 function scheduleAnalytics() {
   state.analyticsRendered = false;
@@ -415,10 +430,12 @@ function renderRateAnalytics() {
     return;
   }
   const selectedRegions = new Set(selectedValues("#analyticsRegionFilter"));
+  const selectedPrefectures = new Set(selectedValues("#analyticsPrefectureFilter"));
   const selectedProducts = selectedValues("#analyticsProductFilter");
   const productTypes = selectedProducts.length ? selectedProducts : uniqueSorted("product_type");
   const periodRecords = state.records.filter((record) => {
     if (selectedRegions.size && !selectedRegions.has(record.region)) return false;
+    if (selectedPrefectures.size && !selectedPrefectures.has(record.prefecture)) return false;
     if (!productTypes.includes(record.product_type)) return false;
     return recordOverlapsPeriod(record, from, to);
   });
@@ -427,10 +444,11 @@ function renderRateAnalytics() {
   const noRate = periodRecords.filter((record) => record._analyticsTermKey && !Number.isFinite(record._comparableRate)).length;
   const institutionCount = new Set(comparable.map((record) => record.institution_name).filter(Boolean)).size;
   const regionLabel = selectedRegions.size ? [...selectedRegions].join("・") : "全国";
+  const prefectureLabel = selectedPrefectures.size ? [...selectedPrefectures].join("・") : "全都道府県";
   const periodLabel = `${from || "期間指定なし"} ～ ${to || "期間指定なし"}`;
   const displayMode = $("#analyticsDisplayMode").value === "all" ? "all" : "top5";
   const displayLabel = displayMode === "all" ? "全金融機関" : "上位5";
-  $("#analyticsSummary").textContent = `${regionLabel} / ${periodLabel} / ${displayLabel} / 比較可能 ${fmt(comparable.length)}明細`;
+  $("#analyticsSummary").textContent = `${regionLabel} / ${prefectureLabel} / ${periodLabel} / ${displayLabel} / 比較可能 ${fmt(comparable.length)}明細`;
   const sections = productTypes
     .map((productType) => buildProductAnalytics(productType, periodRecords))
     .map((analytics) => productAnalyticsHtml(analytics, displayMode))
@@ -516,6 +534,7 @@ function initializeUi() {
   const maturityEstimable = state.records.filter((r) => r._maturityYears.length).length;
   $("#maturityCoverage").textContent = `推定可能 ${fmt(maturityEstimable)}件 / ${fmt(state.records.length)}件。年を指定すると開催状況を全件に切り替えます。`;
   fillSelect("#analyticsRegionFilter", uniqueSorted("region"));
+  fillSelect("#analyticsPrefectureFilter", uniqueSorted("prefecture"));
   fillSelect("#analyticsProductFilter", uniqueSorted("product_type"));
   resetAnalyticsControls(false);
 
@@ -574,7 +593,11 @@ function bindEvents() {
   $("#dateIssuePrev").addEventListener("click", () => { state.dateIssuePage--; renderDateIssues(); });
   $("#dateIssueNext").addEventListener("click", () => { state.dateIssuePage++; renderDateIssues(); });
   $("#clearFocus").addEventListener("click", clearFocus);
-  ["#analyticsDateFrom","#analyticsDateTo","#analyticsRegionFilter","#analyticsProductFilter","#analyticsDisplayMode"].forEach((id) => $(id).addEventListener("change", scheduleAnalytics));
+  ["#analyticsDateFrom","#analyticsDateTo","#analyticsPrefectureFilter","#analyticsProductFilter","#analyticsDisplayMode"].forEach((id) => $(id).addEventListener("change", scheduleAnalytics));
+  $("#analyticsRegionFilter").addEventListener("change", () => {
+    updateAnalyticsPrefectureOptions();
+    scheduleAnalytics();
+  });
   $("#resetAnalytics").addEventListener("click", () => resetAnalyticsControls(true));
   $("#mobileFilterToggle")?.addEventListener("click", toggleMobileFilters);
   $("#mobileSortKey")?.addEventListener("change", (event) => {

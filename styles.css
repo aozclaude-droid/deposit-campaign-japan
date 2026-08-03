@@ -149,7 +149,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 
 
 /* 期間別金利ランキング */
-.analytics-controls { display: grid; grid-template-columns: minmax(270px, 1.25fr) minmax(190px, .8fr) minmax(190px, .8fr) minmax(190px, .7fr) minmax(165px, .55fr); gap: 13px; align-items: stretch; }
+.analytics-controls { display: grid; grid-template-columns: minmax(270px, 1.25fr) repeat(3, minmax(175px, .8fr)) minmax(190px, .7fr) minmax(165px, .55fr); gap: 13px; align-items: stretch; }
 .analytics-controls > label { display: flex; flex-direction: column; gap: 6px; color: var(--muted); font-size: 12px; }
 .analytics-controls input, .analytics-controls select { width: 100%; border: 1px solid #cbd5e3; background: #fff; border-radius: 9px; color: var(--ink); padding: 9px 10px; }
 .analytics-controls select[multiple] { min-height: 125px; padding: 5px; }
