@@ -1,7 +1,18 @@
 "use strict";
 
-const APP_VERSION = "2026.08.03.1";
-const DATA_URL = "campaign_all.json?v=20260803-1";
+const APP_VERSION = "2026.08.03.2";
+const PREFECTURE_ORDER = [
+  "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
+  "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
+  "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県",
+  "岐阜県", "静岡県", "愛知県", "三重県",
+  "滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県",
+  "鳥取県", "島根県", "岡山県", "広島県", "山口県",
+  "徳島県", "香川県", "愛媛県", "高知県",
+  "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
+];
+const PREFECTURE_RANK = new Map(PREFECTURE_ORDER.map((name, index) => [name, index]));
+const DATA_URL = "campaign_all.json?v=20260803-2";
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
@@ -304,7 +315,7 @@ function updateAnalyticsPrefectureOptions(preferredValues = null) {
     .filter((record) => !selectedRegions.size || selectedRegions.has(record.region))
     .map((record) => text(record.prefecture).trim())
     .filter(Boolean))]
-    .sort((a, b) => a.localeCompare(b, "ja"));
+    .sort(comparePrefectures);
   fillSelect("#analyticsPrefectureFilter", available);
   const availableSet = new Set(available);
   setSelectedValues("#analyticsPrefectureFilter", previous.filter((value) => availableSet.has(value)));
@@ -464,7 +475,19 @@ function setSelectedValues(id, values) {
   Array.from($(id).options).forEach((o) => { o.selected = wanted.has(o.value); });
 }
 function uniqueSorted(field) {
-  return [...new Set(state.records.map((r) => text(r[field]).trim()).filter(Boolean))].sort((a,b) => a.localeCompare(b, "ja"));
+  const values = [...new Set(state.records.map((r) => text(r[field]).trim()).filter(Boolean))];
+  return field === "prefecture"
+    ? values.sort(comparePrefectures)
+    : values.sort((a,b) => a.localeCompare(b, "ja"));
+}
+
+function comparePrefectures(a, b) {
+  const aRank = PREFECTURE_RANK.get(a);
+  const bRank = PREFECTURE_RANK.get(b);
+  if (aRank !== undefined && bRank !== undefined) return aRank - bRank;
+  if (aRank !== undefined) return -1;
+  if (bRank !== undefined) return 1;
+  return a.localeCompare(b, "ja");
 }
 function fillSelect(id, values) {
   $(id).innerHTML = values.map((v) => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
