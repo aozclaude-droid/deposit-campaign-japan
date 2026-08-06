@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.08.03.2";
+const APP_VERSION = "2026.08.06.2";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -12,7 +12,7 @@ const PREFECTURE_ORDER = [
   "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
 ];
 const PREFECTURE_RANK = new Map(PREFECTURE_ORDER.map((name, index) => [name, index]));
-const DATA_URL = "campaign_all.json?v=20260803-2";
+const DATA_URL = "campaign_all.json?v=20260806-2";
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
@@ -496,6 +496,9 @@ function normalizeRecord(record, index) {
   const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","term","interest_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes"];
   const normalized = { _index: index };
   fields.forEach((f) => { normalized[f] = text(record[f]); });
+  if (["JA", "JAバンク", "JAマリンバンク", "JFマリンバンク", "農業協同組合"].includes(normalized.institution_type)) {
+    normalized.institution_type = "JA等";
+  }
   normalized.campaign_end_date = record.campaign_end_date == null ? "" : text(record.campaign_end_date);
   normalized._searchInstitution = normalized.institution_name.toLocaleLowerCase("ja");
   normalized._searchCampaign = normalized.campaign_name.toLocaleLowerCase("ja");
