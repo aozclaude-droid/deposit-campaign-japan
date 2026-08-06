@@ -499,6 +499,15 @@ function normalizeRecord(record, index) {
   if (["JA", "JAバンク", "JAマリンバンク", "JFマリンバンク", "農業協同組合"].includes(normalized.institution_type)) {
     normalized.institution_type = "JA等";
   }
+  if (["政府系金融機関", "外国銀行"].includes(normalized.institution_type)) {
+    normalized.institution_type = "その他銀行";
+  }
+  if (normalized.institution_name.includes("商工中金") || normalized.institution_name.includes("商工組合中央金庫")) {
+    normalized.institution_type = "その他銀行";
+  }
+  if (normalized.institution_name.startsWith("イオン銀行")) {
+    normalized.institution_type = "ネット銀行";
+  }
   normalized.campaign_end_date = record.campaign_end_date == null ? "" : text(record.campaign_end_date);
   normalized._searchInstitution = normalized.institution_name.toLocaleLowerCase("ja");
   normalized._searchCampaign = normalized.campaign_name.toLocaleLowerCase("ja");
