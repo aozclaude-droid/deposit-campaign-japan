@@ -640,15 +640,23 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .heatmap-card-heading, .heatmap-detail-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 13px 15px; border-bottom: 1px solid var(--line); background: #f8fafd; }
 .heatmap-card-heading h3, .heatmap-detail-heading h3 { margin: 0; color: #203b66; font-size: 16px; }
 .heatmap-card-heading p, .heatmap-detail-heading p { margin: 4px 0 0; font-size: 11px; }
-.japan-map-scroll { overflow: auto; padding: 10px; background: radial-gradient(circle at 60% 45%, #f8fbff 0, #f3f7fb 58%, #edf3f8 100%); }
-.japan-tile-map { display: block; width: 100%; min-width: 680px; height: auto; }
-.prefecture-tile { cursor: pointer; outline: none; }
-.prefecture-tile rect { fill: #e5e9ef; stroke: #fff; stroke-width: 2.4; transition: fill .18s, stroke .18s, filter .18s, transform .18s; transform-box: fill-box; transform-origin: center; }
-.prefecture-tile text { pointer-events: none; fill: #26384f; font-size: 11px; font-weight: 850; paint-order: stroke; stroke: rgba(255, 255, 255, .18); stroke-width: .35px; transition: fill .18s; }
-.prefecture-tile:hover rect, .prefecture-tile:focus rect { stroke: #173e91; stroke-width: 3; filter: drop-shadow(0 4px 5px rgba(28, 46, 79, .18)); transform: translateY(-1px); }
-.prefecture-tile.is-selected rect { stroke: #f0a327; stroke-width: 4; filter: drop-shadow(0 4px 6px rgba(154, 101, 0, .28)); }
-.prefecture-tile.no-data text { fill: #7f8b9b; stroke: none; }
-.japan-map-region-label { fill: #93a0b1; font-size: 10px; font-weight: 800; letter-spacing: .05em; }
+.japan-map-scroll { overflow: auto; padding: 10px; background: radial-gradient(circle at 63% 40%, #fbfdff 0, #f4f8fc 57%, #edf3f8 100%); }
+.japan-prefecture-map { display: block; width: 100%; min-width: 680px; height: 620px; margin: 0 auto; }
+.japan-prefecture-map .prefecture-shape { fill: #e5e9ef; stroke: #fff; stroke-width: 2.2; cursor: pointer; outline: none; transition: fill .18s, stroke .18s, filter .18s; }
+.japan-prefecture-map .prefecture-shape > path,
+.japan-prefecture-map .prefecture-shape > polygon { vector-effect: non-scaling-stroke; }
+.japan-prefecture-map .prefecture-shape:hover,
+.japan-prefecture-map .prefecture-shape:focus { stroke: #173e91 !important; stroke-width: 4 !important; filter: drop-shadow(0 5px 5px rgba(28, 46, 79, .24)); }
+.japan-prefecture-map .prefecture-shape.is-selected { stroke: #f0a327 !important; stroke-width: 6 !important; filter: drop-shadow(0 5px 7px rgba(154, 101, 0, .32)); }
+.japan-prefecture-map .prefecture-shape.no-data { fill: #e5e9ef !important; }
+.japan-prefecture-map .boundary-line { stroke: #d8e1eb !important; pointer-events: none; }
+.prefecture-label-layer { pointer-events: none; }
+.prefecture-map-label { fill: #26384f; font-size: 20px; font-weight: 900; letter-spacing: -.06em; paint-order: stroke; stroke-width: 3px; stroke-linejoin: round; transition: fill .18s, stroke .18s; }
+.prefecture-map-label.is-medium { font-size: 17px; }
+.prefecture-map-label.is-small { font-size: 14px; }
+.prefecture-map-label.is-dark-label { stroke: rgba(255, 255, 255, .72); }
+.prefecture-map-label.is-light-label { stroke: rgba(65, 20, 28, .55); }
+
 .heatmap-legend { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 5px; color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
 .heatmap-legend-swatches { display: inline-flex; overflow: hidden; border: 1px solid #d7e0ea; border-radius: 999px; }
 .heatmap-legend-swatches i { display: block; width: 22px; height: 12px; }
@@ -701,7 +709,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   .heatmap-main-grid { margin-top: 11px; }
   .heatmap-map-card, .heatmap-ranking-card, .heatmap-detail-card, .online-bank-card { border-radius: 10px; }
   .japan-map-scroll { padding: 5px; }
-  .japan-tile-map { min-width: 650px; }
+  .japan-prefecture-map { min-width: 650px; height: 590px; }
   .heatmap-ranking-list { max-height: 340px; }
   .online-bank-summary { display: flex; overflow-x: auto; }
   .online-bank-summary .heatmap-summary-card { min-width: 205px; }

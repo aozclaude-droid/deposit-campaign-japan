@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.08.07.4";
+const APP_VERSION = "2026.08.07.5";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -22,29 +22,7 @@ const ANALYTICS_TERMS = [
   { key: "5y", label: "5年", months: 60 }
 ];
 const HEATMAP_TERMS = ANALYTICS_TERMS.filter((term) => ["1y", "3y", "5y"].includes(term.key));
-const PREFECTURE_TILE_POSITIONS = [
-  { name: "北海道", col: 10, row: 0, span: 2 },
-  { name: "青森県", col: 9, row: 2, span: 2 },
-  { name: "秋田県", col: 9, row: 3 }, { name: "岩手県", col: 10, row: 3 },
-  { name: "山形県", col: 9, row: 4 }, { name: "宮城県", col: 10, row: 4 },
-  { name: "福島県", col: 10, row: 5 },
-  { name: "新潟県", col: 8, row: 5 }, { name: "石川県", col: 6, row: 5 }, { name: "富山県", col: 7, row: 5 },
-  { name: "福井県", col: 6, row: 6 }, { name: "長野県", col: 8, row: 6 },
-  { name: "群馬県", col: 9, row: 6 }, { name: "栃木県", col: 10, row: 6 }, { name: "茨城県", col: 11, row: 6 },
-  { name: "滋賀県", col: 6, row: 7 }, { name: "岐阜県", col: 7, row: 7 }, { name: "山梨県", col: 8, row: 7 },
-  { name: "埼玉県", col: 10, row: 7 }, { name: "千葉県", col: 11, row: 7 },
-  { name: "鳥取県", col: 3, row: 7 }, { name: "島根県", col: 2, row: 7 }, { name: "京都府", col: 5, row: 7 },
-  { name: "山口県", col: 1, row: 8 }, { name: "広島県", col: 2, row: 8 }, { name: "岡山県", col: 3, row: 8 },
-  { name: "兵庫県", col: 4, row: 8 }, { name: "大阪府", col: 5, row: 8 }, { name: "愛知県", col: 7, row: 8 },
-  { name: "静岡県", col: 8, row: 8 }, { name: "神奈川県", col: 9, row: 8 }, { name: "東京都", col: 10, row: 8 },
-  { name: "福岡県", col: 0, row: 9 }, { name: "香川県", col: 3, row: 9 }, { name: "徳島県", col: 4, row: 9 },
-  { name: "奈良県", col: 5, row: 9 }, { name: "三重県", col: 6, row: 9 },
-  { name: "佐賀県", col: 0, row: 10 }, { name: "大分県", col: 1, row: 10 }, { name: "愛媛県", col: 2, row: 10 },
-  { name: "高知県", col: 3, row: 10 }, { name: "和歌山県", col: 5, row: 10 },
-  { name: "長崎県", col: 0, row: 11 }, { name: "熊本県", col: 1, row: 11 },
-  { name: "鹿児島県", col: 0, row: 12 }, { name: "宮崎県", col: 1, row: 12 },
-  { name: "沖縄県", col: 0, row: 14 }
-];
+const PREFECTURE_CODE_NAMES = Object.fromEntries(PREFECTURE_ORDER.map((name, index) => [String(index + 1), name]));
 const HEATMAP_COLORS = [
   "#eaf6ff", "#d4ebfa", "#b7dcef", "#f5e3df",
   "#f2b8ae", "#e98278", "#d8514f", "#ad2837"
@@ -538,50 +516,103 @@ function scheduleHeatmap() {
 }
 function renderJapanTileMap() {
   const svg = $("#japanHeatmap");
-  if (!svg || svg.childElementCount) return;
-  const tileWidth = 54;
-  const tileHeight = 34;
-  const gapX = 58;
-  const gapY = 40;
-  const originX = 12;
-  const originY = 12;
-  const labels = PREFECTURE_TILE_POSITIONS.map((item) => {
-    const width = tileWidth * (item.span || 1) + (item.span === 2 ? 4 : 0);
-    const x = originX + item.col * gapX;
-    const y = originY + item.row * gapY;
-    const shortLabel = item.name === "北海道" ? "北海道" : item.name.replace(/[都府県]$/, "");
-    return `<g class="prefecture-tile" data-prefecture="${esc(item.name)}" role="button" tabindex="0" aria-label="${esc(item.name)}">
-      <rect x="${x}" y="${y}" width="${width}" height="${tileHeight}" rx="8" ry="8"></rect>
-      <text x="${x + width / 2}" y="${y + tileHeight / 2 + 4}" text-anchor="middle">${esc(shortLabel)}</text>
-    </g>`;
-  }).join("");
-  svg.innerHTML = `<text class="japan-map-region-label" x="595" y="72">北海道</text>
-    <text class="japan-map-region-label" x="600" y="190">東北</text>
-    <text class="japan-map-region-label" x="610" y="365">関東</text>
-    <text class="japan-map-region-label" x="410" y="245">北陸・甲信越</text>
-    <text class="japan-map-region-label" x="430" y="410">東海</text>
-    <text class="japan-map-region-label" x="270" y="335">近畿</text>
-    <text class="japan-map-region-label" x="110" y="335">中国</text>
-    <text class="japan-map-region-label" x="145" y="455">四国</text>
-    <text class="japan-map-region-label" x="20" y="535">九州・沖縄</text>${labels}`;
-  $$(".prefecture-tile").forEach((tile) => {
+  if (!svg || svg.dataset.initialized === "true") return;
+  svg.dataset.initialized = "true";
+  svg.querySelectorAll(".boundary-line").forEach((line) => line.setAttribute("aria-hidden", "true"));
+
+  const bindPrefectureInteraction = (element, prefecture) => {
     const select = () => {
-      state.heatmapSelectedPrefecture = tile.dataset.prefecture;
+      state.heatmapSelectedPrefecture = prefecture;
       renderHeatmapSelection();
     };
-    tile.addEventListener("mouseenter", (event) => showHeatmapTooltip(event, tile.dataset.prefecture));
-    tile.addEventListener("mousemove", moveTooltip);
-    tile.addEventListener("mouseleave", hideTooltip);
-    tile.addEventListener("focus", (event) => showHeatmapTooltip(event, tile.dataset.prefecture));
-    tile.addEventListener("blur", hideTooltip);
-    tile.addEventListener("click", select);
-    tile.addEventListener("keydown", (event) => {
+    element.addEventListener("mouseenter", (event) => showHeatmapTooltip(event, prefecture));
+    element.addEventListener("mousemove", moveTooltip);
+    element.addEventListener("mouseleave", hideTooltip);
+    element.addEventListener("focus", (event) => showHeatmapTooltip(event, prefecture));
+    element.addEventListener("blur", hideTooltip);
+    element.addEventListener("click", select);
+    element.addEventListener("keydown", (event) => {
       if (!["Enter", " "].includes(event.key)) return;
       event.preventDefault();
       select();
     });
+  };
+
+  svg.querySelectorAll(".prefecture").forEach((shape) => {
+    const prefecture = PREFECTURE_CODE_NAMES[String(Number(shape.dataset.code))];
+    if (!prefecture) return;
+    shape.dataset.prefecture = prefecture;
+    shape.classList.add("prefecture-shape");
+    shape.setAttribute("role", "button");
+    shape.setAttribute("tabindex", "0");
+    shape.setAttribute("aria-label", prefecture);
+    shape.removeAttribute("fill");
+    shape.removeAttribute("stroke");
+    shape.removeAttribute("stroke-width");
+    bindPrefectureInteraction(shape, prefecture);
+  });
+
+}
+function mapPointInRoot(svg, element, x, y) {
+  const point = svg.createSVGPoint();
+  point.x = x;
+  point.y = y;
+  const elementMatrix = element.getScreenCTM();
+  const rootMatrix = svg.getScreenCTM();
+  if (!elementMatrix || !rootMatrix) return null;
+  return point.matrixTransform(elementMatrix).matrixTransform(rootMatrix.inverse());
+}
+function buildPrefectureMapLabels(svg) {
+  svg.querySelector(".prefecture-label-layer")?.remove();
+  const namespace = "http://www.w3.org/2000/svg";
+  const layer = document.createElementNS(namespace, "g");
+  layer.setAttribute("class", "prefecture-label-layer");
+  layer.setAttribute("aria-hidden", "true");
+
+  svg.querySelectorAll(".prefecture-shape").forEach((shape) => {
+    const candidates = Array.from(shape.querySelectorAll("path, polygon"));
+    let selected = null;
+    let selectedBox = null;
+    let largestArea = -1;
+    candidates.forEach((candidate) => {
+      let box;
+      try { box = candidate.getBBox(); } catch { return; }
+      const area = box.width * box.height;
+      if (area > largestArea) {
+        largestArea = area;
+        selected = candidate;
+        selectedBox = box;
+      }
+    });
+    if (!selected || !selectedBox) return;
+    const center = mapPointInRoot(svg, selected, selectedBox.x + selectedBox.width / 2, selectedBox.y + selectedBox.height / 2);
+    const topLeft = mapPointInRoot(svg, selected, selectedBox.x, selectedBox.y);
+    const bottomRight = mapPointInRoot(svg, selected, selectedBox.x + selectedBox.width, selectedBox.y + selectedBox.height);
+    if (!center || !topLeft || !bottomRight) return;
+    const rootArea = Math.abs((bottomRight.x - topLeft.x) * (bottomRight.y - topLeft.y));
+    const label = document.createElementNS(namespace, "text");
+    label.dataset.prefecture = shape.dataset.prefecture;
+    label.setAttribute("x", center.x.toFixed(2));
+    label.setAttribute("y", center.y.toFixed(2));
+    label.setAttribute("class", `prefecture-map-label${rootArea < 850 ? " is-small" : rootArea < 1900 ? " is-medium" : ""}`);
+    label.setAttribute("text-anchor", "middle");
+    label.setAttribute("dominant-baseline", "central");
+    label.textContent = shape.dataset.prefecture === "北海道" ? "北海道" : shape.dataset.prefecture.replace(/[都府県]$/, "");
+    layer.appendChild(label);
+  });
+  svg.appendChild(layer);
+  layer.querySelectorAll(".prefecture-map-label").forEach((label) => {
+    const shape = Array.from(svg.querySelectorAll(".prefecture-shape")).find((item) => item.dataset.prefecture === label.dataset.prefecture);
+    if (!shape) return;
+    const fillColor = shape.style.fill || HEATMAP_NO_DATA_COLOR;
+    const hasData = shape.classList.contains("has-data");
+    const labelColor = heatmapLabelColor(fillColor, hasData);
+    label.style.fill = labelColor;
+    label.classList.toggle("is-light-label", labelColor === "#ffffff");
+    label.classList.toggle("is-dark-label", labelColor !== "#ffffff");
   });
 }
+
 function uniqueHeatmapRecords(records) {
   const seen = new Set();
   return records.filter((record) => {
@@ -689,9 +720,18 @@ function renderHeatmapLegend(min, max) {
 function summaryCardHtml(label, value, detail, className = "") {
   return `<article class="heatmap-summary-card ${className}"><div class="heatmap-summary-label">${esc(label)}</div><div class="heatmap-summary-value">${esc(value)}</div><div class="heatmap-summary-detail">${esc(detail)}</div></article>`;
 }
+function svgPrefectureLabel(prefecture) {
+  return Array.from(document.querySelectorAll(".prefecture-map-label")).find((label) => label.dataset.prefecture === prefecture) || null;
+}
 function renderPrefectureHeatmap() {
   state.heatmapRendered = true;
   renderJapanTileMap();
+  const mapSvg = $("#japanHeatmap");
+  if (mapSvg && !mapSvg.querySelector(".prefecture-label-layer")) {
+    window.requestAnimationFrame(() => {
+      if (!mapSvg.querySelector(".prefecture-label-layer")) buildPrefectureMapLabels(mapSvg);
+    });
+  }
   const data = buildHeatmapData();
   state.heatmapData = data;
   const values = data.rankedPrefectures.map((item) => item.averageRate);
@@ -708,18 +748,22 @@ function renderPrefectureHeatmap() {
     summaryCardHtml("算出対象", `${fmt(data.rankedPrefectures.length)} / 47`, `比較可能 ${fmt(data.regionalRecords.length)}明細`, "coverage")
   ].join("");
   renderHeatmapLegend(min, max);
-  $$(".prefecture-tile").forEach((tile) => {
-    const item = data.prefectures.get(tile.dataset.prefecture);
-    const rect = tile.querySelector("rect");
-    const label = tile.querySelector("text");
+  $$(".prefecture-shape").forEach((shape) => {
+    const item = data.prefectures.get(shape.dataset.prefecture);
     const hasData = item && Number.isFinite(item.averageRate);
     const fillColor = heatmapColor(item?.averageRate, min, max);
-    rect.style.fill = fillColor;
-    if (label) label.style.fill = heatmapLabelColor(fillColor, hasData);
-    tile.classList.toggle("has-data", Boolean(hasData));
-    tile.classList.toggle("no-data", !hasData);
-    tile.classList.toggle("is-selected", tile.dataset.prefecture === state.heatmapSelectedPrefecture);
-    tile.setAttribute("aria-label", hasData ? `${item.prefecture} ${data.term.label}平均 ${formatRate(item.averageRate)}` : `${tile.dataset.prefecture} データなし`);
+    shape.style.setProperty("fill", fillColor, "important");
+    shape.classList.toggle("has-data", Boolean(hasData));
+    shape.classList.toggle("no-data", !hasData);
+    shape.classList.toggle("is-selected", shape.dataset.prefecture === state.heatmapSelectedPrefecture);
+    shape.setAttribute("aria-label", hasData ? `${item.prefecture} ${data.term.label}平均 ${formatRate(item.averageRate)}` : `${shape.dataset.prefecture} データなし`);
+    const label = svgPrefectureLabel(shape.dataset.prefecture);
+    if (label) {
+      const labelColor = heatmapLabelColor(fillColor, hasData);
+      label.style.fill = labelColor;
+      label.classList.toggle("is-light-label", labelColor === "#ffffff");
+      label.classList.toggle("is-dark-label", labelColor !== "#ffffff");
+    }
   });
   $("#heatmapRanking").innerHTML = data.rankedPrefectures.length ? data.rankedPrefectures.map((item, index) => `
     <button class="heatmap-ranking-row ${item.prefecture === state.heatmapSelectedPrefecture ? "is-selected" : ""}" data-prefecture="${esc(item.prefecture)}" type="button">
@@ -748,7 +792,7 @@ function showHeatmapTooltip(event, prefecture) {
 function renderHeatmapSelection() {
   const data = state.heatmapData;
   if (!data) return;
-  $$(".prefecture-tile").forEach((tile) => tile.classList.toggle("is-selected", tile.dataset.prefecture === state.heatmapSelectedPrefecture));
+  $$(".prefecture-shape").forEach((tile) => tile.classList.toggle("is-selected", tile.dataset.prefecture === state.heatmapSelectedPrefecture));
   $$(".heatmap-ranking-row").forEach((row) => row.classList.toggle("is-selected", row.dataset.prefecture === state.heatmapSelectedPrefecture));
   const detail = $("#heatmapPrefectureDetail");
   const item = data.prefectures.get(state.heatmapSelectedPrefecture);
