@@ -11,7 +11,7 @@
 <title>全国預金キャンペーン・データベース</title>
 <link href="favicon_C_rate.svg?v=20260806-2" rel="icon" type="image/svg+xml"/>
 <meta content="#0B7C93" name="theme-color"/>
-<link href="styles.css?v=20260806-2" rel="stylesheet"/>
+<link href="styles.css?v=20260807-4" rel="stylesheet"/>
 </head>
 <body>
 <header class="hero">
@@ -22,7 +22,7 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.08.06.2</span>
+<span class="app-version" id="appVersion">画面版 2026.08.07.4</span>
 </div>
 </div>
 </header>
@@ -39,6 +39,11 @@
 <span class="workspace-tab-kicker">RATE ANALYTICS</span>
 <span class="workspace-tab-title">金利ランキングマトリクス</span>
 <span class="workspace-tab-description">期間・地域・商品区分別の最高・平均・上位5</span>
+</button>
+<button aria-controls="heatmapTabPanel" aria-selected="false" class="workspace-tab" data-view="heatmap" id="heatmapTab" role="tab" tabindex="-1" type="button">
+<span class="workspace-tab-kicker">PREFECTURE MAP</span>
+<span class="workspace-tab-title">都道府県金利ヒートマップ</span>
+<span class="workspace-tab-description">47都道府県の1年・3年・5年平均とネット銀行比較</span>
 </button>
 </div>
 </section><div aria-labelledby="timelineTab" class="workspace-tab-panel" id="timelineTabPanel" role="tabpanel"><section aria-label="集計" class="stat-grid">
@@ -278,6 +283,8 @@
 <li>実際の満期日は預入日、商品条件、自動継続、中途解約などで異なります。終了日未設定は募集開始日基準、年限を判定できない明細は満期年検索の対象外です。</li>
 <li>金利ランキングは、絶対金利を数値化できる明細のみを使用します。店頭金利への上乗せ式・倍率式で最終金利が明示されていないものは平均とランキングから除外します。</li>
 <li>同一金融機関・同一商品区分・同一期間区分に複数明細がある場合は、対象期間内の最高金利を採用します。</li>
+<li>都道府県ヒートマップは、金融機関内で対象金利を平均した後、金融機関を均等に扱って都道府県平均を算出します。</li>
+<li>ネット銀行は都道府県別平均から除外し、「全国対応・ネット銀行」として別枠で集計します。</li>
 </ul>
 </div>
 <div>
@@ -328,15 +335,74 @@
 </div>
 </section></div>
 
-
-
-
-
-
-
+<div aria-labelledby="heatmapTab" class="workspace-tab-panel" hidden="" id="heatmapTabPanel" role="tabpanel">
+<section class="panel" id="prefectureHeatmapPanel">
+<div class="panel-header">
+<div>
+<p class="section-kicker">PREFECTURE RATE MAP</p>
+<h2>都道府県別 預金・貯金金利ヒートマップ</h2>
+</div>
+<div class="muted" id="heatmapSummary">条件を読み込み中…</div>
+</div>
+<div class="panel-body">
+<div class="heatmap-controls">
+<fieldset class="heatmap-term-switch" aria-label="預入期間・年限">
+<legend>預入期間・年限</legend>
+<div class="heatmap-term-buttons">
+<button class="btn heatmap-term-button is-active" data-heatmap-term="1y" type="button" aria-pressed="true">1年</button>
+<button class="btn heatmap-term-button" data-heatmap-term="3y" type="button" aria-pressed="false">3年</button>
+<button class="btn heatmap-term-button" data-heatmap-term="5y" type="button" aria-pressed="false">5年</button>
+</div>
+</fieldset>
+<label>商品区分
+<select aria-label="ヒートマップ対象商品区分（複数選択可）" id="heatmapProductFilter" multiple="" size="4"></select>
+</label>
+<label>地域金融機関の種別
+<select aria-label="ヒートマップ対象金融機関種別（複数選択可）" id="heatmapInstitutionTypeFilter" multiple="" size="6"></select>
+<span class="field-help">ネット銀行は都道府県平均に含めず、全国向け別枠で表示します。</span>
+</label>
+<label>開催状況
+<select aria-label="ヒートマップ対象開催状況（複数選択可）" id="heatmapStatusFilter" multiple="" size="4"></select>
+</label>
+<div class="heatmap-actions">
+<button class="btn" id="resetHeatmap" type="button">ヒートマップ条件を初期化</button>
+<span class="analytics-auto-update-note">条件を変更すると自動更新されます。</span>
+</div>
+</div>
+<p class="heatmap-help">同じ金融機関に複数の対象明細がある場合は、その金融機関内で平均した後、各金融機関を均等に扱って都道府県平均を算出します。数値化できない上乗せ式・倍率式は除外します。</p>
+<div class="heatmap-summary-grid" id="heatmapSummaryCards"></div>
+<div class="heatmap-main-grid">
+<section class="heatmap-map-card" aria-label="日本地図ヒートマップ">
+<div class="heatmap-card-heading">
+<div><h3 id="heatmapMapTitle">1年平均金利</h3><p class="muted">都道府県を選択すると金融機関別内訳を表示します。</p></div>
+<div class="heatmap-legend" id="heatmapLegend" aria-label="色の凡例"></div>
+</div>
+<div class="japan-map-scroll">
+<svg aria-labelledby="heatmapMapTitle" class="japan-tile-map" id="japanHeatmap" role="img" viewBox="0 0 720 620"></svg>
+</div>
+</section>
+<section class="heatmap-ranking-card">
+<div class="heatmap-card-heading"><div><h3>都道府県ランキング</h3><p class="muted">金融機関均等平均の高い順</p></div></div>
+<div class="heatmap-ranking-list" id="heatmapRanking"></div>
+</section>
+</div>
+<section class="heatmap-detail-card" id="heatmapPrefectureDetail" aria-live="polite">
+<div class="heatmap-empty">地図またはランキングから都道府県を選択してください。</div>
+</section>
+<section class="online-bank-card">
+<div class="heatmap-card-heading">
+<div><p class="section-kicker">NATIONWIDE ONLINE BANKS</p><h3>全国対応・ネット銀行</h3><p class="muted">ネット銀行は東京都を含む都道府県平均から除外し、全国向け商品として独立集計しています。</p></div>
+<div class="online-bank-headline" id="onlineBankHeadline">—</div>
+</div>
+<div class="online-bank-results" id="onlineBankResults"></div>
+</section>
+<p class="heatmap-footnote">本ヒートマップは、金融機関に登録された都道府県を基準に集計しています。実際の申込可能地域とは異なる場合があります。対象データのない都道府県はグレー表示です。</p>
+</div>
+</section>
+</div>
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="app.js?v=20260806-2"></script>
+<script defer="" src="app.js?v=20260807-4"></script>
 </body>
 </html>

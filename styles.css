@@ -243,7 +243,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 }
 .workspace-tabs {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 7px;
 }
 .workspace-tab {
@@ -315,7 +315,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 
 @media (max-width: 760px) {
   .workspace-tabs-shell { top: 4px; padding: 5px; }
-  .workspace-tabs { grid-template-columns: 1fr 1fr; gap: 5px; }
+  .workspace-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
   .workspace-tab {
     grid-template-columns: 1fr;
     grid-template-areas: "title" "description";
@@ -610,4 +610,106 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
     width: 100%;
     line-height: 1.5;
   }
+}
+
+
+/* 都道府県金利ヒートマップ */
+.heatmap-controls { display: grid; grid-template-columns: minmax(260px, .9fr) repeat(3, minmax(185px, 1fr)) minmax(170px, .65fr); gap: 13px; align-items: stretch; }
+.heatmap-controls > label { display: flex; flex-direction: column; gap: 6px; color: var(--muted); font-size: 12px; }
+.heatmap-controls select { width: 100%; min-height: 125px; padding: 5px; border: 1px solid #cbd5e3; border-radius: 9px; background: #fff; color: var(--ink); }
+.heatmap-controls select option { padding: 4px 6px; border-radius: 4px; }
+.heatmap-term-switch { min-width: 0; margin: 0; padding: 10px 11px 12px; border: 1px solid var(--line); border-radius: 11px; }
+.heatmap-term-switch legend { padding: 0 5px; color: var(--muted); font-size: 12px; }
+.heatmap-term-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.heatmap-term-button { min-height: 52px; font-size: 16px; font-weight: 850; }
+.heatmap-term-button.is-active { border-color: #147eaa; background: linear-gradient(135deg, #147eaa, #0b6c91); color: #fff; box-shadow: 0 6px 14px rgba(20, 126, 170, .20); }
+.heatmap-actions { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; }
+.heatmap-help, .heatmap-footnote { margin: 13px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.heatmap-summary-grid { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 11px; margin-top: 15px; }
+.heatmap-summary-card { min-width: 0; padding: 14px 15px; border: 1px solid #dce6f0; border-radius: 12px; background: #fff; box-shadow: 0 5px 15px rgba(28, 46, 79, .05); }
+.heatmap-summary-card.national { border-top: 4px solid #2459c7; }
+.heatmap-summary-card.highest { border-top: 4px solid #147eaa; }
+.heatmap-summary-card.lowest { border-top: 4px solid #91a0b4; }
+.heatmap-summary-card.coverage { border-top: 4px solid #7254b8; }
+.heatmap-summary-card.online { border-top: 4px solid #0b8b79; }
+.heatmap-summary-label { color: var(--muted); font-size: 11px; font-weight: 750; }
+.heatmap-summary-value { margin-top: 4px; color: #173e91; font-size: 25px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.heatmap-summary-detail { margin-top: 3px; color: #7b8798; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.heatmap-main-grid { display: grid; grid-template-columns: minmax(620px, 1.65fr) minmax(300px, .75fr); gap: 14px; margin-top: 15px; }
+.heatmap-map-card, .heatmap-ranking-card, .heatmap-detail-card, .online-bank-card { border: 1px solid var(--line); border-radius: 13px; background: #fff; overflow: hidden; }
+.heatmap-card-heading, .heatmap-detail-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 13px 15px; border-bottom: 1px solid var(--line); background: #f8fafd; }
+.heatmap-card-heading h3, .heatmap-detail-heading h3 { margin: 0; color: #203b66; font-size: 16px; }
+.heatmap-card-heading p, .heatmap-detail-heading p { margin: 4px 0 0; font-size: 11px; }
+.japan-map-scroll { overflow: auto; padding: 10px; background: radial-gradient(circle at 60% 45%, #f8fbff 0, #f3f7fb 58%, #edf3f8 100%); }
+.japan-tile-map { display: block; width: 100%; min-width: 680px; height: auto; }
+.prefecture-tile { cursor: pointer; outline: none; }
+.prefecture-tile rect { fill: #e5e9ef; stroke: #fff; stroke-width: 2.4; transition: fill .18s, stroke .18s, filter .18s, transform .18s; transform-box: fill-box; transform-origin: center; }
+.prefecture-tile text { pointer-events: none; fill: #26384f; font-size: 11px; font-weight: 850; paint-order: stroke; stroke: rgba(255, 255, 255, .18); stroke-width: .35px; transition: fill .18s; }
+.prefecture-tile:hover rect, .prefecture-tile:focus rect { stroke: #173e91; stroke-width: 3; filter: drop-shadow(0 4px 5px rgba(28, 46, 79, .18)); transform: translateY(-1px); }
+.prefecture-tile.is-selected rect { stroke: #f0a327; stroke-width: 4; filter: drop-shadow(0 4px 6px rgba(154, 101, 0, .28)); }
+.prefecture-tile.no-data text { fill: #7f8b9b; stroke: none; }
+.japan-map-region-label { fill: #93a0b1; font-size: 10px; font-weight: 800; letter-spacing: .05em; }
+.heatmap-legend { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 5px; color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+.heatmap-legend-swatches { display: inline-flex; overflow: hidden; border: 1px solid #d7e0ea; border-radius: 999px; }
+.heatmap-legend-swatches i { display: block; width: 22px; height: 12px; }
+.heatmap-legend-end { display: inline-flex; align-items: baseline; gap: 4px; white-space: nowrap; }
+.heatmap-legend-end b { color: #50627a; font-size: 10px; }
+.heatmap-no-data-key { display: inline-flex; align-items: center; gap: 4px; margin-left: 4px; }
+.heatmap-no-data-key i { display: inline-block; width: 13px; height: 13px; border: 1px solid #d1d7e0; border-radius: 3px; }
+.heatmap-ranking-card { min-height: 540px; }
+.heatmap-ranking-list { max-height: 560px; overflow: auto; padding: 6px; }
+.heatmap-ranking-row { display: grid; grid-template-columns: 30px minmax(90px, 1fr) auto; grid-template-areas: "rank name rate" "rank detail detail"; align-items: center; width: 100%; gap: 2px 8px; padding: 9px 10px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--ink); text-align: left; cursor: pointer; }
+.heatmap-ranking-row:hover, .heatmap-ranking-row:focus { border-color: #cbd9eb; background: #f6f9fd; }
+.heatmap-ranking-row.is-selected { border-color: #f0b04a; background: #fff9ed; }
+.heatmap-rank-number { grid-area: rank; display: inline-flex; align-items: center; justify-content: center; width: 25px; height: 25px; border-radius: 50%; background: #eaf1fb; color: #315b92; font-size: 11px; font-weight: 900; }
+.heatmap-rank-name { grid-area: name; font-weight: 800; }
+.heatmap-ranking-row strong { grid-area: rate; color: #0b6c91; font-size: 15px; font-variant-numeric: tabular-nums; }
+.heatmap-ranking-row small { grid-area: detail; color: #8792a2; }
+.heatmap-detail-card, .online-bank-card { margin-top: 14px; }
+.heatmap-empty { padding: 28px; color: var(--muted); text-align: center; }
+.heatmap-detail-table { width: 100%; min-width: 720px; border-collapse: collapse; }
+.heatmap-detail-table th, .heatmap-detail-table td { padding: 10px 12px; border-bottom: 1px solid var(--line-soft); text-align: left; white-space: nowrap; }
+.heatmap-detail-table thead th { background: #f4f7fc; color: #4c5e77; font-size: 11px; }
+.heatmap-detail-table tbody tr:hover { background: #fbfdff; }
+.heatmap-detail-table .rate { color: #174e9d; font-weight: 850; font-variant-numeric: tabular-nums; }
+.online-bank-headline { color: #0b6c91; font-size: 17px; font-weight: 850; white-space: nowrap; }
+.online-bank-results { padding: 13px 14px 15px; }
+.online-bank-summary { display: grid; grid-template-columns: repeat(3, minmax(145px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.heatmap-footnote { padding: 0 2px; }
+
+@media (max-width: 1200px) {
+  .heatmap-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .heatmap-main-grid { grid-template-columns: 1fr; }
+  .heatmap-ranking-card { min-height: 0; }
+  .heatmap-ranking-list { max-height: 380px; }
+}
+@media (max-width: 900px) {
+  .heatmap-summary-grid { grid-template-columns: repeat(2, 1fr); }
+  .online-bank-summary { grid-template-columns: 1fr 1fr; }
+  .heatmap-card-heading, .heatmap-detail-heading { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 760px) {
+  .workspace-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .workspace-tab { min-height: 62px; padding: 7px 5px; }
+  .workspace-tab-title { font-size: 10.5px; }
+  .workspace-tab-description { display: none; }
+  .heatmap-controls { grid-template-columns: 1fr; gap: 10px; }
+  .heatmap-controls select { min-height: 108px; }
+  .heatmap-term-button { min-height: 46px; font-size: 14px; }
+  .heatmap-summary-grid { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 3px; scroll-snap-type: x proximity; }
+  .heatmap-summary-card { min-width: 210px; scroll-snap-align: start; }
+  .heatmap-main-grid { margin-top: 11px; }
+  .heatmap-map-card, .heatmap-ranking-card, .heatmap-detail-card, .online-bank-card { border-radius: 10px; }
+  .japan-map-scroll { padding: 5px; }
+  .japan-tile-map { min-width: 650px; }
+  .heatmap-ranking-list { max-height: 340px; }
+  .online-bank-summary { display: flex; overflow-x: auto; }
+  .online-bank-summary .heatmap-summary-card { min-width: 205px; }
+  .online-bank-headline { font-size: 14px; }
+  .heatmap-help, .heatmap-footnote { font-size: 10px; line-height: 1.55; }
+}
+@media (max-width: 430px) {
+  .workspace-tab-title { font-size: 9.5px; }
+  .heatmap-term-buttons { gap: 5px; }
+  .heatmap-summary-card { min-width: 190px; }
 }
