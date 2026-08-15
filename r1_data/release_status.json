@@ -1,0 +1,11 @@
+{
+  "status": "R1_RELEASE_CURRENT",
+  "release_version": "0.8.5.2",
+  "r1_collection_complete": true,
+  "resolved_campaign_count": 468,
+  "unresolved_campaign_count": 1316,
+  "history_linked_campaign_count": 44,
+  "base_rate_history_record_count": 4223,
+  "base_rate_institution_count": 128,
+  "source_final_freeze_status": "PASS_R1_FINAL_FREEZE_V0850"
+}

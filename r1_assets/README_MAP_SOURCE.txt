@@ -1,0 +1,1 @@
+Japan prefecture SVG map\nSource: Geolonia / japanese-prefectures / map-full.svg\nUpstream: https://raw.githubusercontent.com/geolonia/japanese-prefectures/master/map-full.svg\nLicense stated by upstream: GFDL\nUpstream notes that the SVG is based on Wikipedia 日本地図.svg.\nThis project stores the upstream SVG locally and applies rate colors/labels externally via CSS/JavaScript.\n
