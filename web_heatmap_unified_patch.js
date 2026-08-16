@@ -13,7 +13,7 @@
  */
 
 (() => {
-  const PATCH_VERSION = "20260816.3";
+  const PATCH_VERSION = "20260816.4";
   const R1_CURRENT_URL = "./r1_data/current_default_ranking.json";
 
   const PRODUCT_MODES = [
@@ -108,7 +108,8 @@
   }
 
   function currentMode() {
-    return q("#heatmapProductFilter")?.value || "base_term";
+    const value = q("#heatmapProductFilter")?.value || "";
+    return PRODUCT_MODES.some(([mode]) => mode === value) ? value : "base_term";
   }
 
   function currentTerm() {
@@ -285,14 +286,19 @@
     return mode === "campaign" ? buildCampaignData() : buildBaseData(mode);
   }
 
-  function configureControls() {
+  function configureControls(force = false) {
     const product = q("#heatmapProductFilter");
     if (!product) return;
-    if (product.dataset.unifiedHeatmapPatch !== PATCH_VERSION) {
+    const expectedValues = PRODUCT_MODES.map(([value]) => value);
+    const actualValues = Array.from(product.options).map((option) => option.value);
+    const optionsAreUnified = actualValues.length === expectedValues.length
+      && expectedValues.every((value, index) => actualValues[index] === value);
+    if (force || product.dataset.unifiedHeatmapPatch !== PATCH_VERSION || !optionsAreUnified || product.multiple) {
+      const previous = expectedValues.includes(product.value) ? product.value : "base_term";
       product.multiple = false;
       product.size = 3;
       product.innerHTML = PRODUCT_MODES.map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
-      product.value = "base_term";
+      product.value = previous;
       product.dataset.unifiedHeatmapPatch = PATCH_VERSION;
     }
 
@@ -331,15 +337,20 @@
   function renderUnified() {
     configureControls();
     if (typeof renderJapanTileMap === "function") renderJapanTileMap();
+    const mapSvg = q("#japanHeatmap");
+    if (mapSvg && !mapSvg.querySelector(".prefecture-label-layer") && typeof buildPrefectureMapLabels === "function") {
+      window.requestAnimationFrame(() => {
+        if (!mapSvg.querySelector(".prefecture-label-layer")) buildPrefectureMapLabels(mapSvg);
+      });
+    }
     const data = dataForCurrentMode();
     state.heatmapData = data;
-    state.heatmapRendered = true;
 
     const values = data.rankedPrefectures.map((x) => x.averageRate);
     const min = values.length ? Math.min(...values) : null;
     const max = values.length ? Math.max(...values) : null;
     const highest = data.rankedPrefectures[0] || null;
-    const lowest = data.rankedPrefectures.at(-1) || null;
+    const lowest = data.rankedPrefectures.length ? data.rankedPrefectures[data.rankedPrefectures.length - 1] : null;
     const termPrefix = data.mode === "base_ordinary" ? "" : `${data.term.label} `;
 
     const title = q("#heatmapMapTitle");
@@ -389,6 +400,22 @@
     }
     renderSelection();
     renderOnline();
+    state.heatmapRendered = true;
+  }
+
+  function renderUnifiedSafe() {
+    try {
+      renderUnified();
+      return true;
+    } catch (error) {
+      try { state.heatmapRendered = false; } catch (_) {}
+      const summary = q("#heatmapSummary");
+      if (summary) summary.textContent = `統合ヒートマップ描画エラー: ${String(error?.message || error)}`;
+      const ranking = q("#heatmapRanking");
+      if (ranking) ranking.innerHTML = `<div class="heatmap-empty">統合ヒートマップを描画できませんでした。ページを再読み込みしてください。</div>`;
+      console.error("[UnifiedHeatmap] render failed", error);
+      return false;
+    }
   }
 
   function renderSelection() {
@@ -446,6 +473,26 @@
     if (typeof moveTooltip === "function") moveTooltip(event);
   }
 
+  function resetUnifiedControls(render = true) {
+    try { state.heatmapTermKey = "1y"; } catch (_) {}
+    try { state.heatmapSelectedPrefecture = ""; } catch (_) {}
+    qa(".heatmap-term-button").forEach((button) => {
+      const active = button.dataset.heatmapTerm === "1y";
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+    configureControls(true);
+    const product = q("#heatmapProductFilter");
+    if (product) product.value = "base_term";
+    const types = q("#heatmapInstitutionTypeFilter");
+    if (types) Array.from(types.options).forEach((option) => { option.selected = option.value !== "ネット銀行"; });
+    const statuses = q("#heatmapStatusFilter");
+    if (statuses) Array.from(statuses.options).forEach((option) => { option.selected = option.value === "開催中"; });
+    configureControls();
+    if (render && typeof state !== "undefined" && state.activeView === "heatmap") renderUnifiedSafe();
+    else if (typeof state !== "undefined") state.heatmapRendered = false;
+  }
+
   // Replace existing app.js heatmap function bindings.  This must run only
   // after app.js has executed; the installer therefore loads this patch with
   // `defer` after app.js and web_r1_bridge.js.  We retry during init as a
@@ -454,10 +501,11 @@
     let installed = false;
     try {
       if (typeof renderPrefectureHeatmap === "function") {
-        renderPrefectureHeatmap = renderUnified;
+        renderPrefectureHeatmap = renderUnifiedSafe;
         installed = true;
       }
     } catch (_) {}
+    try { if (typeof resetHeatmapControls === "function") resetHeatmapControls = resetUnifiedControls; } catch (_) {}
     try { if (typeof renderHeatmapSelection === "function") renderHeatmapSelection = renderSelection; } catch (_) {}
     try { if (typeof renderOnlineBankSection === "function") renderOnlineBankSection = renderOnline; } catch (_) {}
     try { if (typeof showHeatmapTooltip === "function") showHeatmapTooltip = tooltip; } catch (_) {}
@@ -473,26 +521,74 @@
       product.addEventListener("change", () => {
         state.heatmapSelectedPrefecture = "";
         configureControls();
-        renderUnified();
+        renderUnifiedSafe();
       });
     }
     qa(".heatmap-term-button").forEach((button) => {
       if (button.dataset.unifiedBound) return;
       button.dataset.unifiedBound = "1";
-      button.addEventListener("click", () => setTimeout(renderUnified, 0));
+      button.addEventListener("click", () => setTimeout(renderUnifiedSafe, 0));
     });
     ["#heatmapInstitutionTypeFilter", "#heatmapStatusFilter"].forEach((selector) => {
       const el = q(selector);
       if (el && !el.dataset.unifiedBound) {
         el.dataset.unifiedBound = "1";
-        el.addEventListener("change", () => renderUnified());
+        el.addEventListener("change", () => renderUnifiedSafe());
       }
     });
+  }
+
+  function appUiReady() {
+    try {
+      return Array.isArray(state.records) && state.records.length > 0
+        && !!q("#heatmapTabPanel") && !!q("#heatmapProductFilter")
+        && q("#heatmapInstitutionTypeFilter")?.options.length > 0;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function refreshAfterAppInit() {
+    installOverrides();
+    configureControls(true);
+    hideSeparateR1Heatmap();
+    bindControls();
+    if ((typeof state !== "undefined" && state.activeView === "heatmap") || window.location.hash === "#prefecture-heatmap") {
+      renderUnifiedSafe();
+    }
+  }
+
+  function watchForAppInitialization() {
+    let attempts = 0;
+    const timer = window.setInterval(() => {
+      attempts += 1;
+      hideSeparateR1Heatmap();
+      if (appUiReady()) {
+        window.clearInterval(timer);
+        refreshAfterAppInit();
+      } else if (attempts >= 100) {
+        window.clearInterval(timer);
+      }
+    }, 100);
+  }
+
+  function bindViewHooks() {
+    if (document.documentElement.dataset.unifiedHeatmapViewHooks === PATCH_VERSION) return;
+    document.documentElement.dataset.unifiedHeatmapViewHooks = PATCH_VERSION;
+    window.addEventListener("hashchange", () => {
+      if (window.location.hash === "#prefecture-heatmap") window.setTimeout(refreshAfterAppInit, 0);
+    });
+    document.addEventListener("click", (event) => {
+      const tab = event.target.closest?.("#heatmapTab,[data-view='heatmap']");
+      if (tab) window.setTimeout(refreshAfterAppInit, 0);
+    }, true);
   }
 
   async function init() {
     installOverrides();
     configureControls();
+    bindViewHooks();
+    watchForAppInitialization();
     hideSeparateR1Heatmap();
     bindControls();
 
@@ -514,21 +610,25 @@
     }
 
     installOverrides();
-    configureControls();
+    configureControls(appUiReady());
     hideSeparateR1Heatmap();
     bindControls();
-    if (typeof state !== "undefined" && state.activeView === "heatmap") renderUnified();
+    if (typeof state !== "undefined" && state.activeView === "heatmap") renderUnifiedSafe();
 
     // One final retry catches app/bridge initialization that completed in the
     // same event turn after this handler.
     window.setTimeout(() => {
       installOverrides();
-      configureControls();
+      configureControls(appUiReady());
       hideSeparateR1Heatmap();
       bindControls();
-      if (typeof state !== "undefined" && state.activeView === "heatmap") renderUnified();
+      if (typeof state !== "undefined" && state.activeView === "heatmap") renderUnifiedSafe();
     }, 0);
   }
+
+  window.addEventListener("pageshow", () => {
+    if (window.location.hash === "#prefecture-heatmap") window.setTimeout(refreshAfterAppInit, 0);
+  });
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();
