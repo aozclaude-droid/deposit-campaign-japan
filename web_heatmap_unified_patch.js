@@ -13,7 +13,7 @@
  */
 
 (() => {
-  const PATCH_VERSION = "20260816.2";
+  const PATCH_VERSION = "20260816.3";
   const R1_CURRENT_URL = "./r1_data/current_default_ranking.json";
 
   const PRODUCT_MODES = [
@@ -317,17 +317,15 @@
   }
 
   function hideSeparateR1Heatmap() {
+    // The old R1 bridge is no longer a user-facing section.  Its data files
+    // remain available to the unified prefecture heatmap and R1 matrix logic,
+    // but the standalone BASE RATE / EFFECTIVE RATE shell must not appear.
     const shell = q("#r1BridgeShell");
-    if (!shell) return;
-    qa("button, a", shell).forEach((el) => {
-      if (/都道府県.*ヒートマップ|ヒートマップ/.test(el.textContent || "")) el.hidden = true;
-    });
-    qa("section, div", shell).forEach((el) => {
-      const heading = el.querySelector(":scope > h2, :scope > h3, :scope > .r1-kicker + h2, :scope > .r1-kicker + h3");
-      if (heading && /都道府県.*ヒートマップ|通常金利.*ヒートマップ/.test(heading.textContent || "")) el.hidden = true;
-    });
-    const headText = shell.querySelector(".r1-head p");
-    if (headText) headText.textContent = "通常金利の都道府県比較は上の「都道府県金利ヒートマップ」に統合しました。ここでは金融機関別ランキングと通常金利・実効金利の比較を確認できます。";
+    if (!shell) return false;
+    shell.hidden = true;
+    shell.setAttribute("aria-hidden", "true");
+    shell.style.setProperty("display", "none", "important");
+    return true;
   }
 
   function renderUnified() {
@@ -448,11 +446,25 @@
     if (typeof moveTooltip === "function") moveTooltip(event);
   }
 
-  // Replace existing app.js heatmap function bindings.
-  try { if (typeof renderPrefectureHeatmap === "function") renderPrefectureHeatmap = renderUnified; } catch (_) {}
-  try { if (typeof renderHeatmapSelection === "function") renderHeatmapSelection = renderSelection; } catch (_) {}
-  try { if (typeof renderOnlineBankSection === "function") renderOnlineBankSection = renderOnline; } catch (_) {}
-  try { if (typeof showHeatmapTooltip === "function") showHeatmapTooltip = tooltip; } catch (_) {}
+  // Replace existing app.js heatmap function bindings.  This must run only
+  // after app.js has executed; the installer therefore loads this patch with
+  // `defer` after app.js and web_r1_bridge.js.  We retry during init as a
+  // defensive measure for cached/older HTML.
+  function installOverrides() {
+    let installed = false;
+    try {
+      if (typeof renderPrefectureHeatmap === "function") {
+        renderPrefectureHeatmap = renderUnified;
+        installed = true;
+      }
+    } catch (_) {}
+    try { if (typeof renderHeatmapSelection === "function") renderHeatmapSelection = renderSelection; } catch (_) {}
+    try { if (typeof renderOnlineBankSection === "function") renderOnlineBankSection = renderOnline; } catch (_) {}
+    try { if (typeof showHeatmapTooltip === "function") showHeatmapTooltip = tooltip; } catch (_) {}
+    return installed;
+  }
+
+  installOverrides();
 
   function bindControls() {
     const product = q("#heatmapProductFilter");
@@ -479,9 +491,18 @@
   }
 
   async function init() {
+    installOverrides();
     configureControls();
     hideSeparateR1Heatmap();
     bindControls();
+
+    // web_r1_bridge.js creates #r1BridgeShell on DOMContentLoaded.  Keep a
+    // short-lived observer so the standalone R1 shell cannot reappear because
+    // of execution order or a future async re-render.
+    const observer = new MutationObserver(() => hideSeparateR1Heatmap());
+    if (document.body) observer.observe(document.body, { childList: true, subtree: true });
+    window.setTimeout(() => observer.disconnect(), 5000);
+
     try {
       const response = await fetch(R1_CURRENT_URL, { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -491,9 +512,22 @@
     } catch (error) {
       R1.error = String(error?.message || error);
     }
+
+    installOverrides();
     configureControls();
     hideSeparateR1Heatmap();
+    bindControls();
     if (typeof state !== "undefined" && state.activeView === "heatmap") renderUnified();
+
+    // One final retry catches app/bridge initialization that completed in the
+    // same event turn after this handler.
+    window.setTimeout(() => {
+      installOverrides();
+      configureControls();
+      hideSeparateR1Heatmap();
+      bindControls();
+      if (typeof state !== "undefined" && state.activeView === "heatmap") renderUnified();
+    }, 0);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
