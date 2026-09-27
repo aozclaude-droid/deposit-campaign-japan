@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.09.27.2";
+const APP_VERSION = "2026.09.27.3";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -12,7 +12,7 @@ const PREFECTURE_ORDER = [
   "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
 ];
 const PREFECTURE_RANK = new Map(PREFECTURE_ORDER.map((name, index) => [name, index]));
-const DATA_URL = "campaign_all.json?v=20260927-2";
+const DATA_URL = "campaign_all.json?v=20260927-3";
 const LATEST_UPDATE = {
   publishedOn: "2026-09-27",
   label: "2026年9月27日の追加反映（1回目巡回の人手確認）",
@@ -77,6 +77,20 @@ const dayMs = 86400000;
 const campaignKey = (r) => `${text(r.institution_name)}\u241f${text(r.campaign_name)}`;
 const groupKey = (r) => [r.institution_name, r.campaign_name, r.campaign_start_date, r.campaign_end_date, r.product_type, r.status].map(text).join("\u241f");
 const statusClass = (status) => ({"開催中":"status-active","開催予定":"status-scheduled","終了済み":"status-ended","要確認":"status-review"}[status] || "status-review");
+function effectiveStatus(record) {
+  const sourceStatus = text(record.status) || "要確認";
+  const start = parseIso(text(record.campaign_start_date));
+  const end = parseIso(record.campaign_end_date == null ? "" : text(record.campaign_end_date));
+  const today = parseIso(TODAY_ISO);
+  if (!today || (start && end && end < start)) return sourceStatus;
+  // 終了済みは募集額到達などによる早期終了もあるため、日付だけで再開しない。
+  if (sourceStatus === "終了済み") return sourceStatus;
+  if (end && end < today) return "終了済み";
+  if (start && start > today) return "開催予定";
+  // 開催予定は開始日を迎えたら自動的に開催中へ進める。
+  if (sourceStatus === "開催予定" && start && start <= today && (!end || end >= today)) return "開催中";
+  return sourceStatus;
+}
 const isCompactViewport = () => window.matchMedia("(max-width: 760px)").matches;
 
 
@@ -886,6 +900,9 @@ function normalizeRecord(record, index) {
     normalized.institution_type = "ネット銀行";
   }
   normalized.campaign_end_date = record.campaign_end_date == null ? "" : text(record.campaign_end_date);
+  normalized._sourceStatus = normalized.status;
+  normalized.status = effectiveStatus(normalized);
+  normalized._statusDerived = normalized.status !== normalized._sourceStatus;
   normalized._searchInstitution = normalized.institution_name.toLocaleLowerCase("ja");
   normalized._searchCampaign = normalized.campaign_name.toLocaleLowerCase("ja");
   normalized._searchTerm = normalized.term.toLocaleLowerCase("ja");
