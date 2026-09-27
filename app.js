@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.09.27.1";
+const APP_VERSION = "2026.09.27.2";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -12,27 +12,14 @@ const PREFECTURE_ORDER = [
   "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
 ];
 const PREFECTURE_RANK = new Map(PREFECTURE_ORDER.map((name, index) => [name, index]));
-const DATA_URL = "campaign_all.json?v=20260927-1";
+const DATA_URL = "campaign_all.json?v=20260927-2";
 const LATEST_UPDATE = {
   publishedOn: "2026-09-27",
-  label: "2026年9月27日の公開反映",
-  expectedTotalRecords: 15808,
-  addedStartIndex: 15787,
-  addedCount: 21,
-  updatedRecords: [
-    {
-      institution_name: "熊本銀行",
-      campaign_name: "夏の定期預金キャンペーン",
-      term: "1年",
-      product_url: "https://www.kumamotobank.co.jp/personal/service/yokin/teiki/summerteiki2026/"
-    },
-    {
-      institution_name: "熊本銀行",
-      campaign_name: "夏の定期預金キャンペーン",
-      term: "3年",
-      product_url: "https://www.kumamotobank.co.jp/personal/service/yokin/teiki/summerteiki2026/"
-    }
-  ]
+  label: "2026年9月27日の追加反映（1回目巡回の人手確認）",
+  expectedTotalRecords: 15881,
+  addedStartIndex: 15808,
+  addedCount: 73,
+  updatedRecords: []
 };
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
