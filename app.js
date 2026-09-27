@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.08.07.5";
+const APP_VERSION = "2026.09.27.1";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -12,7 +12,28 @@ const PREFECTURE_ORDER = [
   "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
 ];
 const PREFECTURE_RANK = new Map(PREFECTURE_ORDER.map((name, index) => [name, index]));
-const DATA_URL = "campaign_all.json?v=20260807-3";
+const DATA_URL = "campaign_all.json?v=20260927-1";
+const LATEST_UPDATE = {
+  publishedOn: "2026-09-27",
+  label: "2026年9月27日の公開反映",
+  expectedTotalRecords: 15808,
+  addedStartIndex: 15787,
+  addedCount: 21,
+  updatedRecords: [
+    {
+      institution_name: "熊本銀行",
+      campaign_name: "夏の定期預金キャンペーン",
+      term: "1年",
+      product_url: "https://www.kumamotobank.co.jp/personal/service/yokin/teiki/summerteiki2026/"
+    },
+    {
+      institution_name: "熊本銀行",
+      campaign_name: "夏の定期預金キャンペーン",
+      term: "3年",
+      product_url: "https://www.kumamotobank.co.jp/personal/service/yokin/teiki/summerteiki2026/"
+    }
+  ]
+};
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
@@ -52,7 +73,8 @@ const state = {
   heatmapTermKey: "1y",
   heatmapSelectedPrefecture: "",
   heatmapData: null,
-  timelineExactTermKey: ""
+  timelineExactTermKey: "",
+  latestOnly: false
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -898,6 +920,85 @@ function normalizeRecord(record, index) {
   return normalized;
 }
 
+function matchesLatestUpdatedRecord(record, expected) {
+  return ["institution_name", "campaign_name", "term", "product_url"]
+    .every((field) => text(record[field]) === text(expected[field]));
+}
+
+function markLatestUpdateRecords() {
+  const expectedAddedEnd = LATEST_UPDATE.addedStartIndex + LATEST_UPDATE.addedCount;
+  state.records.forEach((record) => {
+    record._latestUpdateType = "";
+    if (record._index >= LATEST_UPDATE.addedStartIndex && record._index < expectedAddedEnd) {
+      record._latestUpdateType = "added";
+    }
+  });
+  LATEST_UPDATE.updatedRecords.forEach((expected) => {
+    const match = state.records.find((record) => matchesLatestUpdatedRecord(record, expected));
+    if (match) match._latestUpdateType = "updated";
+  });
+}
+
+function latestUpdateRecords() {
+  return state.records.filter((record) => record._latestUpdateType);
+}
+
+function renderLatestUpdate() {
+  const records = latestUpdateRecords();
+  const added = records.filter((record) => record._latestUpdateType === "added");
+  const updated = records.filter((record) => record._latestUpdateType === "updated");
+  const institutions = new Map();
+
+  records.forEach((record) => {
+    if (!institutions.has(record.institution_name)) institutions.set(record.institution_name, []);
+    institutions.get(record.institution_name).push(record);
+  });
+
+  $("#latestUpdateDate").textContent = LATEST_UPDATE.label;
+  $("#latestUpdateLead").textContent = `${fmt(institutions.size)}金融機関の情報を反映しました。追加した商品と、内容を更新した商品をここで確認できます。`;
+  $("#latestUpdateMetrics").innerHTML = [
+    ["新しく追加", added.length, "件"],
+    ["内容を更新", updated.length, "件"],
+    ["対象金融機関", institutions.size, "機関"],
+    ["現在の総件数", state.records.length, "件"]
+  ].map(([label, value, unit]) => `<div class="latest-update-metric"><span>${esc(label)}</span><strong>${fmt(value)}</strong><small>${unit}</small></div>`).join("");
+
+  $("#latestUpdateList").innerHTML = [...institutions.entries()].map(([institution, items]) => {
+    const addedCount = items.filter((item) => item._latestUpdateType === "added").length;
+    const updatedCount = items.filter((item) => item._latestUpdateType === "updated").length;
+    const campaigns = [...new Set(items.map((item) => item.campaign_name).filter(Boolean))];
+    const rates = [...new Set(items.map((item) => item.interest_rate).filter(Boolean))];
+    const badges = [
+      addedCount ? `<span class="update-badge added">追加 ${fmt(addedCount)}件</span>` : "",
+      updatedCount ? `<span class="update-badge updated">更新 ${fmt(updatedCount)}件</span>` : ""
+    ].join("");
+    return `<article class="latest-update-item">
+      <div class="latest-update-item-head"><h3>${esc(institution)}</h3><div>${badges}</div></div>
+      <p>${campaigns.map(esc).join(" / ")}</p>
+      <small>${rates.slice(0, 3).map(esc).join(" / ")}${rates.length > 3 ? ` ほか${fmt(rates.length - 3)}件` : ""}</small>
+    </article>`;
+  }).join("");
+
+  const countsMatch = state.records.length === LATEST_UPDATE.expectedTotalRecords
+    && added.length === LATEST_UPDATE.addedCount
+    && updated.length === LATEST_UPDATE.updatedRecords.length;
+  if (!countsMatch) {
+    $("#latestUpdateLead").textContent = "今回の更新情報と読み込んだJSONの件数が一致しません。全データは表示できますが、更新欄は確認が必要です。";
+    $("#latestUpdatePanel").classList.add("has-warning");
+  }
+}
+
+function renderMetadataHistory() {
+  const notes = Array.isArray(state.metadata.notes) ? state.metadata.notes : [];
+  const summary = $("#metadataNotesSummary");
+  const toggle = $("#metadataNotesToggle");
+  $("#metadataNotes").innerHTML = notes.length ? notes.map((note) => `<li>${esc(note)}</li>`).join("") : "<li>整備履歴はありません。</li>";
+  if (summary) summary.textContent = notes.length
+    ? `過去のデータ整備履歴は${fmt(notes.length)}件あります。通常は非表示にし、必要なときだけ開けます。`
+    : "過去のデータ整備履歴はありません。";
+  if (toggle) toggle.textContent = notes.length ? `過去の整備履歴 ${fmt(notes.length)}件を表示` : "整備履歴を表示";
+}
+
 async function loadData() {
   try {
     const response = await fetch(DATA_URL, { cache: "no-store" });
@@ -909,6 +1010,7 @@ async function loadData() {
 
     state.metadata = payload.metadata || {};
     state.records = payload.records.map(normalizeRecord);
+    markLatestUpdateRecords();
     initializeUi();
 
     const metadataCount = Number(state.metadata.record_count);
@@ -924,8 +1026,7 @@ async function loadData() {
 }
 
 function initializeUi() {
-  const created = state.metadata.created_at;
-  $("#updatedAt").textContent = created ? `データ更新日時: ${created}` : "データ更新日時: 不明";
+  $("#updatedAt").textContent = `掲載データ最終反映: ${LATEST_UPDATE.publishedOn}`;
   fillSelect("#regionFilter", uniqueSorted("region"));
   fillSelect("#prefectureFilter", uniqueSorted("prefecture"));
   fillSelect("#institutionTypeFilter", uniqueSorted("institution_type"));
@@ -946,8 +1047,8 @@ function initializeUi() {
   resetHeatmapControls(false);
   renderJapanTileMap();
 
-  const notes = Array.isArray(state.metadata.notes) ? state.metadata.notes : [];
-  $("#metadataNotes").innerHTML = notes.length ? notes.map((n) => `<li>${esc(n)}</li>`).join("") : "<li>metadata.notes はありません。</li>";
+  renderLatestUpdate();
+  renderMetadataHistory();
 
   if (isCompactViewport()) {
     state.ganttPageSize = 10;
@@ -993,6 +1094,22 @@ function bindEvents() {
   $("#activeOnly").addEventListener("click", () => quickStatus(["開催中"]));
   $("#activeScheduled").addEventListener("click", () => quickStatus(["開催中","開催予定"]));
   $("#reviewOnly").addEventListener("click", () => { clearFilters(false); $("#reviewFilter").value = "yes"; applyFilters(); });
+  $("#showLatestOnly")?.addEventListener("click", () => {
+    clearFilters(false);
+    state.latestOnly = true;
+    setSelectedValues("#statusFilter", []);
+    setActiveView("timeline", { scroll: true, render: false });
+    applyFilters();
+    $("#showLatestOnly").classList.add("hidden");
+    $("#showAllData").classList.remove("hidden");
+  });
+  $("#showAllData")?.addEventListener("click", () => {
+    clearFilters(false);
+    setSelectedValues("#statusFilter", ["開催中", "開催予定"]);
+    applyFilters();
+    $("#showAllData").classList.add("hidden");
+    $("#showLatestOnly").classList.remove("hidden");
+  });
   $$(".date-preset").forEach((button) => {
     button.addEventListener("click", () => setQuickStartYear(Number(button.dataset.year), button.dataset.label || button.textContent.trim(), button));
   });
@@ -1123,6 +1240,7 @@ function clearFilters(run = true) {
   deactivateQuickDatePreset();
   state.focusKey = null;
   state.timelineExactTermKey = "";
+  state.latestOnly = false;
   if (run) applyFilters();
 }
 
@@ -1146,6 +1264,7 @@ function applyFilters() {
   };
 
   state.filtered = state.records.filter((r) => {
+    if (state.latestOnly && !r._latestUpdateType) return false;
     if (f.regions.size && !f.regions.has(r.region)) return false;
     if (f.prefectures.size && !f.prefectures.has(r.prefecture)) return false;
     if (f.institutionTypes.size && !f.institutionTypes.has(r.institution_type)) return false;
@@ -1198,7 +1317,8 @@ function renderStats() {
   $("#statReview").textContent = fmt(counts["要確認"]);
   const maturityYear = $("#maturityYearFilter").value;
   const quickRange = state.quickDateRange ? ` / ${state.quickDateLabel} ${state.quickDateRange.from}以降` : "";
-  $("#filterSummary").textContent = `全${fmt(state.records.length)}件中 ${fmt(records.length)}件を表示${maturityYear ? ` / 想定満期 ${maturityYear}年` : ""}${quickRange}`;
+  const latestLabel = state.latestOnly ? " / 今回の更新のみ" : "";
+  $("#filterSummary").textContent = `全${fmt(state.records.length)}件中 ${fmt(records.length)}件を表示${latestLabel}${maturityYear ? ` / 想定満期 ${maturityYear}年` : ""}${quickRange}`;
 }
 
 function buildGanttGroups() {

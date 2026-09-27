@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="ja">
 <head>
@@ -11,7 +11,7 @@
 <title>全国預金キャンペーン・データベース</title>
 <link href="favicon_C_rate.svg?v=20260806-2" rel="icon" type="image/svg+xml"/>
 <meta content="#0B7C93" name="theme-color"/>
-<link href="styles.css?v=20260807-4" rel="stylesheet"/>
+<link href="styles.css?v=20260927-1" rel="stylesheet"/>
   <link rel="stylesheet" href="web_r1_bridge.css" data-r1-web-bridge="1">
 </head>
 <body>
@@ -23,13 +23,30 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.08.07.4</span>
+<span class="app-version" id="appVersion">画面版 2026.09.27.1</span>
 </div>
 </div>
 </header>
 <main aria-busy="true" class="container" id="app">
 <section class="alert error hidden" id="errorPanel" role="alert"></section>
-<section class="alert warning hidden" id="warningPanel" role="status"></section><section aria-label="表示モード切替" class="workspace-tabs-shell" id="workspaceTabsShell">
+<section class="alert warning hidden" id="warningPanel" role="status"></section>
+<section aria-labelledby="latestUpdateTitle" class="latest-update-panel" id="latestUpdatePanel">
+<div class="latest-update-heading">
+<div>
+<p class="section-kicker">LATEST UPDATE</p>
+<h2 id="latestUpdateTitle">今回追加・更新した情報</h2>
+<p class="latest-update-lead" id="latestUpdateLead">最新の公開データを読み込み中です。</p>
+</div>
+<div class="latest-update-date" id="latestUpdateDate">—</div>
+</div>
+<div aria-label="今回の更新件数" class="latest-update-metrics" id="latestUpdateMetrics"></div>
+<div class="latest-update-list" id="latestUpdateList" aria-live="polite"></div>
+<div class="latest-update-actions">
+<button class="btn latest-update-button" id="showLatestOnly" type="button">今回の更新だけを一覧で見る</button>
+<button class="btn hidden" id="showAllData" type="button">全データの表示に戻す</button>
+</div>
+</section>
+<section aria-label="表示モード切替" class="workspace-tabs-shell" id="workspaceTabsShell">
 <div aria-label="表示モード" class="workspace-tabs" role="tablist">
 <button aria-controls="timelineTabPanel" aria-selected="true" class="workspace-tab is-active" data-view="timeline" id="timelineTab" role="tab" tabindex="0" type="button">
 <span class="workspace-tab-kicker">TIMELINE</span>
@@ -289,8 +306,12 @@
 </ul>
 </div>
 <div>
-<h3>元データの注記</h3>
+<h3>データの整備履歴</h3>
+<p class="metadata-notes-summary" id="metadataNotesSummary">履歴を読み込み中…</p>
+<details class="metadata-history">
+<summary id="metadataNotesToggle">過去の整備履歴を表示</summary>
 <ul id="metadataNotes"><li>読み込み中…</li></ul>
+</details>
 </div>
 </div>
 </section></div><div aria-labelledby="analyticsTab" class="workspace-tab-panel" hidden="" id="analyticsTabPanel" role="tabpanel"><section class="panel" id="rateAnalyticsPanel">
@@ -626,11 +647,8 @@
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="app.js?v=20260807-5"></script>
+<script defer="" src="app.js?v=20260927-1"></script>
   <script defer src="web_r1_bridge.js" data-r1-web-bridge="1"></script>
-  <script defer src="./web_heatmap_unified_patch.js?v=20260816.4"></script>
+  <script defer src="./web_heatmap_unified_patch.js?v=20260816.10"></script>
 </body>
 </html>
-
-
-
