@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.09.27.3";
+const APP_VERSION = "2026.10.05.1";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -12,13 +12,13 @@ const PREFECTURE_ORDER = [
   "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
 ];
 const PREFECTURE_RANK = new Map(PREFECTURE_ORDER.map((name, index) => [name, index]));
-const DATA_URL = "campaign_all.json?v=20260927-3";
+const DATA_URL = "campaign_all.json?v=20261005-1";
 const LATEST_UPDATE = {
-  publishedOn: "2026-09-27",
-  label: "2026年9月27日の追加反映（1回目巡回の人手確認）",
-  expectedTotalRecords: 15881,
-  addedStartIndex: 15808,
-  addedCount: 73,
+  publishedOn: "2026-10-05",
+  label: "2026年10月5日反映（人による確認結果）",
+  expectedTotalRecords: 15929,
+  addedStartIndex: 15881,
+  addedCount: 48,
   updatedRecords: []
 };
 const TODAY_ISO = localIso(new Date());
@@ -958,14 +958,29 @@ function renderLatestUpdate() {
     institutions.get(record.institution_name).push(record);
   });
 
+  const campaignCount = new Set(records.map((record) => `${record.institution_name}\u0000${record.campaign_name}`)).size;
+  const regionCounts = new Map();
+  records.forEach((record) => {
+    const region = record.region || "地域未設定";
+    regionCounts.set(region, (regionCounts.get(region) || 0) + 1);
+  });
+
   $("#latestUpdateDate").textContent = LATEST_UPDATE.label;
-  $("#latestUpdateLead").textContent = `${fmt(institutions.size)}金融機関の情報を反映しました。追加した商品と、内容を更新した商品をここで確認できます。`;
+  $("#latestUpdateLead").textContent = `最新の公開データへ${fmt(records.length)}件を反映しました。要点だけを表示し、詳しい内訳は必要なときに開けます。`;
   $("#latestUpdateMetrics").innerHTML = [
     ["新しく追加", added.length, "件"],
     ["内容を更新", updated.length, "件"],
     ["対象金融機関", institutions.size, "機関"],
     ["現在の総件数", state.records.length, "件"]
   ].map(([label, value, unit]) => `<div class="latest-update-metric"><span>${esc(label)}</span><strong>${fmt(value)}</strong><small>${unit}</small></div>`).join("");
+
+  $("#latestUpdateCompact").innerHTML = `<div class="latest-update-summary-text">
+    <strong>${fmt(institutions.size)}金融機関・${fmt(campaignCount)}商品</strong>の情報を反映
+  </div><div class="latest-update-region-list" aria-label="地域別の追加件数">${[...regionCounts.entries()]
+    .map(([region, count]) => `<span>${esc(region)} ${fmt(count)}件</span>`).join("")}</div>`;
+
+  const detailsToggle = $("#latestUpdateDetailsToggle");
+  if (detailsToggle) detailsToggle.textContent = `金融機関別の内訳（${fmt(institutions.size)}機関）を表示`;
 
   $("#latestUpdateList").innerHTML = [...institutions.entries()].map(([institution, items]) => {
     const addedCount = items.filter((item) => item._latestUpdateType === "added").length;
@@ -978,7 +993,7 @@ function renderLatestUpdate() {
     ].join("");
     return `<article class="latest-update-item">
       <div class="latest-update-item-head"><h3>${esc(institution)}</h3><div>${badges}</div></div>
-      <p>${campaigns.map(esc).join(" / ")}</p>
+      <p>${campaigns.slice(0, 3).map(esc).join(" / ")}${campaigns.length > 3 ? ` ほか${fmt(campaigns.length - 3)}商品` : ""}</p>
       <small>${rates.slice(0, 3).map(esc).join(" / ")}${rates.length > 3 ? ` ほか${fmt(rates.length - 3)}件` : ""}</small>
     </article>`;
   }).join("");
