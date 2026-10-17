@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.18.3";
+const APP_VERSION = "2026.10.18.4";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -552,11 +552,17 @@ function renderRateAnalytics() {
   $("#analyticsResults").innerHTML = `<div class="analytics-data-summary"><strong>${fmt(institutionCount)}金融機関・${fmt(comparable.length)}比較可能明細</strong><span>対象明細 ${fmt(periodRecords.length)}件</span><span>対象外年限 ${fmt(noTerm)}件</span><span>絶対金利を算出不可 ${fmt(noRate)}件</span></div>${sections || '<div class="analytics-empty">条件に一致するデータがありません。</div>'}`;
 }
 
+function selectedHeatmapProduct() {
+  return $("#heatmapProductFilter")?.value || "";
+}
 function heatmapTerm() {
-  return HEATMAP_TERMS.find((term) => term.key === state.heatmapTermKey) || HEATMAP_TERMS[0];
+  if (ORDINARY_PRODUCT_TYPES.has(selectedHeatmapProduct())) {
+    return HEATMAP_TERMS.find((term) => term.key === "ordinary");
+  }
+  return HEATMAP_TERMS.find((term) => term.key === state.heatmapTermKey && term.key !== "ordinary") || HEATMAP_TERMS[0];
 }
 function syncHeatmapTermControls() {
-  const selectedProduct = selectedValues("#heatmapProductFilter")[0] || "";
+  const selectedProduct = selectedHeatmapProduct();
   const ordinaryMode = ORDINARY_PRODUCT_TYPES.has(selectedProduct);
   if (ordinaryMode) state.heatmapTermKey = "ordinary";
   else if (state.heatmapTermKey === "ordinary") state.heatmapTermKey = "1y";
@@ -582,7 +588,7 @@ function resetHeatmapControls(render = true) {
     button.setAttribute("aria-pressed", active ? "true" : "false");
   });
   const products = uniqueSorted("product_type");
-  setSelectedValues("#heatmapProductFilter", products.includes("定期預金") ? ["定期預金"] : products.slice(0, 1));
+  $("#heatmapProductFilter").value = products.includes("定期預金") ? "定期預金" : (products[0] || "");
   syncHeatmapTermControls();
   setSelectedValues("#heatmapInstitutionTypeFilter", uniqueSorted("institution_type").filter((value) => value !== "ネット銀行"));
   setSelectedValues("#heatmapStatusFilter", state.records.some((record) => record.status === "開催中") ? ["開催中"] : []);
@@ -720,7 +726,8 @@ function buildInstitutionRateGroups(records) {
   })).sort((a, b) => b.averageRate - a.averageRate || a.institution.localeCompare(b.institution, "ja"));
 }
 function buildHeatmapData() {
-  const products = new Set(selectedValues("#heatmapProductFilter"));
+  const selectedProduct = selectedHeatmapProduct();
+  const products = new Set(selectedProduct ? [selectedProduct] : []);
   const institutionTypes = new Set(selectedValues("#heatmapInstitutionTypeFilter"));
   const statuses = new Set(selectedValues("#heatmapStatusFilter"));
   const term = heatmapTerm();
@@ -809,6 +816,7 @@ function svgPrefectureLabel(prefecture) {
 }
 function renderPrefectureHeatmap() {
   state.heatmapRendered = true;
+  syncHeatmapTermControls();
   renderJapanTileMap();
   const mapSvg = $("#japanHeatmap");
   if (mapSvg && !mapSvg.querySelector(".prefecture-label-layer")) {
@@ -1227,7 +1235,8 @@ function bindEvents() {
   $("#heatmapProductFilter").addEventListener("change", () => {
     syncHeatmapTermControls();
     state.heatmapSelectedPrefecture = "";
-    scheduleHeatmap();
+    state.heatmapRendered = false;
+    if (state.activeView === "heatmap") renderPrefectureHeatmap();
   });
   ["#heatmapInstitutionTypeFilter", "#heatmapStatusFilter"].forEach((id) => $(id).addEventListener("change", () => {
     state.heatmapSelectedPrefecture = "";
