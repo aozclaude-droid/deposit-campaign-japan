@@ -2,19 +2,20 @@
 
 /*
  * Deposit Campaign Japan - Unified Prefecture Heatmap Patch
- * 2026-08-16
+ * v4.7 / 2026-10-18
  *
- * Integrates:
- *   - 定期預金: R1 current_default_ranking.json (standard/storefront term-deposit rates)
- *   - 普通預金: R1 current_default_ranking.json (ordinary/savings rates)
+ * Integrates into the existing prefecture heatmap:
+ *   - 定期預金: R1 current_default_ranking.json (店頭表示金利)
+ *   - 普通預金: R1 base_rate_history.json から最新スナップショットを抽出 (普通預金金利)
  *   - キャンペーン預金・貯金: existing campaign_all.json-backed state.records
  *
  * Loaded AFTER app.js and web_r1_bridge.js.
  */
 
 (() => {
-  const PATCH_VERSION = "20260816.4";
+  const PATCH_VERSION = "20261018.11";
   const R1_CURRENT_URL = "./r1_data/current_default_ranking.json";
+  const R1_HISTORY_URL = "./r1_data/base_rate_history.json";
 
   const PRODUCT_MODES = [
     ["base_term", "定期預金"],
@@ -30,9 +31,15 @@
   ];
   const PREF_SET = new Set(PREFECTURES);
 
-  const R1 = { rows: [], loaded: false, error: "" };
+  const R1 = { rows: [], historyRows: [], loaded: false, error: "", historyError: "" };
   const q = (s, root = document) => root.querySelector(s);
   const qa = (s, root = document) => Array.from(root.querySelectorAll(s));
+
+  // Prevent a one-frame flash of the old standalone R1 section.
+  const style = document.createElement("style");
+  style.id = "unifiedHeatmapV4Style";
+  style.textContent = `#r1BridgeShell{display:none!important}`;
+  document.head?.appendChild(style);
 
   const num = (v) => {
     const x = Number(String(v ?? "").replace(/[,%％\s]/g, ""));
@@ -45,61 +52,168 @@
     }
     return "";
   };
-  const inst = (row) => String(pick(row, "institution_name", "金融機関名")).trim();
-  const pref = (row) => String(pick(row, "prefecture", "都道府県")).trim();
-  const region = (row) => String(pick(row, "region", "地域")).trim();
-  const productFamily = (row) => String(pick(row, "product_family")).trim();
-  const productLabel = (row) => String(pick(row, "product_label", "product_name", "商品名", "product_type", "商品区分")).trim();
-  const tableContext = (row) => String(pick(row, "table_context", "source_table_context")).trim();
-  const sourceDate = (row) => String(pick(row, "source_as_of_date", "effective_from", "base_rate_source_date")).trim();
+  const inst = (row) => String(pick(row, "institution_name", "金融機関名", "bank_name", "name")).trim();
+  const pref = (row) => String(pick(row, "prefecture", "都道府県", "prefecture_name")).trim();
+  const region = (row) => String(pick(row, "region", "地域", "area")).trim();
+  const productFamily = (row) => String(pick(
+    row, "product_family", "product_category", "deposit_type", "account_type", "category"
+  )).trim();
+  const productLabel = (row) => String(pick(
+    row, "product_label", "product_name", "商品名", "product_type", "商品区分",
+    "deposit_name", "account_name", "product"
+  )).trim();
+  const tableContext = (row) => String(pick(
+    row, "table_context", "source_table_context", "rate_type", "rate_category", "context"
+  )).trim();
+  const sourceDate = (row) => String(pick(
+    row, "source_as_of_date", "effective_from", "base_rate_source_date", "as_of_date", "date"
+  )).trim();
+
+  const isoDateOnly = (value) => {
+    const s = String(value ?? "").trim().slice(0, 10);
+    return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : "";
+  };
+
+  const effectiveFrom = (row) => isoDateOnly(pick(row, "effective_from", "valid_from", "start_date"));
+  const effectiveTo = (row) => isoDateOnly(pick(row, "effective_to", "valid_to", "end_date"));
+  const observedDate = (row) => isoDateOnly(pick(row, "observed_at", "collected_at", "fetched_at", "updated_at"));
+  const rowSnapshotDate = (row) => effectiveFrom(row) || isoDateOnly(sourceDate(row)) || observedDate(row);
+
+  function todayIsoLocal() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+
+  function productText(row) {
+    return [
+      productFamily(row),
+      productLabel(row),
+      tableContext(row),
+      pick(row, "term_label", "term", "預入期間・年限", "tenor", "period"),
+      pick(row, "rate_type", "rate_category", "deposit_type", "account_type")
+    ].map((v) => String(v || "").trim()).filter(Boolean).join(" ");
+  }
 
   function normalizeType(value, name = "") {
     let t = String(value || "").trim();
     if (["JA", "JAバンク", "JAマリンバンク", "JFマリンバンク", "農業協同組合"].includes(t)) t = "JA等";
-    if (["政府系金融機関", "外国銀行", "銀行"].includes(t)) t = "その他銀行";
+    if (["政府系金融機関", "外国銀行", "銀行", "都市銀行"].includes(t)) t = "その他銀行";
     if (/商工中金|商工組合中央金庫/.test(name)) t = "その他銀行";
     if (/イオン銀行/.test(name)) t = "ネット銀行";
     return t;
   }
-  const instType = (row) => normalizeType(pick(row, "institution_type", "金融機関種別"), inst(row));
+  const instType = (row) => normalizeType(
+    pick(
+      row,
+      "institution_type_normalized",
+      "institution_type",
+      "金融機関種別",
+      "institution_type_raw",
+      "type",
+      "bank_type"
+    ),
+    inst(row)
+  );
 
   function termMonths(row) {
-    const direct = num(pick(row, "term_months", "term_month", "months"));
+    const direct = num(pick(
+      row, "term_months", "term_month", "months", "period_months", "tenor_months", "maturity_months"
+    ));
     if (direct !== null) return Math.round(direct);
-    const label = String(pick(row, "term_label", "term", "預入期間・年限")).trim();
-    let m = label.match(/(\d+)\s*(?:か月|ヶ月|ヵ月|カ月|月)/);
+
+    const years = num(pick(row, "term_years", "years", "period_years", "tenor_years"));
+    if (years !== null) return Math.round(years * 12);
+
+    const label = String(pick(
+      row, "term_label", "term", "預入期間・年限", "tenor", "period", "maturity"
+    )).trim();
+
+    let m = label.match(/(\d+(?:\.\d+)?)\s*(?:か月|ヶ月|ヵ月|カ月|月)/i);
+    if (m) return Math.round(Number(m[1]));
+    m = label.match(/(\d+(?:\.\d+)?)\s*年/i);
+    if (m) return Math.round(Number(m[1]) * 12);
+    m = label.match(/\b(\d+)\s*M\b/i);
     if (m) return Number(m[1]);
-    m = label.match(/(\d+)\s*年/);
-    return m ? Number(m[1]) * 12 : null;
+    m = label.match(/\b(\d+(?:\.\d+)?)\s*Y\b/i);
+    return m ? Math.round(Number(m[1]) * 12) : null;
   }
 
   function rate(row) {
-    return num(pick(row, "rate_percent", "interest_rate_numeric", "interest_rate", "base_rate_percent", "rate"));
+    if (typeof row?._comparableRate === "number" && Number.isFinite(row._comparableRate)) {
+      return row._comparableRate;
+    }
+    return num(pick(
+      row,
+      "rate_percent",
+      "effective_rate_percent",
+      "resolved_effective_rate_percent",
+      "effective_rate",
+      "interest_rate_numeric",
+      "interest_rate",
+      "base_rate_percent",
+      "default_rate_percent",
+      "standard_rate_percent",
+      "ordinary_rate_percent",
+      "deposit_rate_percent",
+      "rate"
+    ));
   }
 
   function isYen(row) {
-    const currency = String(pick(row, "currency", "通貨")).trim().toUpperCase();
-    if (currency && !/^(JPY|YEN|円)$/.test(currency)) return false;
-    const text = `${productLabel(row)} ${tableContext(row)} ${pick(row, "currency_label")}`;
+    const currency = String(pick(row, "currency", "通貨", "currency_code")).trim().toUpperCase();
+    if (currency && !/^(JPY|YEN|円|日本円)$/.test(currency)) return false;
+    const text = `${productText(row)} ${pick(row, "currency_label")}`;
     return !/外貨|米ドル|USドル|USD|ユーロ|EUR|豪ドル|AUD|NZドル|NZD|英ポンド|GBP/i.test(text);
   }
 
   function isOrdinary(row) {
     if (!isYen(row)) return false;
-    const text = `${productLabel(row)} ${pick(row, "term_label", "term", "預入期間・年限")} ${tableContext(row)}`;
-    return /普通預金|普通貯金|通常貯金/.test(text) || /ORDINARY|DEMAND|SAVINGS/i.test(productFamily(row));
+
+    // R1 has an explicit product_family taxonomy.  Ordinary deposits must be
+    // identified from that row-local field (or an exact row-local Japanese
+    // product label fallback) only.  Do NOT search the broad table context and
+    // do NOT use the token "SAVINGS": it also matches INSTALLMENT_SAVINGS
+    // (定期積金), which caused the false 0.392% / 27-prefecture result.
+    const family = productFamily(row).toUpperCase();
+    if (family === "ORDINARY_DEPOSIT") return true;
+    if (family) return false;
+
+    const label = productLabel(row).replace(/[\s　]+/g, "");
+    return /^(普通預金|普通貯金|通常貯金)$/.test(label);
+  }
+
+  function isR1OrdinaryEligible(row) {
+    // Fail closed when R1 exposes eligibility metadata.  The current frozen
+    // R1 release contains one ORDINARY_DEPOSIT row, but it is record_eligible=0;
+    // it must not be presented as a comparable current ordinary-deposit rate.
+    const eligible = String(pick(row, "record_eligible", "record_eligible_v072", "record_eligible_v071")).trim();
+    if (eligible && eligible !== "1") return false;
+
+    const measure = String(pick(row, "rate_measure_type", "rate_measure_type_v072")).trim();
+    if (measure && measure !== "NOMINAL_INTEREST_RATE") return false;
+
+    // Do not reject FUTURE_EFFECTIVE here forever.  currentOrdinaryRows()
+    // performs a date-aware snapshot gate, so a row becomes visible automatically
+    // once its source/effective date arrives.
+    return true;
   }
 
   function isTerm(row) {
     if (!isYen(row) || isOrdinary(row)) return false;
-    const text = `${productLabel(row)} ${tableContext(row)}`;
-    return /定期預金|定期貯金|スーパー定期|大口定期|定期/.test(text)
-      || /STANDARD_TERM|TIME_DEPOSIT|TERM_DEPOSIT/i.test(productFamily(row))
+    const text = productText(row);
+    return /定期預金|定期貯金|スーパー定期|大口定期|期日指定定期|定期/.test(text)
+      || /STANDARD_TERM|TIME_DEPOSIT|TERM_DEPOSIT|FIXED_DEPOSIT|FIXED_TERM/i.test(text)
       || termMonths(row) !== null;
   }
 
   function isNetwork(row) {
-    return /ネット銀行|インターネット銀行/.test(instType(row)) || /全国/.test(pref(row)) || /全国/.test(region(row));
+    const aggregation = String(pick(row, "prefecture_aggregation_eligible")).trim();
+    const scope = String(pick(row, "ranking_scope")).trim().toUpperCase();
+    return aggregation === "0"
+      || scope === "NATIONWIDE_ONLY"
+      || /ネット銀行|インターネット銀行/.test(instType(row))
+      || /全国/.test(pref(row))
+      || /全国/.test(region(row));
   }
 
   function selectedValues(selector) {
@@ -124,6 +238,50 @@
     return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
   }
 
+  function currentOrdinaryRows() {
+    const today = todayIsoLocal();
+    const source = (R1.historyRows.length ? R1.historyRows : R1.rows)
+      .filter((row) => isOrdinary(row) && isR1OrdinaryEligible(row) && rate(row) !== null);
+
+    // Future-effective rows are not part of today's ordinary-deposit snapshot.
+    const eligible = source.filter((row) => {
+      const from = effectiveFrom(row);
+      const to = effectiveTo(row);
+      const snapshot = rowSnapshotDate(row);
+      if (from && from > today) return false;
+      if (to && to < today) return false;
+      if (!from && snapshot && snapshot > today) return false;
+      return true;
+    });
+
+    // base_rate_history is historical. Keep only the latest available snapshot
+    // for each institution / prefecture / institution-type combination so old
+    // observations do not get averaged into the current ordinary-deposit rate.
+    const latest = new Map();
+    for (const row of eligible) {
+      const key = [inst(row), pref(row), instType(row)].join("\u241f");
+      if (!inst(row)) continue;
+      const date = rowSnapshotDate(row);
+      const current = latest.get(key);
+      if (!current || date > current.date) latest.set(key, { date, rows: [row] });
+      else if (date === current.date) current.rows.push(row);
+    }
+
+    return [...latest.values()].flatMap((item) => item.rows);
+  }
+
+  function campaignOrdinaryRows() {
+    try {
+      return (state.records || []).filter((record) =>
+        ["普通預金", "普通貯金"].includes(String(record.product_type || "").trim())
+        && record.status === "開催中"
+        && Number.isFinite(record._comparableRate)
+      );
+    } catch (_) {
+      return [];
+    }
+  }
+
   function representativeInstitutions(rows) {
     const groups = new Map();
     for (const row of rows) {
@@ -133,33 +291,25 @@
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(row);
     }
+
     const out = [];
     for (const group of groups.values()) {
-      const valid = group.map((row) => ({ row, value: rate(row), amount: num(pick(row, "amount_min", "amount_min_yen", "minimum_amount", "deposit_amount_min")) })).filter((x) => x.value !== null);
-      if (!valid.length) continue;
-      let chosen = null;
-      const distinct = [...new Set(valid.map((x) => x.value.toFixed(9)))];
-      if (distinct.length === 1) {
-        chosen = valid[0].value;
-      } else {
-        const withAmount = valid.filter((x) => x.amount !== null).sort((a, b) => a.amount - b.amount || a.value - b.value);
-        if (withAmount.length) {
-          const minAmount = withAmount[0].amount;
-          const smallest = withAmount.filter((x) => x.amount === minAmount);
-          const smallRates = [...new Set(smallest.map((x) => x.value.toFixed(9)))];
-          if (smallRates.length === 1) chosen = smallest[0].value;
-        }
-      }
-      // 金額帯が曖昧な場合は推測せず除外。
-      if (chosen === null) continue;
+      const validRates = group.map(rate).filter(Number.isFinite);
+      if (!validRates.length) continue;
+
+      // Existing heatmap methodology:
+      // first average within each institution, then weight institutions equally
+      // when calculating prefectural averages.
+      const institutionAverage = avg(validRates);
       const dates = group.map(sourceDate).filter(Boolean).sort();
+
       out.push({
         institution: inst(group[0]),
         institution_type: instType(group[0]),
         prefecture: pref(group[0]),
-        averageRate: chosen,
-        maximumRate: chosen,
-        minimumRate: chosen,
+        averageRate: institutionAverage,
+        maximumRate: Math.max(...validRates),
+        minimumRate: Math.min(...validRates),
         records: group,
         source_date: dates.at(-1) || ""
       });
@@ -171,10 +321,15 @@
     const term = currentTerm();
     const selectedTypes = selectedValues("#heatmapInstitutionTypeFilter");
     const typeActive = selectedTypes.size > 0;
-    let rows = R1.rows.filter(isYen);
-    rows = mode === "base_ordinary"
-      ? rows.filter(isOrdinary)
-      : rows.filter((row) => isTerm(row) && termMonths(row) === term.months);
+    let ordinarySource = "";
+    let rows;
+    if (mode === "base_ordinary") {
+      rows = currentOrdinaryRows();
+      ordinarySource = rows.length ? "r1" : "campaign_all";
+      if (!rows.length) rows = campaignOrdinaryRows();
+    } else {
+      rows = R1.rows.filter((row) => isYen(row) && isTerm(row) && termMonths(row) === term.months);
+    }
 
     const regionalRows = rows.filter((row) => !isNetwork(row) && PREF_SET.has(pref(row)) && (!typeActive || selectedTypes.has(instType(row))));
     const onlineRows = rows.filter(isNetwork);
@@ -219,8 +374,9 @@
       onlineInstitutions,
       nationalAverage: avg(regionalInstitutions.map((x) => x.averageRate)),
       onlineAverage: avg(onlineInstitutions.map((x) => x.averageRate)),
+      ordinarySource,
       pending: !R1.loaded,
-      error: R1.error
+      error: mode === "base_ordinary" ? (R1.historyError || R1.error) : R1.error
     };
   }
 
@@ -317,15 +473,13 @@
       help.textContent = mode === "campaign"
         ? "キャンペーン預金・貯金の比較可能金利を集計します。店頭表示金利は含みません。"
         : mode === "base_ordinary"
-          ? "R1通常金利データの普通預金・普通貯金金利を表示します。普通預金には預入年限がないため期間切替は使用しません。"
+          ? "R1の比較可能な普通預金金利を優先し、利用可能なR1データがない場合は全国JSONの開催中普通預金・普通貯金を表示します。普通預金には預入年限がないため期間切替は使用しません。"
           : "R1通常金利データの定期預金・定期貯金の店頭表示金利を表示します。キャンペーン金利は含みません。";
     }
   }
 
   function hideSeparateR1Heatmap() {
-    // The old R1 bridge is no longer a user-facing section.  Its data files
-    // remain available to the unified prefecture heatmap and R1 matrix logic,
-    // but the standalone BASE RATE / EFFECTIVE RATE shell must not appear.
+    // Keep the R1 data source, remove only the standalone visual section.
     const shell = q("#r1BridgeShell");
     if (!shell) return false;
     shell.hidden = true;
@@ -359,7 +513,13 @@
     if (summary) {
       if (data.pending) summary.textContent = "R1通常金利データを読み込み中…";
       else if (data.error && data.mode !== "campaign") summary.textContent = `R1通常金利データ読込エラー: ${data.error}`;
-      else summary.textContent = `${data.label}${data.mode === "base_ordinary" ? "" : ` / ${data.term.label}`} / ${data.rankedPrefectures.length}都道府県 / 地域金融機関 ${data.regionalInstitutions.length}先 / 全国向け ${data.onlineInstitutions.length}先`;
+      else if (data.mode === "base_ordinary" && data.ordinarySource === "campaign_all" && (data.regionalInstitutions.length > 0 || data.onlineInstitutions.length > 0)) {
+        summary.textContent = `普通預金 / 全国JSON（開催中） / ${data.rankedPrefectures.length}都道府県 / 地域金融機関 ${data.regionalInstitutions.length}先 / 全国向け ${data.onlineInstitutions.length}先`;
+      } else if (data.mode === "base_ordinary" && R1.historyRows.length > 0 && data.regionalInstitutions.length === 0 && data.onlineInstitutions.length === 0) {
+        summary.textContent = `普通預金 / R1履歴 ${R1.historyRows.length}行読込済み / 比較可能な普通預金金利0件（R1普通預金収集を拡充中）`;
+      } else if (data.mode !== "campaign" && R1.rows.length > 0 && data.regionalInstitutions.length === 0 && data.onlineInstitutions.length === 0) {
+        summary.textContent = `${data.label}${data.mode === "base_ordinary" ? "" : ` / ${data.term.label}`} / R1 ${R1.rows.length}行読込済み / 対象金利0件`;
+      } else summary.textContent = `${data.label}${data.mode === "base_ordinary" ? "" : ` / ${data.term.label}`} / ${data.rankedPrefectures.length}都道府県 / 地域金融機関 ${data.regionalInstitutions.length}先 / 全国向け ${data.onlineInstitutions.length}先`;
     }
 
     const cards = q("#heatmapSummaryCards");
@@ -392,7 +552,7 @@
     if (ranking) {
       ranking.innerHTML = data.rankedPrefectures.length
         ? data.rankedPrefectures.map((item, i) => `<button class="heatmap-ranking-row ${item.prefecture === state.heatmapSelectedPrefecture ? "is-selected" : ""}" data-prefecture="${item.prefecture}" type="button"><span class="heatmap-rank-number">${i + 1}</span><span class="heatmap-rank-name">${item.prefecture}</span><strong>${formatRate(item.averageRate)}</strong><small>${item.institutionCount}金融機関</small></button>`).join("")
-        : `<div class="heatmap-empty">${data.pending ? "R1通常金利データを読み込み中です。" : "比較可能な都道府県データがありません。"}</div>`;
+        : `<div class="heatmap-empty">${data.pending ? "通常金利データを読み込み中です。" : data.mode === "base_ordinary" ? "比較可能な開催中の普通預金金利がありません。" : "比較可能な都道府県データがありません。"}</div>`;
       qa(".heatmap-ranking-row", ranking).forEach((button) => button.addEventListener("click", () => {
         state.heatmapSelectedPrefecture = button.dataset.prefecture;
         renderSelection();
@@ -493,10 +653,7 @@
     else if (typeof state !== "undefined") state.heatmapRendered = false;
   }
 
-  // Replace existing app.js heatmap function bindings.  This must run only
-  // after app.js has executed; the installer therefore loads this patch with
-  // `defer` after app.js and web_r1_bridge.js.  We retry during init as a
-  // defensive measure for cached/older HTML.
+  // Replace existing app.js heatmap function bindings.
   function installOverrides() {
     let installed = false;
     try {
@@ -584,6 +741,51 @@
     }, true);
   }
 
+  function extractR1Rows(json) {
+    if (Array.isArray(json)) return json;
+    if (!json || typeof json !== "object") return [];
+
+    const preferredKeys = [
+      "rows", "records", "data", "items", "ranking", "rankings",
+      "current", "current_default_ranking", "results"
+    ];
+    for (const key of preferredKeys) {
+      if (Array.isArray(json[key])) return json[key];
+    }
+
+    // Defensive fallback: choose the largest top-level array of objects.
+    const candidates = Object.values(json)
+      .filter((value) => Array.isArray(value) && value.some((x) => x && typeof x === "object"))
+      .sort((a, b) => b.length - a.length);
+    return candidates[0] || [];
+  }
+
+  function logR1Diagnostics() {
+    if (!R1.loaded) return;
+    const yen = R1.rows.filter(isYen);
+    const term = yen.filter(isTerm);
+    const historyYen = R1.historyRows.filter(isYen);
+    const historyOrdinary = historyYen.filter(isOrdinary);
+    const currentOrdinary = currentOrdinaryRows();
+    const withRate = R1.rows.filter((row) => rate(row) !== null);
+    console.info("[UnifiedHeatmap v4.4] R1 diagnostics", {
+      rawRows: R1.rows.length,
+      historyRows: R1.historyRows.length,
+      rowsWithNormalizedType: R1.rows.filter((row) => String(pick(row, "institution_type_normalized")).trim()).length,
+      rowsWithResolvedType: R1.rows.filter((row) => instType(row)).length,
+      selectedInstitutionTypes: [...selectedValues("#heatmapInstitutionTypeFilter")],
+      yenRows: yen.length,
+      termRows: term.length,
+      historyOrdinaryRows: historyOrdinary.length,
+      currentOrdinaryRows: currentOrdinary.length,
+      currentOrdinaryInstitutions: new Set(currentOrdinary.map(inst).filter(Boolean)).size,
+      rateRows: withRate.length,
+      oneYearTermRows: term.filter((row) => termMonths(row) === 12).length,
+      threeYearTermRows: term.filter((row) => termMonths(row) === 36).length,
+      fiveYearTermRows: term.filter((row) => termMonths(row) === 60).length
+    });
+  }
+
   async function init() {
     installOverrides();
     configureControls();
@@ -592,22 +794,32 @@
     hideSeparateR1Heatmap();
     bindControls();
 
-    // web_r1_bridge.js creates #r1BridgeShell on DOMContentLoaded.  Keep a
-    // short-lived observer so the standalone R1 shell cannot reappear because
-    // of execution order or a future async re-render.
     const observer = new MutationObserver(() => hideSeparateR1Heatmap());
     if (document.body) observer.observe(document.body, { childList: true, subtree: true });
     window.setTimeout(() => observer.disconnect(), 5000);
 
     try {
       const response = await fetch(R1_CURRENT_URL, { cache: "no-store" });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) throw new Error(`current_default_ranking.json: HTTP ${response.status}`);
       const json = await response.json();
-      R1.rows = Array.isArray(json) ? json : (Array.isArray(json.rows) ? json.rows : Array.isArray(json.records) ? json.records : []);
-      R1.loaded = true;
+      R1.rows = extractR1Rows(json);
+      R1.error = R1.rows.length ? "" : "current_default_ranking.json に読み取り可能な明細配列がありません。";
     } catch (error) {
       R1.error = String(error?.message || error);
     }
+
+    try {
+      const response = await fetch(R1_HISTORY_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error(`base_rate_history.json: HTTP ${response.status}`);
+      const json = await response.json();
+      R1.historyRows = extractR1Rows(json);
+      R1.historyError = R1.historyRows.length ? "" : "base_rate_history.json に読み取り可能な明細配列がありません。";
+    } catch (error) {
+      R1.historyError = String(error?.message || error);
+    }
+
+    R1.loaded = true;
+    logR1Diagnostics();
 
     installOverrides();
     configureControls(appUiReady());
@@ -615,8 +827,6 @@
     bindControls();
     if (typeof state !== "undefined" && state.activeView === "heatmap") renderUnifiedSafe();
 
-    // One final retry catches app/bridge initialization that completed in the
-    // same event turn after this handler.
     window.setTimeout(() => {
       installOverrides();
       configureControls(appUiReady());
