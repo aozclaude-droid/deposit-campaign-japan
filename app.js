@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.18.2";
+const APP_VERSION = "2026.10.18.3";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -555,6 +555,20 @@ function renderRateAnalytics() {
 function heatmapTerm() {
   return HEATMAP_TERMS.find((term) => term.key === state.heatmapTermKey) || HEATMAP_TERMS[0];
 }
+function syncHeatmapTermControls() {
+  const selectedProduct = selectedValues("#heatmapProductFilter")[0] || "";
+  const ordinaryMode = ORDINARY_PRODUCT_TYPES.has(selectedProduct);
+  if (ordinaryMode) state.heatmapTermKey = "ordinary";
+  else if (state.heatmapTermKey === "ordinary") state.heatmapTermKey = "1y";
+  const legend = $("#heatmapTermLegend");
+  if (legend) legend.textContent = ordinaryMode ? "預入期間・年限（普通預金は年限なし）" : "預入期間・年限";
+  $$(".heatmap-term-button").forEach((button) => {
+    const active = !ordinaryMode && button.dataset.heatmapTerm === state.heatmapTermKey;
+    button.disabled = ordinaryMode;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+}
 function average(values) {
   const valid = values.filter(Number.isFinite);
   return valid.length ? valid.reduce((sum, value) => sum + value, 0) / valid.length : null;
@@ -568,7 +582,8 @@ function resetHeatmapControls(render = true) {
     button.setAttribute("aria-pressed", active ? "true" : "false");
   });
   const products = uniqueSorted("product_type");
-  setSelectedValues("#heatmapProductFilter", ["定期預金", "定期貯金"].filter((value) => products.includes(value)));
+  setSelectedValues("#heatmapProductFilter", products.includes("定期預金") ? ["定期預金"] : products.slice(0, 1));
+  syncHeatmapTermControls();
   setSelectedValues("#heatmapInstitutionTypeFilter", uniqueSorted("institution_type").filter((value) => value !== "ネット銀行"));
   setSelectedValues("#heatmapStatusFilter", state.records.some((record) => record.status === "開催中") ? ["開催中"] : []);
   if (render && state.activeView === "heatmap") renderPrefectureHeatmap();
@@ -1199,18 +1214,9 @@ function bindEvents() {
   });
   $("#resetAnalytics").addEventListener("click", () => resetAnalyticsControls(true));
   $$(".heatmap-term-button").forEach((button) => button.addEventListener("click", () => {
+    if (button.disabled) return;
     state.heatmapTermKey = button.dataset.heatmapTerm;
     state.heatmapSelectedPrefecture = "";
-    if (state.heatmapTermKey === "ordinary") {
-      const ordinaryProducts = uniqueSorted("product_type").filter((value) => ORDINARY_PRODUCT_TYPES.has(value));
-      setSelectedValues("#heatmapProductFilter", ordinaryProducts);
-    } else {
-      const selectedProducts = selectedValues("#heatmapProductFilter");
-      if (selectedProducts.length && selectedProducts.every((value) => ORDINARY_PRODUCT_TYPES.has(value))) {
-        const products = uniqueSorted("product_type");
-        setSelectedValues("#heatmapProductFilter", ["定期預金", "定期貯金"].filter((value) => products.includes(value)));
-      }
-    }
     $$(".heatmap-term-button").forEach((item) => {
       const active = item === button;
       item.classList.toggle("is-active", active);
@@ -1219,15 +1225,7 @@ function bindEvents() {
     scheduleHeatmap();
   }));
   $("#heatmapProductFilter").addEventListener("change", () => {
-    const selectedProducts = selectedValues("#heatmapProductFilter");
-    if (selectedProducts.length && selectedProducts.every((value) => ORDINARY_PRODUCT_TYPES.has(value))) {
-      state.heatmapTermKey = "ordinary";
-      $$(".heatmap-term-button").forEach((button) => {
-        const active = button.dataset.heatmapTerm === state.heatmapTermKey;
-        button.classList.toggle("is-active", active);
-        button.setAttribute("aria-pressed", active ? "true" : "false");
-      });
-    }
+    syncHeatmapTermControls();
     state.heatmapSelectedPrefecture = "";
     scheduleHeatmap();
   });
