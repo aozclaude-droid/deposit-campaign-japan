@@ -23,7 +23,7 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.10.18.1</span>
+<span class="app-version" id="appVersion">画面版 2026.10.18.2</span>
 </div>
 </div>
 </header>
@@ -379,6 +379,7 @@
 <button class="btn heatmap-term-button is-active" data-heatmap-term="1y" type="button" aria-pressed="true">1年</button>
 <button class="btn heatmap-term-button" data-heatmap-term="3y" type="button" aria-pressed="false">3年</button>
 <button class="btn heatmap-term-button" data-heatmap-term="5y" type="button" aria-pressed="false">5年</button>
+<button class="btn heatmap-term-button" data-heatmap-term="ordinary" type="button" aria-pressed="false">普通預金</button>
 </div>
 </fieldset>
 <label>商品区分
@@ -396,7 +397,7 @@
 <span class="analytics-auto-update-note">条件を変更すると自動更新されます。</span>
 </div>
 </div>
-<p class="heatmap-help">同じ金融機関に複数の対象明細がある場合は、その金融機関内で平均した後、各金融機関を均等に扱って都道府県平均を算出します。数値化できない上乗せ式・倍率式は除外します。</p>
+<p class="heatmap-help">「普通預金」は年限を指定せず、普通預金・普通貯金の数値化可能な金利を集計します。同じ金融機関に複数の対象明細がある場合は、その金融機関内で平均した後、各金融機関を均等に扱って都道府県平均を算出します。数値化できない上乗せ式・倍率式は除外します。</p>
 <div class="heatmap-summary-grid" id="heatmapSummaryCards"></div>
 <div class="heatmap-main-grid">
 <section class="heatmap-map-card" aria-label="日本地図ヒートマップ">
@@ -652,7 +653,7 @@
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="app.js?v=20261018-1"></script>
+<script defer="" src="app.js?v=20261018-2"></script>
   <script defer src="web_r1_bridge.js" data-r1-web-bridge="1"></script>
   <script defer src="./web_heatmap_unified_patch.js?v=20260816.10"></script>
 </body>

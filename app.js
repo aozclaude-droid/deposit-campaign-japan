@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.18.1";
+const APP_VERSION = "2026.10.18.2";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -67,7 +67,11 @@ const ANALYTICS_TERMS = [
   { key: "3y", label: "3年", months: 36 },
   { key: "5y", label: "5年", months: 60 }
 ];
-const HEATMAP_TERMS = ANALYTICS_TERMS.filter((term) => ["1y", "3y", "5y"].includes(term.key));
+const ORDINARY_PRODUCT_TYPES = new Set(["普通預金", "普通貯金"]);
+const HEATMAP_TERMS = [
+  ...ANALYTICS_TERMS.filter((term) => ["1y", "3y", "5y"].includes(term.key)),
+  { key: "ordinary", label: "普通預金", months: null }
+];
 const PREFECTURE_CODE_NAMES = Object.fromEntries(PREFECTURE_ORDER.map((name, index) => [String(index + 1), name]));
 const HEATMAP_COLORS = [
   "#eaf6ff", "#d4ebfa", "#b7dcef", "#f5e3df",
@@ -116,7 +120,8 @@ const campaignKey = (r) => `${text(r.institution_name)}\u241f${text(r.campaign_n
 const groupKey = (r) => [r.institution_name, r.campaign_name, r.campaign_start_date, r.campaign_end_date, r.product_type, r.status].map(text).join("\u241f");
 const statusClass = (status) => ({"開催中":"status-active","開催予定":"status-scheduled","終了済み":"status-ended","要確認":"status-review"}[status] || "status-review");
 function effectiveStatus(record) {
-  const sourceStatus = text(record.status) || "要確認";
+  const rawStatus = text(record.status) || "要確認";
+  const sourceStatus = ({ active: "開催中", "実施中": "開催中" })[rawStatus] || rawStatus;
   const start = parseIso(text(record.campaign_start_date));
   const end = parseIso(record.campaign_end_date == null ? "" : text(record.campaign_end_date));
   const today = parseIso(TODAY_ISO);
@@ -708,7 +713,10 @@ function buildHeatmapData() {
   const typeFilterActive = institutionTypes.size > 0;
   const statusFilterActive = statuses.size > 0;
   const termRecords = state.records.filter((record) => {
-    if (record._analyticsTermKey !== term.key || !Number.isFinite(record._comparableRate)) return false;
+    const matchesTerm = term.key === "ordinary"
+      ? ORDINARY_PRODUCT_TYPES.has(record.product_type)
+      : record._analyticsTermKey === term.key;
+    if (!matchesTerm || !Number.isFinite(record._comparableRate)) return false;
     if (productFilterActive && !products.has(record.product_type)) return false;
     if (statusFilterActive && !statuses.has(record.status)) return false;
     return true;
@@ -888,8 +896,13 @@ function transferHeatmapToTimeline({ prefecture = "", institution = "", online =
   if (prefecture) setSelectedValues("#prefectureFilter", [prefecture]);
   if (online) setSelectedValues("#institutionTypeFilter", ["ネット銀行"]);
   else if (data.institutionTypes.length) setSelectedValues("#institutionTypeFilter", data.institutionTypes);
-  $("#termSearch").value = data.term.label;
-  state.timelineExactTermKey = data.term.key;
+  if (data.term.key === "ordinary") {
+    $("#termSearch").value = "";
+    state.timelineExactTermKey = "";
+  } else {
+    $("#termSearch").value = data.term.label;
+    state.timelineExactTermKey = data.term.key;
+  }
   $("#institutionSearch").value = institution;
   applyFilters();
   setActiveView("timeline", { scroll: true });
@@ -1188,6 +1201,16 @@ function bindEvents() {
   $$(".heatmap-term-button").forEach((button) => button.addEventListener("click", () => {
     state.heatmapTermKey = button.dataset.heatmapTerm;
     state.heatmapSelectedPrefecture = "";
+    if (state.heatmapTermKey === "ordinary") {
+      const ordinaryProducts = uniqueSorted("product_type").filter((value) => ORDINARY_PRODUCT_TYPES.has(value));
+      setSelectedValues("#heatmapProductFilter", ordinaryProducts);
+    } else {
+      const selectedProducts = selectedValues("#heatmapProductFilter");
+      if (selectedProducts.length && selectedProducts.every((value) => ORDINARY_PRODUCT_TYPES.has(value))) {
+        const products = uniqueSorted("product_type");
+        setSelectedValues("#heatmapProductFilter", ["定期預金", "定期貯金"].filter((value) => products.includes(value)));
+      }
+    }
     $$(".heatmap-term-button").forEach((item) => {
       const active = item === button;
       item.classList.toggle("is-active", active);
@@ -1195,7 +1218,20 @@ function bindEvents() {
     });
     scheduleHeatmap();
   }));
-  ["#heatmapProductFilter", "#heatmapInstitutionTypeFilter", "#heatmapStatusFilter"].forEach((id) => $(id).addEventListener("change", () => {
+  $("#heatmapProductFilter").addEventListener("change", () => {
+    const selectedProducts = selectedValues("#heatmapProductFilter");
+    if (selectedProducts.length && selectedProducts.every((value) => ORDINARY_PRODUCT_TYPES.has(value))) {
+      state.heatmapTermKey = "ordinary";
+      $$(".heatmap-term-button").forEach((button) => {
+        const active = button.dataset.heatmapTerm === state.heatmapTermKey;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+    state.heatmapSelectedPrefecture = "";
+    scheduleHeatmap();
+  });
+  ["#heatmapInstitutionTypeFilter", "#heatmapStatusFilter"].forEach((id) => $(id).addEventListener("change", () => {
     state.heatmapSelectedPrefecture = "";
     scheduleHeatmap();
   }));
