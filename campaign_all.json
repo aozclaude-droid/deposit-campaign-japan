@@ -2,7 +2,7 @@
   "metadata": {
     "schema_version": "1.0",
     "region": "全国",
-    "created_at": "2026-10-17T20:08:37+09:00",
+    "created_at": "2026-10-21T19:35:05+09:00",
     "source_files": [
       "campaign_hokkaido_tohoku(1).csv",
       "campaign_hokkaido_tohoku(1).json",
@@ -25,12 +25,12 @@
       "campaign_kyushu_okinawa(1).csv",
       "campaign_kyushu_okinawa(1).json"
     ],
-    "record_count": 16582,
-    "institution_count": 887,
-    "campaign_count": 3793,
+    "record_count": 16586,
+    "institution_count": 888,
+    "campaign_count": 3796,
     "review_count": 10633,
-    "date_min": "2009-05-21",
-    "date_max": "2027-05-31",
+    "date_min": "2008-08-02",
+    "date_max": "2029-03-30",
     "notes": [
       "開催状況の再判定基準日: 2026-07-19",
       "地域別CSVを明細データの基礎とし、地域別JSONは件数・内容・metadata確認に使用",
@@ -69,7 +69,8 @@
       "manual_corrections.csv による手動訂正を79件適用: 2026-08-29T17:07:23+09:00",
       "manual_corrections.csv による手動訂正を15件適用: 2026-08-31T21:58:57+09:00",
       "manual_corrections.csv による手動訂正を11件適用: 2026-09-13T13:40:43+09:00",
-      "2026-10-17: 日付前後矛盾36明細を原典・周辺履歴で再照査し、35明細を解消。北おおさか信用金庫の総当たり展開12行を除外。1明細は原文保持で保留。"
+      "2026-10-17: 日付前後矛盾36明細を原典・周辺履歴で再照査し、35明細を解消。北おおさか信用金庫の総当たり展開12行を除外。1明細は原文保持で保留。",
+      "2026-10-21: 全国試運転の意味重複を照合し、未収録の高確度資料だけをCodex照査後に追加。"
     ]
   },
   "records": [
@@ -298548,6 +298549,78 @@
       "product_url": "https://www.shinkin.co.jp/anan/_news/contents/21278/NewsRelease_20261015.pdf",
       "status": "開催予定",
       "review_notes": "AIテキスト抽出では金利数字欠落のため保留。公式PDF全ページ画像を目視し、年10％、期間、年限、金額、対象条件を確認。全国増分巡回（2026-10-17基準）source_id=16f0fd2655b2033f"
+    },
+    {
+      "region": "関東",
+      "prefecture": "東京都",
+      "institution_name": "足立成和信用金庫",
+      "institution_type": "信用金庫",
+      "product_type": "定期預金",
+      "campaign_name": "創立100周年記念 定期預金「フクフク」",
+      "campaign_start_date": "2026-09-01",
+      "campaign_end_date": "2026-12-30",
+      "term": "3年",
+      "interest_rate": "年1.075％（税引前）",
+      "rate_condition": "スーパー定期・スーパー定期300基準金利＋0.40％",
+      "eligibility_conditions": "個人・個人事業主（法人不可）。原則、既存定期預金に合算して預け入れる場合は新たに50万円以上を上乗せ。",
+      "deposit_amount": "50万円以上1,000万円未満（1万円単位）",
+      "product_url": "https://www.adachiseiwa.co.jp/application/files/5117/9187/2193/20261013_fukufuku.pdf",
+      "status": "開催中",
+      "review_notes": "募集総額100億円。募集総額に達し次第終了。満期後は継続日の基準金利で自動継続。公式PDFをCodexで目視照査（2026-10-21）。"
+    },
+    {
+      "region": "関東",
+      "prefecture": "東京都",
+      "institution_name": "足立成和信用金庫",
+      "institution_type": "信用金庫",
+      "product_type": "定期預金",
+      "campaign_name": "創立100周年記念 定期預金「フクフク」",
+      "campaign_start_date": "2026-09-01",
+      "campaign_end_date": "2026-12-30",
+      "term": "5年",
+      "interest_rate": "年1.175％（税引前）",
+      "rate_condition": "スーパー定期・スーパー定期300基準金利＋0.45％",
+      "eligibility_conditions": "個人・個人事業主（法人不可）。原則、既存定期預金に合算して預け入れる場合は新たに50万円以上を上乗せ。",
+      "deposit_amount": "50万円以上1,000万円未満（1万円単位）",
+      "product_url": "https://www.adachiseiwa.co.jp/application/files/5117/9187/2193/20261013_fukufuku.pdf",
+      "status": "開催中",
+      "review_notes": "募集総額100億円。募集総額に達し次第終了。満期後は継続日の基準金利で自動継続。公式PDFをCodexで目視照査（2026-10-21）。"
+    },
+    {
+      "region": "関東",
+      "prefecture": "東京都",
+      "institution_name": "足立成和信用金庫",
+      "institution_type": "信用金庫",
+      "product_type": "定期積金",
+      "campaign_name": "創立100周年記念 定期積金「コツコツ」",
+      "campaign_start_date": "2026-09-01",
+      "campaign_end_date": "2026-12-30",
+      "term": "5年",
+      "interest_rate": "年1.725％（税引前）",
+      "rate_condition": "定期積金基準金利＋1.05％",
+      "eligibility_conditions": "個人・個人事業主（法人不可）。自動振替契約のみ。既存定期積金の中途解約による本商品作成は原則不可。",
+      "deposit_amount": "毎月1万円以上5万円以下（1,000円単位）",
+      "product_url": "https://www.adachiseiwa.co.jp/application/files/2217/9187/2194/20261013_kotsukotsu.pdf",
+      "status": "開催中",
+      "review_notes": "募集総額20億円。募集総額に達し次第終了。公式PDFをCodexで目視照査（2026-10-21）。"
+    },
+    {
+      "region": "近畿",
+      "prefecture": "和歌山県",
+      "institution_name": "紀陽銀行",
+      "institution_type": "地方銀行",
+      "product_type": "定期預金",
+      "campaign_name": "見舞金付定期預金「BCP預金」",
+      "campaign_start_date": "2026-04-01",
+      "campaign_end_date": "2026-06-01",
+      "term": "1年",
+      "interest_rate": "店頭表示の大口定期預金利率",
+      "rate_condition": "預入時の約定利率を満期時まで適用",
+      "eligibility_conditions": "当行営業エリア（東京を除く）に本社または事業所を有する法人。指定地点で震度6強以上の場合、預入額の5％（最大1,000万円）を見舞金として支払う。",
+      "deposit_amount": "2,000万円以上2億円以下（1,000万円単位、1法人上限2億円）",
+      "product_url": "https://www.kiyobank.co.jp/personal/get_pdf.php?f=00003158",
+      "status": "終了済み",
+      "review_notes": "募集総額400億円。預入日2026-07-01。全国試運転の公式資料をCodexで照査（2026-10-21）。"
     }
   ]
 }

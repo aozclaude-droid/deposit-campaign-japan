@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.18.5";
+const APP_VERSION = "2026.10.21.1";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -12,52 +12,15 @@ const PREFECTURE_ORDER = [
   "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
 ];
 const PREFECTURE_RANK = new Map(PREFECTURE_ORDER.map((name, index) => [name, index]));
-const DATA_URL = "campaign_all.json?v=20261018-1";
+const DATA_URL = "campaign_all.json?v=20261021-1";
 const LATEST_UPDATE = {
-  publishedOn: "2026-10-18",
-  label: "2026年10月18日反映（全国巡回・追加照査・日付整合）",
-  expectedTotalRecords: 16582,
-  addedStartIndex: 15917,
-  addedCount: 665,
-  removedCount: 12,
-  updatedRecordKeys: [
-  "かながわ信用金庫␟かながわ信用金庫 Newかなしん定期預金 PDF␟2024-07-01␟2025-03-31␟1年␟0.50％␟␟https://www.shinkin.co.jp/kanagawa/news/2024/20240701-1.pdf",
-  "横浜銀行␟横浜銀行 相続定期預金プラン␟2020-04-01␟2020-09-30␟3か月␟1.00％␟␟https://www.boy.co.jp/kojin/souzoku/teiki/index.html",
-  "セブン銀行␟セブン銀行 夏の定期預金キャンペーン␟2026-06-23␟2026-08-31␟1年␟1.20％␟1年超2年未満の期日指定も対象␟https://www.sevenbank.co.jp/oos/adv/tmp_293.html",
-  "清水銀行␟清水銀行 2025しみず夏CAN!␟2025-06-09␟2025-08-29␟1年␟0.55％␟␟https://www.shimizubank.co.jp/article_source/data/news/detail/2025can.html",
-  "清水銀行␟清水銀行 2025しみず夏CAN!␟2025-06-09␟2025-08-29␟1年␟0.60％␟␟https://www.shimizubank.co.jp/article_source/data/news/detail/2025can.html",
-  "清水銀行␟清水銀行 2025しみず夏CAN!␟2025-06-09␟2025-08-29␟3年␟0.65％␟␟https://www.shimizubank.co.jp/article_source/data/news/detail/2025can.html",
-  "清水銀行␟清水銀行 2025しみず夏CAN!␟2025-06-09␟2025-08-29␟3年␟0.70％␟␟https://www.shimizubank.co.jp/article_source/data/news/detail/2025can.html",
-  "清水銀行␟清水銀行 2025しみず夏CAN!␟2025-06-09␟2025-08-29␟5年␟0.75％␟␟https://www.shimizubank.co.jp/article_source/data/news/detail/2025can.html",
-  "清水銀行␟清水銀行 2025しみず夏CAN!␟2025-06-09␟2025-08-29␟5年␟0.80％␟␟https://www.shimizubank.co.jp/article_source/data/news/detail/2025can.html",
-  "JAたかつき␟JAたかつき ウィンターキャンペー PDF␟2018-11-01␟2019-01-31␟1年␟年0.20％␟組合員␟https://www.ja-takatsuki.or.jp/uploads/winter.pdf",
-  "JAたかつき␟JAたかつき ウィンターキャンペー PDF␟2018-11-01␟2019-01-31␟1年␟年0.15％␟非組合␟https://www.ja-takatsuki.or.jp/uploads/winter.pdf",
-  "JAたかつき␟JAたかつき ウィンターキャンペー PDF␟2018-11-01␟2019-01-31␟3年␟年0.25％␟組合員␟https://www.ja-takatsuki.or.jp/uploads/winter.pdf",
-  "JAたかつき␟JAたかつき ウィンターキャンペー PDF␟2018-11-01␟2019-01-31␟3年␟年0.20％␟非組合␟https://www.ja-takatsuki.or.jp/uploads/winter.pdf",
-  "北おおさか信用金庫␟北おおさか信用金庫 年金定期預金「健寿」␟2019-04-01␟2020-03-31␟1年␟店頭金利＋0.25％＝0.26％ 2019/04/01から␟␟https://www.kitaosaka-shinkin.co.jp/personal/76ea427572535d623ddc9a73d7bd4c3b640a57c1.pdf",
-  "北おおさか信用金庫␟北おおさか信用金庫 年金定期預金「健寿」␟2020-04-01␟2021-03-31␟1年␟店頭金利＋0.20％＝0.21％ 2020/04/01から␟␟https://www.kitaosaka-shinkin.co.jp/personal/76ea427572535d623ddc9a73d7bd4c3b640a57c1.pdf",
-  "北おおさか信用金庫␟北おおさか信用金庫 年金定期預金「健寿」␟2021-04-01␟2025-03-02␟1年␟店頭金利＋0.20％＝0.202％ 2021/04/01から␟␟https://www.kitaosaka-shinkin.co.jp/personal/76ea427572535d623ddc9a73d7bd4c3b640a57c1.pdf",
-  "北おおさか信用金庫␟北おおさか信用金庫 年金定期預金「健寿」␟2025-03-03␟␟1年␟店頭金利＋0.20％＝0.425％ 2025/03/03から␟␟https://www.kitaosaka-shinkin.co.jp/personal/76ea427572535d623ddc9a73d7bd4c3b640a57c1.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟10年␟年0.500％␟100万円以上/300万円以上␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟1年␟年0.300％␟100万円以上␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟1年␟年0.150％␟30万円以上100万円未満␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟2年␟年0.350％␟100万円以上␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟2年␟年0.150％␟30万円以上100万円未満␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟3年␟年0.400％␟100万円以上␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟3年␟年0.200％␟30万円以上100万円未満␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟4年␟年0.400％␟100万円以上␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟4年␟年0.200％␟30万円以上100万円未満␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟5年␟年0.450％␟100万円以上␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大同信用組合␟大同信用組合 ニュースーパー定期II␟2022-12-01␟2023-01-31␟5年␟年0.250％␟30万円以上100万円未満␟https://www.daido.shinkumi.jp/pdf/new_super_2022.pdf",
-  "大阪信用金庫␟大阪信用金庫 ゆうゆう3000␟2023-10-16␟2024-01-03␟1年␟年0.25％␟␟https://www.osaka-shinkin.co.jp/pdf/yokin/yuyu3000.pdf",
-  "大阪商工信用金庫␟大阪商工信用金庫 商工シルバー定期預金␟2023-12-01␟2023-11-30␟1年␟年0.330％␟␟https://www.osaka-shoko.co.jp/tameru/teikiyokin/shokosilver/",
-  "大阪商工信用金庫␟大阪商工信用金庫 年金定期␟2024-12-02␟2025-02-28␟1年␟年0.525％␟␟https://www.osaka-shoko.co.jp/_news/contents/21213/2024%E5%B9%B412%E6%9C%882%E6%97%A5%E3%81%8B%E3%82%89%E3%81%AE%E3%82%A6%E3%82%A3%E3%83%B3%E3%82%BF%E3%83%BC%E3%82%AD%E3%83%A3%E3%83%B3%E3%83%9A%E3%83%BC%E3%83%B3%E5%AE%9A%E6%9C%9F%E9%A0%90%E9%87%91%E3%81%AE%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B.pdf",
-  "しまね信用金庫␟しまね信用金庫 特別金利定期預金USAGI␟2022-12-15␟2023-03-31␟1年␟0.04％␟␟https://www.shimane-shinkin.co.jp/article/3220/",
-  "しまね信用金庫␟しまね信用金庫 特別金利定期預金USAGI␟2022-12-15␟2023-03-31␟3年␟0.10％␟␟https://www.shimane-shinkin.co.jp/article/3220/",
-  "しまね信用金庫␟しまね信用金庫 特別金利定期預金USAGI␟2022-12-15␟2023-03-31␟5年␟0.36％␟␟https://www.shimane-shinkin.co.jp/article/3220/",
-  "鳥取銀行␟鳥取銀行 とりぎん退職金特別金利プラン␟2023-12-04␟2024-12-01␟1年␟0.30％＋店頭金利␟␟https://www.tottoribank.co.jp/retail/deposit/yokin/taishoku_kinri/",
-  "鳥取銀行␟鳥取銀行 とりぎん退職金特別金利プラン␟2023-12-04␟2024-12-01␟1年␟0.50％＋店頭金利条件A␟␟https://www.tottoribank.co.jp/retail/deposit/yokin/taishoku_kinri/"
-]
+  publishedOn: "2026-10-21",
+  label: "2026年10月21日反映（全国巡回・公式資料照査）",
+  expectedTotalRecords: 16586,
+  addedStartIndex: 16582,
+  addedCount: 4,
+  removedCount: 0,
+  updatedRecordKeys: []
 };
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
