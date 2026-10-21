@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.21.1";
+const APP_VERSION = "2026.10.22.1";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -12,15 +12,44 @@ const PREFECTURE_ORDER = [
   "福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
 ];
 const PREFECTURE_RANK = new Map(PREFECTURE_ORDER.map((name, index) => [name, index]));
-const DATA_URL = "campaign_all.json?v=20261021-1";
+const REGION_ORDER = [
+  "北海道・東北", "関東", "東京", "甲信越・北陸", "東海",
+  "近畿", "大阪", "中国", "四国", "九州・沖縄"
+];
+const REGION_RANK = new Map(REGION_ORDER.map((name, index) => [name, index]));
+const PREFECTURE_REGION = new Map([
+  ["北海道", "北海道・東北"], ["青森県", "北海道・東北"], ["岩手県", "北海道・東北"], ["宮城県", "北海道・東北"], ["秋田県", "北海道・東北"], ["山形県", "北海道・東北"], ["福島県", "北海道・東北"],
+  ["茨城県", "関東"], ["栃木県", "関東"], ["群馬県", "関東"], ["埼玉県", "関東"], ["千葉県", "関東"], ["神奈川県", "関東"], ["東京都", "東京"],
+  ["新潟県", "甲信越・北陸"], ["富山県", "甲信越・北陸"], ["石川県", "甲信越・北陸"], ["福井県", "甲信越・北陸"], ["山梨県", "甲信越・北陸"], ["長野県", "甲信越・北陸"],
+  ["岐阜県", "東海"], ["静岡県", "東海"], ["愛知県", "東海"], ["三重県", "東海"],
+  ["滋賀県", "近畿"], ["京都府", "近畿"], ["兵庫県", "近畿"], ["奈良県", "近畿"], ["和歌山県", "近畿"], ["大阪府", "大阪"],
+  ["鳥取県", "中国"], ["島根県", "中国"], ["岡山県", "中国"], ["広島県", "中国"], ["山口県", "中国"],
+  ["徳島県", "四国"], ["香川県", "四国"], ["愛媛県", "四国"], ["高知県", "四国"],
+  ["福岡県", "九州・沖縄"], ["佐賀県", "九州・沖縄"], ["長崎県", "九州・沖縄"], ["熊本県", "九州・沖縄"], ["大分県", "九州・沖縄"], ["宮崎県", "九州・沖縄"], ["鹿児島県", "九州・沖縄"], ["沖縄県", "九州・沖縄"]
+]);
+const REGION_ALIASES = new Map([
+  ["北海道", "北海道・東北"], ["東北", "北海道・東北"],
+  ["甲信越", "甲信越・北陸"], ["北陸", "甲信越・北陸"],
+  ["中部", "東海"], ["九州", "九州・沖縄"]
+]);
+function canonicalRegion(region, prefecture) {
+  return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
+}
+const DATA_URL = "campaign_all.json?v=20261022-1";
 const LATEST_UPDATE = {
-  publishedOn: "2026-10-21",
-  label: "2026年10月21日反映（全国巡回・公式資料照査）",
-  expectedTotalRecords: 16586,
-  addedStartIndex: 16582,
-  addedCount: 4,
-  removedCount: 0,
-  updatedRecordKeys: []
+  publishedOn: "2026-10-22",
+  label: "2026年10月22日反映（高知銀行・地域区分整理）",
+  expectedTotalRecords: 16652,
+  addedStartIndex: 16652,
+  addedCount: 0,
+  removedCount: 4,
+  updatedRecordKeys: [
+  "高知銀行␟高知銀行 退職金専用定期預金 ビビッド・プレミアム␟2025-10-01␟␟1年␟店頭表示金利＋年0.265％（税引前）␟通常の場合␟https://www.kochi-bank.co.jp/yokin/teiki/vivid-premium.html",
+  "高知銀行␟高知銀行 退職金専用定期預金 ビビッド・プレミアム␟2025-10-01␟␟1年␟店頭表示金利＋年0.465％（税引前）␟当行へ年金受取口座を指定、または年金予約を申込み␟https://www.kochi-bank.co.jp/yokin/teiki/vivid-premium.html",
+  "高知銀行␟高知ユナイテッドSC応援積立定期預金「アシストⅡ」␟2026-10-01␟2027-03-31␟1年␟店頭表示利率＋年0.10％（税引前）␟各分割預入時の預入日から満期日前日までの日数に応じたスーパー定期預金（M型）の店頭表示利率に年0.10％上乗せ␟https://www.kochi-bank.co.jp/pdf/GO1200_kochi-usc-teiki-assist-2.pdf",
+  "高知銀行␟高知ユナイテッドSC応援積立定期預金「アシストⅡ」␟2026-10-01␟2027-03-31␟2年␟店頭表示利率＋年0.10％（税引前）␟各分割預入時の預入日から満期日前日までの日数に応じたスーパー定期預金（M型）の店頭表示利率に年0.10％上乗せ␟https://www.kochi-bank.co.jp/pdf/GO1200_kochi-usc-teiki-assist-2.pdf",
+  "高知銀行␟高知ユナイテッドSC応援積立定期預金「アシストⅡ」␟2026-10-01␟2027-03-31␟3年␟店頭表示利率＋年0.10％（税引前）␟各分割預入時の預入日から満期日前日までの日数に応じたスーパー定期預金（M型）の店頭表示利率に年0.10％上乗せ␟https://www.kochi-bank.co.jp/pdf/GO1200_kochi-usc-teiki-assist-2.pdf"
+]
 };
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
@@ -904,9 +933,9 @@ function setSelectedValues(id, values) {
 }
 function uniqueSorted(field) {
   const values = [...new Set(state.records.map((r) => text(r[field]).trim()).filter(Boolean))];
-  return field === "prefecture"
-    ? values.sort(comparePrefectures)
-    : values.sort((a,b) => a.localeCompare(b, "ja"));
+  if (field === "prefecture") return values.sort(comparePrefectures);
+  if (field === "region") return values.sort((a, b) => (REGION_RANK.get(a) ?? 999) - (REGION_RANK.get(b) ?? 999) || a.localeCompare(b, "ja"));
+  return values.sort((a,b) => a.localeCompare(b, "ja"));
 }
 
 function comparePrefectures(a, b) {
@@ -924,6 +953,7 @@ function normalizeRecord(record, index) {
   const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","term","interest_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes"];
   const normalized = { _index: index };
   fields.forEach((f) => { normalized[f] = text(record[f]); });
+  normalized.region = canonicalRegion(normalized.region, normalized.prefecture);
   if (["JA", "JAバンク", "JAマリンバンク", "JFマリンバンク", "農業協同組合"].includes(normalized.institution_type)) {
     normalized.institution_type = "JA等";
   }
