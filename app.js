@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.22.1";
+const APP_VERSION = "2026.10.22.2";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -35,20 +35,40 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261022-1";
+const DATA_URL = "campaign_all.json?v=20261022-2";
 const LATEST_UPDATE = {
   publishedOn: "2026-10-22",
-  label: "2026年10月22日反映（高知銀行・地域区分整理）",
-  expectedTotalRecords: 16652,
-  addedStartIndex: 16652,
+  label: "2026年10月22日反映（全国再巡回・普通預金更新）",
+  expectedTotalRecords: 16673,
+  addedStartIndex: 16673,
   addedCount: 0,
   removedCount: 4,
   updatedRecordKeys: [
-  "高知銀行␟高知銀行 退職金専用定期預金 ビビッド・プレミアム␟2025-10-01␟␟1年␟店頭表示金利＋年0.265％（税引前）␟通常の場合␟https://www.kochi-bank.co.jp/yokin/teiki/vivid-premium.html",
-  "高知銀行␟高知銀行 退職金専用定期預金 ビビッド・プレミアム␟2025-10-01␟␟1年␟店頭表示金利＋年0.465％（税引前）␟当行へ年金受取口座を指定、または年金予約を申込み␟https://www.kochi-bank.co.jp/yokin/teiki/vivid-premium.html",
-  "高知銀行␟高知ユナイテッドSC応援積立定期預金「アシストⅡ」␟2026-10-01␟2027-03-31␟1年␟店頭表示利率＋年0.10％（税引前）␟各分割預入時の預入日から満期日前日までの日数に応じたスーパー定期預金（M型）の店頭表示利率に年0.10％上乗せ␟https://www.kochi-bank.co.jp/pdf/GO1200_kochi-usc-teiki-assist-2.pdf",
-  "高知銀行␟高知ユナイテッドSC応援積立定期預金「アシストⅡ」␟2026-10-01␟2027-03-31␟2年␟店頭表示利率＋年0.10％（税引前）␟各分割預入時の預入日から満期日前日までの日数に応じたスーパー定期預金（M型）の店頭表示利率に年0.10％上乗せ␟https://www.kochi-bank.co.jp/pdf/GO1200_kochi-usc-teiki-assist-2.pdf",
-  "高知銀行␟高知ユナイテッドSC応援積立定期預金「アシストⅡ」␟2026-10-01␟2027-03-31␟3年␟店頭表示利率＋年0.10％（税引前）␟各分割預入時の預入日から満期日前日までの日数に応じたスーパー定期預金（M型）の店頭表示利率に年0.10％上乗せ␟https://www.kochi-bank.co.jp/pdf/GO1200_kochi-usc-teiki-assist-2.pdf"
+  "千葉興業銀行␟ちばコーギー支店デビューキャンペーン␟2026-10-19␟2026-11-30␟キャンペーン金利適用期間2か月␟年0.95％␟キャンペーン金利␟https://www.chibakogyo-bank.co.jp/kojin/campaign/202610_1/index.html",
+  "京都信用金庫␟特別金利定期預金【3年】␟2026-10-19␟2027-03-31␟3年␟年1.80％␟新たな資金による預入れ␟https://www.kyoto-shinkin.co.jp/personal/asset/teiki/special2610.html",
+  "呉信用金庫␟SDGs寄付型定期預金「未来へつなぐ」␟2026-04-01␟2027-03-31␟1年␟店頭表示金利＋0.20％␟店頭表示金利への上乗せ␟https://www.kure-shinkin.jp/tameru/SDGs.shtml",
+  "諏訪信用金庫␟子育て応援定期預金␟2025-11-04␟2026-10-30␟3年␟年0.80％␟通常金利␟https://www.suwashinkin.co.jp/campaign/pdf/kids_yokin_2608.pdf",
+  "諏訪信用金庫␟子育て応援定期預金␟2025-11-04␟2026-10-30␟3年␟年0.90％␟子ども手当を当金庫で受給␟https://www.suwashinkin.co.jp/campaign/pdf/kids_yokin_2608.pdf",
+  "諏訪信用金庫␟子育て応援定期預金␟2025-11-04␟2026-10-30␟5年␟年1.10％␟通常金利␟https://www.suwashinkin.co.jp/campaign/pdf/kids_yokin_2608.pdf",
+  "諏訪信用金庫␟子育て応援定期預金␟2025-11-04␟2026-10-30␟5年␟年1.15％␟子ども手当を当金庫で受給␟https://www.suwashinkin.co.jp/campaign/pdf/kids_yokin_2608.pdf",
+  "JA成田市␟みのりの秋定期貯金キャンペーン2026␟2026-09-15␟2026-10-30␟1年␟年1.00％␟キャンペーン金利␟https://www.ja-narita.or.jp/info/%e3%81%bf%e3%81%ae%e3%82%8a%e3%81%ae%e7%a7%8b%e5%ae%9a%e6%9c%9f%e8%b2%af%e9%87%91%e3%82%ad%e3%83%a3%e3%83%b3%e3%83%9a%e3%83%bc%e3%83%b32026%ef%bc%882026%e5%b9%b49%e6%9c%8815%e6%97%a5%ef%bd%9e2026/",
+  "播州信用金庫␟Newサマーキャンペーン定期預金␟2026-08-17␟2026-10-30␟1年␟年1.25％␟新たな資金␟https://www.shinkin.co.jp/banshin/save/regular/20260817summer.html",
+  "播州信用金庫␟Newサマーキャンペーン定期預金␟2026-08-17␟2026-10-30␟3年␟年1.60％␟新たな資金␟https://www.shinkin.co.jp/banshin/save/regular/20260817summer.html",
+  "播州信用金庫␟Newサマーキャンペーン定期預金␟2026-08-17␟2026-10-30␟5年␟年1.65％␟新たな資金␟https://www.shinkin.co.jp/banshin/save/regular/20260817summer.html",
+  "播州信用金庫␟Newサマーキャンペーン定期預金␟2026-08-17␟2026-10-30␟1年␟年1.00％␟当金庫に預け入れ中の資金␟https://www.shinkin.co.jp/banshin/save/regular/20260817summer.html",
+  "播州信用金庫␟Newサマーキャンペーン定期預金␟2026-08-17␟2026-10-30␟3年␟年1.20％␟当金庫に預け入れ中の資金␟https://www.shinkin.co.jp/banshin/save/regular/20260817summer.html",
+  "近畿産業信用組合␟大阪・兵庫・京都府下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟1年␟年1.80％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit10.html",
+  "近畿産業信用組合␟大阪・兵庫・京都府下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟3年␟年2.10％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit10.html",
+  "近畿産業信用組合␟大阪・兵庫・京都府下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟5年␟年2.15％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit10.html",
+  "近畿産業信用組合␟滋賀・和歌山・奈良・岐阜・長崎県下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟1年␟年1.70％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit11.html",
+  "近畿産業信用組合␟滋賀・和歌山・奈良・岐阜・長崎県下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟3年␟年2.00％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit11.html",
+  "近畿産業信用組合␟滋賀・和歌山・奈良・岐阜・長崎県下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟5年␟年2.05％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit11.html",
+  "筑波銀行␟福得！！懸賞金付き金利上乗せ定期預金キャンペーン␟2026-10-01␟2027-01-29␟1年␟年1.30％␟新たな資金・店頭限定␟https://www.tsukubabank.co.jp/cms/article/fb2c1c5e12b9e1f75f839f913bfbf41c44b5c323/",
+  "筑波銀行␟福得！！懸賞金付き金利上乗せ定期預金キャンペーン␟2026-10-01␟2027-01-29␟3年␟年1.50％␟新たな資金・店頭限定␟https://www.tsukubabank.co.jp/cms/article/fb2c1c5e12b9e1f75f839f913bfbf41c44b5c323/",
+  "京都銀行␟年金受取感謝定期預金キャンペーン「寿」␟2026-10-01␟2027-03-31␟1年␟年1.50％␟公的年金の受取条件␟https://www.kyotobank.co.jp/kojin/campaign/pdf/nenkinteiki_2610.pdf",
+  "京都銀行␟退職金特別定期預金「ファーストステップⅡ」␟2026-07-01␟2026-12-30␟3か月␟年2.00％␟退職金受取後1年以内等␟https://www.kyotobank.co.jp/kojin/campaign/first/index.html",
+  "但馬銀行␟たんぎん退職金特別金利定期預金␟2026-02-02␟2026-12-30␟6か月␟年1.20％␟退職金受取後1年以内等␟https://www.tajimabank.co.jp/pdf/taisyoku_teiki14.pdf",
+  "但馬銀行␟たんぎん資産運用プラン〈退職金コース〉␟2026-02-02␟2026-12-30␟1年␟年1.50％␟投資信託との同時申込␟https://www.tajimabank.co.jp/pdf/taisyoku_teiki14.pdf"
 ]
 };
 const TODAY_ISO = localIso(new Date());
