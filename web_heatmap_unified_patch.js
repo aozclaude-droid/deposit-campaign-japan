@@ -13,9 +13,9 @@
  */
 
 (() => {
-  const PATCH_VERSION = "20261024.5";
+  const PATCH_VERSION = "20261024.6";
   const R1_CURRENT_URL = "./r1_data/current_default_ranking.json";
-  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261024-5";
+  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261024-6";
 
   const PRODUCT_MODES = [
     ["base_term", "定期預金"],
