@@ -13,9 +13,9 @@
  */
 
 (() => {
-  const PATCH_VERSION = "20261018.11";
+  const PATCH_VERSION = "20261024.5";
   const R1_CURRENT_URL = "./r1_data/current_default_ranking.json";
-  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261024-4";
+  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261024-5";
 
   const PRODUCT_MODES = [
     ["base_term", "定期預金"],
@@ -31,7 +31,7 @@
   ];
   const PREF_SET = new Set(PREFECTURES);
 
-  const R1 = { rows: [], historyRows: [], loaded: false, error: "", historyError: "" };
+  const R1 = { rows: [], historyRows: [], loaded: false, historyReady: false, error: "", historyError: "" };
   const q = (s, root = document) => root.querySelector(s);
   const qa = (s, root = document) => Array.from(root.querySelectorAll(s));
 
@@ -325,8 +325,18 @@
     let rows;
     if (mode === "base_ordinary") {
       rows = currentOrdinaryRows();
-      ordinarySource = rows.length ? "r1" : "campaign_all";
-      if (!rows.length) rows = campaignOrdinaryRows();
+      if (rows.length) {
+        ordinarySource = "r1";
+      } else if (!R1.historyReady || R1.historyError) {
+        // Never flash the campaign fallback while the large history file is
+        // still loading (or when its load failed). It produces a misleading
+        // one-prefecture / 0.9% map before the real nationwide data arrives.
+        ordinarySource = R1.historyError ? "history_error" : "history_loading";
+        rows = [];
+      } else {
+        ordinarySource = "campaign_all";
+        rows = campaignOrdinaryRows();
+      }
     } else {
       rows = R1.rows.filter((row) => isYen(row) && isTerm(row) && termMonths(row) === term.months);
     }
@@ -375,7 +385,7 @@
       nationalAverage: avg(regionalInstitutions.map((x) => x.averageRate)),
       onlineAverage: avg(onlineInstitutions.map((x) => x.averageRate)),
       ordinarySource,
-      pending: !R1.loaded,
+      pending: mode === "base_ordinary" ? (!R1.historyReady && !R1.historyError) : !R1.loaded,
       error: mode === "base_ordinary" ? (R1.historyError || R1.error) : R1.error
     };
   }
@@ -515,6 +525,8 @@
       else if (data.error && data.mode !== "campaign") summary.textContent = `R1通常金利データ読込エラー: ${data.error}`;
       else if (data.mode === "base_ordinary" && data.ordinarySource === "campaign_all" && (data.regionalInstitutions.length > 0 || data.onlineInstitutions.length > 0)) {
         summary.textContent = `普通預金 / 全国JSON（開催中） / ${data.rankedPrefectures.length}都道府県 / 地域金融機関 ${data.regionalInstitutions.length}先 / 全国向け ${data.onlineInstitutions.length}先`;
+      } else if (data.mode === "base_ordinary" && data.ordinarySource === "r1") {
+        summary.textContent = `普通預金 / 通常金利履歴 / ${data.rankedPrefectures.length}都道府県 / 地域金融機関 ${data.regionalInstitutions.length}先 / 全国向け ${data.onlineInstitutions.length}先`;
       } else if (data.mode === "base_ordinary" && R1.historyRows.length > 0 && data.regionalInstitutions.length === 0 && data.onlineInstitutions.length === 0) {
         summary.textContent = `普通預金 / R1履歴 ${R1.historyRows.length}行読込済み / 比較可能な普通預金金利0件（R1普通預金収集を拡充中）`;
       } else if (data.mode !== "campaign" && R1.rows.length > 0 && data.regionalInstitutions.length === 0 && data.onlineInstitutions.length === 0) {
@@ -813,8 +825,10 @@
       if (!response.ok) throw new Error(`base_rate_history.json: HTTP ${response.status}`);
       const json = await response.json();
       R1.historyRows = extractR1Rows(json);
+      R1.historyReady = true;
       R1.historyError = R1.historyRows.length ? "" : "base_rate_history.json に読み取り可能な明細配列がありません。";
     } catch (error) {
+      R1.historyReady = false;
       R1.historyError = String(error?.message || error);
     }
 

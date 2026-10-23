@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.24.4";
+const APP_VERSION = "2026.10.24.5";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -35,7 +35,7 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261024-4";
+const DATA_URL = "campaign_all.json?v=20261024-5";
 const LATEST_UPDATE = {
   publishedOn: "2026-10-24",
   label: "2026年10月24日 普通預金データ整理反映",
