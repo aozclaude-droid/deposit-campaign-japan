@@ -948,23 +948,42 @@ function comparePrefectures(a, b) {
 function fillSelect(id, values) {
   $(id).innerHTML = values.map((v) => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
 }
+const INSTITUTION_TYPE_ORDER = [
+  "都市銀行", "地方銀行", "信託銀行", "ネット銀行", "その他銀行",
+  "信用金庫", "信用組合", "JA等", "労働金庫", "ゆうちょ銀行"
+];
+function canonicalInstitutionType(value, institutionName = "") {
+  let type = text(value).replace(/\s+/g, "");
+  const name = text(institutionName);
+  if (["JA", "JA等", "JAバンク", "JAマリンバンク", "JFマリンバンク", "農業協同組合", "農協"].includes(type)) {
+    type = "JA等";
+  } else if (["地銀", "地方銀行", "第二地銀", "第二地方銀行"].includes(type)) {
+    type = "地方銀行";
+  } else if (["ネット銀行", "ネット銀行等", "新たな形態の銀行", "インターネット銀行"].includes(type)) {
+    type = "ネット銀行";
+  } else if (["その他銀行", "その他の銀行", "銀行", "政府系金融機関", "外国銀行"].includes(type)) {
+    type = "その他銀行";
+  }
+  if (name.includes("商工中金") || name.includes("商工組合中央金庫")) type = "その他銀行";
+  if (name.startsWith("イオン銀行")) type = "ネット銀行";
+  if (!type && (/^JA/.test(name) || /農業協同組合|農協/.test(name))) type = "JA等";
+  return type;
+}
+function institutionTypeOptions({ includeOnline = true } = {}) {
+  const available = new Set(state.records.map((record) => record.institution_type).filter(Boolean));
+  const ordered = INSTITUTION_TYPE_ORDER.filter((type) => available.has(type) && (includeOnline || type !== "ネット銀行"));
+  const known = new Set(INSTITUTION_TYPE_ORDER);
+  const unexpected = [...available]
+    .filter((type) => !known.has(type) && (includeOnline || type !== "ネット銀行"))
+    .sort((a, b) => a.localeCompare(b, "ja"));
+  return [...ordered, ...unexpected];
+}
 function normalizeRecord(record, index) {
   const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","term","interest_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes"];
   const normalized = { _index: index };
   fields.forEach((f) => { normalized[f] = text(record[f]); });
   normalized.region = canonicalRegion(normalized.region, normalized.prefecture);
-  if (["JA", "JAバンク", "JAマリンバンク", "JFマリンバンク", "農業協同組合"].includes(normalized.institution_type)) {
-    normalized.institution_type = "JA等";
-  }
-  if (["政府系金融機関", "外国銀行"].includes(normalized.institution_type)) {
-    normalized.institution_type = "その他銀行";
-  }
-  if (normalized.institution_name.includes("商工中金") || normalized.institution_name.includes("商工組合中央金庫")) {
-    normalized.institution_type = "その他銀行";
-  }
-  if (normalized.institution_name.startsWith("イオン銀行")) {
-    normalized.institution_type = "ネット銀行";
-  }
+  normalized.institution_type = canonicalInstitutionType(normalized.institution_type, normalized.institution_name);
   normalized.campaign_end_date = record.campaign_end_date == null ? "" : text(record.campaign_end_date);
   normalized._sourceStatus = normalized.status;
   normalized.status = effectiveStatus(normalized);
@@ -1115,7 +1134,7 @@ function initializeUi() {
   $("#updatedAt").textContent = `掲載データ最終反映: ${LATEST_UPDATE.publishedOn}`;
   fillSelect("#regionFilter", uniqueSorted("region"));
   fillSelect("#prefectureFilter", uniqueSorted("prefecture"));
-  fillSelect("#institutionTypeFilter", uniqueSorted("institution_type"));
+  fillSelect("#institutionTypeFilter", institutionTypeOptions());
   fillSelect("#productTypeFilter", uniqueSorted("product_type"));
   fillSelect("#statusFilter", ["開催中","開催予定","終了済み","要確認"].filter((s) => state.records.some((r) => r.status === s)));
   setSelectedValues("#statusFilter", ["開催中","開催予定"]);
@@ -1128,7 +1147,7 @@ function initializeUi() {
   fillSelect("#analyticsProductFilter", uniqueSorted("product_type"));
   resetAnalyticsControls(false);
   fillSelect("#heatmapProductFilter", uniqueSorted("product_type"));
-  fillSelect("#heatmapInstitutionTypeFilter", uniqueSorted("institution_type").filter((value) => value !== "ネット銀行"));
+  fillSelect("#heatmapInstitutionTypeFilter", institutionTypeOptions({ includeOnline: false }));
   fillSelect("#heatmapStatusFilter", ["開催中", "開催予定", "終了済み", "要確認"].filter((status) => state.records.some((record) => record.status === status)));
   resetHeatmapControls(false);
   renderJapanTileMap();

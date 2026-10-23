@@ -13,14 +13,18 @@
  */
 
 (() => {
-  const PATCH_VERSION = "20261024.6";
+  const PATCH_VERSION = "20261024.8";
   const R1_CURRENT_URL = "./r1_data/current_default_ranking.json";
-  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261024-6";
+  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261024-8";
 
   const PRODUCT_MODES = [
     ["base_term", "定期預金"],
     ["base_ordinary", "普通預金"],
     ["campaign", "キャンペーン預金・貯金"]
+  ];
+  const INSTITUTION_TYPE_ORDER = [
+    "都市銀行", "地方銀行", "信託銀行", "その他銀行",
+    "信用金庫", "信用組合", "JA等", "労働金庫", "ゆうちょ銀行"
   ];
 
   const PREFECTURES = [
@@ -95,11 +99,14 @@
   }
 
   function normalizeType(value, name = "") {
-    let t = String(value || "").trim();
-    if (["JA", "JAバンク", "JAマリンバンク", "JFマリンバンク", "農業協同組合"].includes(t)) t = "JA等";
-    if (["政府系金融機関", "外国銀行", "銀行", "都市銀行"].includes(t)) t = "その他銀行";
+    let t = String(value || "").replace(/\s+/g, "");
+    if (["JA", "JA等", "JAバンク", "JAマリンバンク", "JFマリンバンク", "農業協同組合", "農協"].includes(t)) t = "JA等";
+    if (["地銀", "地方銀行", "第二地銀", "第二地方銀行"].includes(t)) t = "地方銀行";
+    if (["ネット銀行", "ネット銀行等", "新たな形態の銀行", "インターネット銀行"].includes(t)) t = "ネット銀行";
+    if (["その他銀行", "その他の銀行", "銀行", "政府系金融機関", "外国銀行"].includes(t)) t = "その他銀行";
     if (/商工中金|商工組合中央金庫/.test(name)) t = "その他銀行";
     if (/イオン銀行/.test(name)) t = "ネット銀行";
+    if (!t && (/^JA/.test(name) || /農業協同組合|農協/.test(name))) t = "JA等";
     return t;
   }
   const instType = (row) => normalizeType(
@@ -114,6 +121,35 @@
     ),
     inst(row)
   );
+
+  function refreshInstitutionTypeOptions() {
+    const select = q("#heatmapInstitutionTypeFilter");
+    if (!select) return;
+    const rows = [];
+    try { if (Array.isArray(state.records)) rows.push(...state.records); } catch (_) {}
+    rows.push(...R1.rows, ...R1.historyRows);
+    const available = new Set(rows.map(instType).filter((type) => type && type !== "ネット銀行"));
+    if (!available.size) return;
+
+    const known = new Set(INSTITUTION_TYPE_ORDER);
+    const desired = [
+      ...INSTITUTION_TYPE_ORDER.filter((type) => available.has(type)),
+      ...[...available].filter((type) => !known.has(type)).sort((a, b) => a.localeCompare(b, "ja"))
+    ];
+    const currentOptions = Array.from(select.options);
+    const current = currentOptions.map((option) => option.value);
+    if (current.length === desired.length && current.every((value, index) => value === desired[index])) return;
+
+    const selected = new Set(currentOptions.filter((option) => option.selected).map((option) => normalizeType(option.value)));
+    const selectAll = currentOptions.length === 0 || currentOptions.every((option) => option.selected);
+    select.replaceChildren(...desired.map((type) => {
+      const option = document.createElement("option");
+      option.value = type;
+      option.textContent = type;
+      option.selected = selectAll || selected.has(type);
+      return option;
+    }));
+  }
 
   function termMonths(row) {
     const direct = num(pick(
@@ -455,6 +491,7 @@
   function configureControls(force = false) {
     const product = q("#heatmapProductFilter");
     if (!product) return;
+    refreshInstitutionTypeOptions();
     const expectedValues = PRODUCT_MODES.map(([value]) => value);
     const actualValues = Array.from(product.options).map((option) => option.value);
     const optionsAreUnified = actualValues.length === expectedValues.length
