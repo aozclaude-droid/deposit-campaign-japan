@@ -35,7 +35,7 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261022-2";
+const DATA_URL = "campaign_all.json?v=20261024-3";
 const LATEST_UPDATE = {
   publishedOn: "2026-10-24",
   label: "2026年10月24日反映（銀行普通預金は121先中115先を収録・全国キャンペーンは10月22日時点）",
