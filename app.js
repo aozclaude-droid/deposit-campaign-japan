@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.24.2";
+const APP_VERSION = "2026.10.24.4";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -35,41 +35,20 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261024-3";
+const DATA_URL = "campaign_all.json?v=20261024-4";
 const LATEST_UPDATE = {
   publishedOn: "2026-10-24",
-  label: "2026年10月24日反映（銀行普通預金は121先中115先を収録・全国キャンペーンは10月22日時点）",
-  expectedTotalRecords: 16673,
-  addedStartIndex: 16673,
+  label: "2026年10月24日 普通預金データ整理反映",
+  expectedTotalRecords: 16419,
+  addedStartIndex: 16419,
   addedCount: 0,
-  removedCount: 4,
+  movedToBaseHistoryCount: 254,
+  movedInstitutionCount: 32,
+  reclassifiedCount: 1,
+  ordinaryCampaignRetainedCount: 29,
   updatedRecordKeys: [
-  "千葉興業銀行␟ちばコーギー支店デビューキャンペーン␟2026-10-19␟2026-11-30␟キャンペーン金利適用期間2か月␟年0.95％␟キャンペーン金利␟https://www.chibakogyo-bank.co.jp/kojin/campaign/202610_1/index.html",
-  "京都信用金庫␟特別金利定期預金【3年】␟2026-10-19␟2027-03-31␟3年␟年1.80％␟新たな資金による預入れ␟https://www.kyoto-shinkin.co.jp/personal/asset/teiki/special2610.html",
-  "呉信用金庫␟SDGs寄付型定期預金「未来へつなぐ」␟2026-04-01␟2027-03-31␟1年␟店頭表示金利＋0.20％␟店頭表示金利への上乗せ␟https://www.kure-shinkin.jp/tameru/SDGs.shtml",
-  "諏訪信用金庫␟子育て応援定期預金␟2025-11-04␟2026-10-30␟3年␟年0.80％␟通常金利␟https://www.suwashinkin.co.jp/campaign/pdf/kids_yokin_2608.pdf",
-  "諏訪信用金庫␟子育て応援定期預金␟2025-11-04␟2026-10-30␟3年␟年0.90％␟子ども手当を当金庫で受給␟https://www.suwashinkin.co.jp/campaign/pdf/kids_yokin_2608.pdf",
-  "諏訪信用金庫␟子育て応援定期預金␟2025-11-04␟2026-10-30␟5年␟年1.10％␟通常金利␟https://www.suwashinkin.co.jp/campaign/pdf/kids_yokin_2608.pdf",
-  "諏訪信用金庫␟子育て応援定期預金␟2025-11-04␟2026-10-30␟5年␟年1.15％␟子ども手当を当金庫で受給␟https://www.suwashinkin.co.jp/campaign/pdf/kids_yokin_2608.pdf",
-  "JA成田市␟みのりの秋定期貯金キャンペーン2026␟2026-09-15␟2026-10-30␟1年␟年1.00％␟キャンペーン金利␟https://www.ja-narita.or.jp/info/%e3%81%bf%e3%81%ae%e3%82%8a%e3%81%ae%e7%a7%8b%e5%ae%9a%e6%9c%9f%e8%b2%af%e9%87%91%e3%82%ad%e3%83%a3%e3%83%b3%e3%83%9a%e3%83%bc%e3%83%b32026%ef%bc%882026%e5%b9%b49%e6%9c%8815%e6%97%a5%ef%bd%9e2026/",
-  "播州信用金庫␟Newサマーキャンペーン定期預金␟2026-08-17␟2026-10-30␟1年␟年1.25％␟新たな資金␟https://www.shinkin.co.jp/banshin/save/regular/20260817summer.html",
-  "播州信用金庫␟Newサマーキャンペーン定期預金␟2026-08-17␟2026-10-30␟3年␟年1.60％␟新たな資金␟https://www.shinkin.co.jp/banshin/save/regular/20260817summer.html",
-  "播州信用金庫␟Newサマーキャンペーン定期預金␟2026-08-17␟2026-10-30␟5年␟年1.65％␟新たな資金␟https://www.shinkin.co.jp/banshin/save/regular/20260817summer.html",
-  "播州信用金庫␟Newサマーキャンペーン定期預金␟2026-08-17␟2026-10-30␟1年␟年1.00％␟当金庫に預け入れ中の資金␟https://www.shinkin.co.jp/banshin/save/regular/20260817summer.html",
-  "播州信用金庫␟Newサマーキャンペーン定期預金␟2026-08-17␟2026-10-30␟3年␟年1.20％␟当金庫に預け入れ中の資金␟https://www.shinkin.co.jp/banshin/save/regular/20260817summer.html",
-  "近畿産業信用組合␟大阪・兵庫・京都府下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟1年␟年1.80％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit10.html",
-  "近畿産業信用組合␟大阪・兵庫・京都府下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟3年␟年2.10％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit10.html",
-  "近畿産業信用組合␟大阪・兵庫・京都府下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟5年␟年2.15％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit10.html",
-  "近畿産業信用組合␟滋賀・和歌山・奈良・岐阜・長崎県下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟1年␟年1.70％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit11.html",
-  "近畿産業信用組合␟滋賀・和歌山・奈良・岐阜・長崎県下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟3年␟年2.00％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit11.html",
-  "近畿産業信用組合␟滋賀・和歌山・奈良・岐阜・長崎県下店舗限定特別金利定期預金␟2026-10-19␟2027-01-29␟5年␟年2.05％␟新たな資金・店頭限定␟https://www.kinsan.co.jp/kojin/deposit/special_deposit11.html",
-  "筑波銀行␟福得！！懸賞金付き金利上乗せ定期預金キャンペーン␟2026-10-01␟2027-01-29␟1年␟年1.30％␟新たな資金・店頭限定␟https://www.tsukubabank.co.jp/cms/article/fb2c1c5e12b9e1f75f839f913bfbf41c44b5c323/",
-  "筑波銀行␟福得！！懸賞金付き金利上乗せ定期預金キャンペーン␟2026-10-01␟2027-01-29␟3年␟年1.50％␟新たな資金・店頭限定␟https://www.tsukubabank.co.jp/cms/article/fb2c1c5e12b9e1f75f839f913bfbf41c44b5c323/",
-  "京都銀行␟年金受取感謝定期預金キャンペーン「寿」␟2026-10-01␟2027-03-31␟1年␟年1.50％␟公的年金の受取条件␟https://www.kyotobank.co.jp/kojin/campaign/pdf/nenkinteiki_2610.pdf",
-  "京都銀行␟退職金特別定期預金「ファーストステップⅡ」␟2026-07-01␟2026-12-30␟3か月␟年2.00％␟退職金受取後1年以内等␟https://www.kyotobank.co.jp/kojin/campaign/first/index.html",
-  "但馬銀行␟たんぎん退職金特別金利定期預金␟2026-02-02␟2026-12-30␟6か月␟年1.20％␟退職金受取後1年以内等␟https://www.tajimabank.co.jp/pdf/taisyoku_teiki14.pdf",
-  "但馬銀行␟たんぎん資産運用プラン〈退職金コース〉␟2026-02-02␟2026-12-30␟1年␟年1.50％␟投資信託との同時申込␟https://www.tajimabank.co.jp/pdf/taisyoku_teiki14.pdf"
-]
+    "UI銀行␟UI銀行3rd はたらくサイフ(普通預金)リリース記念 Anniversary定期預金キャンペーン␟2025-06-18␟2025-09-30␟1年␟1.35％␟␟https://www.uibank.co.jp/cms_source/data/campaign/detail/2025/000647.html"
+  ]
 };
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
@@ -1052,18 +1031,20 @@ function renderLatestUpdate() {
   });
 
   $("#latestUpdateDate").textContent = LATEST_UPDATE.label;
-  $("#latestUpdateLead").textContent = `最新の公開データへ${fmt(records.length)}件を反映し、重複・誤展開${fmt(LATEST_UPDATE.removedCount)}件を整理しました。要点だけを表示し、詳しい内訳は必要なときに開けます。`;
+  $("#latestUpdateLead").textContent = `キャンペーン一覧から通常金利・優遇商品金利${fmt(LATEST_UPDATE.movedToBaseHistoryCount)}件を金利履歴へ移し、普通預金キャンペーン${fmt(LATEST_UPDATE.ordinaryCampaignRetainedCount)}件はキャンペーン一覧に残しました。`;
   $("#latestUpdateMetrics").innerHTML = [
     ["新しく追加", added.length, "件"],
-    ["内容を更新", updated.length, "件"],
-    ["対象金融機関", institutions.size, "機関"],
+    ["通常金利へ移行", LATEST_UPDATE.movedToBaseHistoryCount, "件"],
+    ["商品区分を訂正", LATEST_UPDATE.reclassifiedCount, "件"],
     ["現在の総件数", state.records.length, "件"]
   ].map(([label, value, unit]) => `<div class="latest-update-metric"><span>${esc(label)}</span><strong>${fmt(value)}</strong><small>${unit}</small></div>`).join("");
 
   $("#latestUpdateCompact").innerHTML = `<div class="latest-update-summary-text">
-    <strong>${fmt(institutions.size)}金融機関・${fmt(campaignCount)}商品</strong>の情報を反映
-  </div><div class="latest-update-region-list" aria-label="地域別の追加件数">${[...regionCounts.entries()]
-    .map(([region, count]) => `<span>${esc(region)} ${fmt(count)}件</span>`).join("")}</div>`;
+    <strong>${fmt(LATEST_UPDATE.movedInstitutionCount)}金融機関・${fmt(LATEST_UPDATE.movedToBaseHistoryCount)}明細</strong>を通常金利履歴へ移行
+  </div><div class="latest-update-region-list" aria-label="今回の整理内容">
+    <span>普通預金キャンペーン保持 ${fmt(LATEST_UPDATE.ordinaryCampaignRetainedCount)}件</span>
+    <span>商品区分訂正 ${fmt(LATEST_UPDATE.reclassifiedCount)}件</span>
+  </div>`;
 
   const detailsToggle = $("#latestUpdateDetailsToggle");
   if (detailsToggle) detailsToggle.textContent = `金融機関別の内訳（${fmt(institutions.size)}機関）を表示`;
