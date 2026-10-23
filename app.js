@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.22.2";
+const APP_VERSION = "2026.10.24.2";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -37,8 +37,8 @@ function canonicalRegion(region, prefecture) {
 }
 const DATA_URL = "campaign_all.json?v=20261022-2";
 const LATEST_UPDATE = {
-  publishedOn: "2026-10-22",
-  label: "2026年10月22日反映（全国再巡回・普通預金更新）",
+  publishedOn: "2026-10-24",
+  label: "2026年10月24日反映（銀行普通預金は121先中115先を収録・全国キャンペーンは10月22日時点）",
   expectedTotalRecords: 16673,
   addedStartIndex: 16673,
   addedCount: 0,
