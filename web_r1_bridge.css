@@ -124,3 +124,13 @@
 .r1-histogram-count{fill:#24486f;font-size:8px;font-weight:800}.r1-histogram-xlabel{fill:#61738a;font-size:8px}.r1-histogram-axis-label{fill:#405873;font-size:10px;font-weight:800}
 .r1-histogram-term-switch{display:flex;gap:5px;flex-wrap:wrap}.r1-histogram-term{padding:6px 9px;border:1px solid #cbd7e6;border-radius:999px;background:#fff;color:#45627f;font-size:9px;font-weight:800;cursor:pointer}.r1-histogram-term.is-active{border-color:#275a9e;background:#275a9e;color:#fff}
 @media(max-width:600px){.r1-rate-histogram{padding:10px}.r1-rate-histogram-head{flex-direction:column}.r1-rate-histogram svg{min-width:680px}}
+
+
+/* W5: histogram drill-down */
+.r1-histogram-bar.is-clickable{cursor:pointer;outline:none}.r1-histogram-bar.is-clickable:focus rect,.r1-histogram-bar.is-selected rect{fill:#e8871f;opacity:1;stroke:#9a5100;stroke-width:1.5}
+.r1-histogram-details{margin-top:12px;padding:12px;border:1px solid #c9d8ea;border-radius:10px;background:#fff}.r1-histogram-details[hidden]{display:none}
+.r1-histogram-details-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:9px}.r1-histogram-details-head h5{margin:0;color:#23486f;font-size:13px}.r1-histogram-details-head p{margin:3px 0 0;color:#74869a;font-size:9px}
+.r1-histogram-details-head button{padding:5px 10px;border:1px solid #cbd7e6;border-radius:8px;background:#fff;color:#49647f;font-size:9px;font-weight:800;cursor:pointer}
+.r1-histogram-details ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0;padding:0;max-height:300px;overflow:auto;list-style:none}
+.r1-histogram-details li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;padding:8px 9px;border:1px solid #e4ebf3;border-radius:8px;background:#f8fbff}.r1-histogram-details li strong{overflow:hidden;color:#29496e;font-size:10px;text-overflow:ellipsis;white-space:nowrap}.r1-histogram-details li span{color:#a02f2f;font-size:11px;font-weight:800}.r1-histogram-details li small{grid-column:1/-1;color:#8290a1;font-size:8px}
+@media(max-width:800px){.r1-histogram-details ul{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.r1-histogram-details ul{grid-template-columns:1fr}}

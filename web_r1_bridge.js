@@ -735,11 +735,14 @@
     return nice * magnitude;
   }
 
-  function buildRateHistogram(rates) {
-    const values = rates.filter(Number.isFinite).sort((a,b)=>a-b);
-    if (!values.length) return {bins:[],maximumCount:0,step:0};
-    const minimum = values[0];
-    const maximum = values.at(-1);
+  function buildRateHistogram(points) {
+    const samples = (points || []).map((entry,index) => {
+      if (typeof entry === "number") return {rate:entry,institution:`金融機関${index+1}`,institutionType:"",prefecture:""};
+      return {...entry,rate:Number(entry?.rate)};
+    }).filter(item => Number.isFinite(item.rate)).sort((a,b)=>a.rate-b.rate || String(a.institution||"").localeCompare(String(b.institution||""),"ja"));
+    if (!samples.length) return {bins:[],maximumCount:0,step:0};
+    const minimum = samples[0].rate;
+    const maximum = samples.at(-1).rate;
     const step = niceHistogramStep(maximum-minimum);
     const start = Math.floor(minimum/step)*step;
     const rawCount = maximum === minimum ? 1 : Math.ceil((maximum-start)/step)+1;
@@ -748,22 +751,24 @@
     const bins = Array.from({length:Math.max(1,Math.ceil((maximum-start)/actualStep)+1)},(_,index)=>({
       from:start+index*actualStep,
       to:start+(index+1)*actualStep,
-      count:0
+      count:0,
+      members:[]
     })).slice(0,24);
-    values.forEach(value => {
-      let index = Math.floor((value-start)/actualStep+1e-10);
+    samples.forEach(sample => {
+      let index = Math.floor((sample.rate-start)/actualStep+1e-10);
       index = Math.max(0,Math.min(bins.length-1,index));
-      bins[index].count++;
+      bins[index].members.push(sample);
+      bins[index].count = bins[index].members.length;
     });
     return {bins,maximumCount:Math.max(...bins.map(bin=>bin.count),0),step:actualStep};
   }
 
   function histogramRateLabel(value) {
-    return Number(value).toFixed(3).replace(/0+$/,"").replace(/\.$/,"");
+    return Number(value).toFixed(3).replace(/0+$/," ").trim().replace(/\.$/,"");
   }
 
-  function rateHistogramHtml(rates, label, controls="") {
-    const model = buildRateHistogram(rates);
+  function rateHistogramHtml(points, label, controls="") {
+    const model = buildRateHistogram(points);
     if (!model.bins.length) return `<section class="r1-rate-histogram"><div class="r1-rate-histogram-head"><div><h4>金利分布</h4><p>X軸：金利（年率％）／Y軸：金融機関数</p></div>${controls}</div><div class="r1-empty">グラフ化できる金利データがありません。</div></section>`;
     const width=960, height=360, left=64, right=22, top=24, bottom=78;
     const chartWidth=width-left-right, chartHeight=height-top-bottom;
@@ -781,12 +786,46 @@
       const barHeight=bin.count/yTop*chartHeight;
       const y=top+chartHeight-barHeight;
       const rangeLabel=`${histogramRateLabel(bin.from)}%以上・${histogramRateLabel(bin.to)}%未満`;
-      return `<g class="r1-histogram-bar"><title>${esc(rangeLabel)}：${fmt(bin.count)}金融機関</title><rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="3"/><text class="r1-histogram-count" x="${x+barWidth/2}" y="${Math.max(top+10,y-5)}" text-anchor="middle">${bin.count ? fmt(bin.count) : ""}</text><text class="r1-histogram-xlabel" x="${x+barWidth/2}" y="${height-bottom+18}" transform="rotate(-42 ${x+barWidth/2} ${height-bottom+18})" text-anchor="end">${esc(histogramRateLabel(bin.from))}</text></g>`;
+      const members=encodeURIComponent(JSON.stringify(bin.members.map(item=>({
+        institution:String(item.institution||""),rate:item.rate,
+        institutionType:String(item.institutionType||""),prefecture:String(item.prefecture||"")
+      }))));
+      const interactive=bin.count ? ` tabindex="0" role="button" aria-label="${esc(rangeLabel)}の${fmt(bin.count)}金融機関を表示" data-r1-histogram-bin="1" data-r1-histogram-range="${esc(rangeLabel)}" data-r1-histogram-members="${members}"` : "";
+      return `<g class="r1-histogram-bar${bin.count ? " is-clickable" : ""}"${interactive}><title>${esc(rangeLabel)}：${fmt(bin.count)}金融機関（クリックで一覧表示）</title><rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="3"/><text class="r1-histogram-count" x="${x+barWidth/2}" y="${Math.max(top+10,y-5)}" text-anchor="middle">${bin.count ? fmt(bin.count) : ""}</text><text class="r1-histogram-xlabel" x="${x+barWidth/2}" y="${height-bottom+18}" transform="rotate(-42 ${x+barWidth/2} ${height-bottom+18})" text-anchor="end">${esc(histogramRateLabel(bin.from))}</text></g>`;
     }).join("");
     return `<section class="r1-rate-histogram">
-      <div class="r1-rate-histogram-head"><div><h4>${esc(label)}の金利分布</h4><p>X軸：金利（年率％）／Y軸：金融機関数　階級幅：${esc(histogramRateLabel(model.step))}%　対象：${fmt(rates.length)}金融機関</p></div>${controls}</div>
+      <div class="r1-rate-histogram-head"><div><h4>${esc(label)}の金利分布</h4><p>X軸：金利（年率％）／Y軸：金融機関数　階級幅：${esc(histogramRateLabel(model.step))}%　対象：${fmt(points.length)}金融機関　棒をクリックすると内訳を表示</p></div>${controls}</div>
       <div class="r1-rate-histogram-scroll"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(label)}の金利帯別金融機関数"><g class="r1-histogram-grid">${grid}</g><line class="r1-histogram-axis" x1="${left}" y1="${top}" x2="${left}" y2="${height-bottom}"/><line class="r1-histogram-axis" x1="${left}" y1="${height-bottom}" x2="${width-right}" y2="${height-bottom}"/>${bars}<text class="r1-histogram-axis-label" x="${(left+width-right)/2}" y="${height-8}" text-anchor="middle">金利（年率％、${esc(histogramRateLabel(model.step))}%刻み）</text><text class="r1-histogram-axis-label" x="15" y="${top+chartHeight/2}" transform="rotate(-90 15 ${top+chartHeight/2})" text-anchor="middle">金融機関数</text></svg></div>
+      <div class="r1-histogram-details" data-r1-histogram-details hidden><div class="r1-histogram-details-head"><div><h5 data-r1-histogram-title></h5><p data-r1-histogram-summary></p></div><button type="button" data-r1-histogram-close>閉じる</button></div><ul data-r1-histogram-list></ul></div>
     </section>`;
+  }
+
+  function wireHistogramInteractions(host) {
+    host.querySelectorAll("[data-r1-histogram-bin]").forEach(bar => {
+      const open = () => {
+        const section=bar.closest(".r1-rate-histogram");
+        const panel=section?.querySelector("[data-r1-histogram-details]");
+        if (!panel) return;
+        let members=[];
+        try { members=JSON.parse(decodeURIComponent(bar.dataset.r1HistogramMembers || "%5B%5D")); } catch (_) { members=[]; }
+        members.sort((a,b)=>Number(b.rate)-Number(a.rate) || String(a.institution).localeCompare(String(b.institution),"ja"));
+        section.querySelectorAll(".r1-histogram-bar.is-selected").forEach(node=>node.classList.remove("is-selected"));
+        bar.classList.add("is-selected");
+        panel.querySelector("[data-r1-histogram-title]").textContent=`${bar.dataset.r1HistogramRange}の金融機関`;
+        panel.querySelector("[data-r1-histogram-summary]").textContent=`${fmt(members.length)}金融機関（同一階級内は金利の高い順）`;
+        panel.querySelector("[data-r1-histogram-list]").innerHTML=members.map(item=>`<li><strong>${esc(item.institution || "名称不明")}</strong><span>${fmtRate(Number(item.rate))}</span><small>${esc([item.institutionType,item.prefecture].filter(Boolean).join(" / "))}</small></li>`).join("");
+        panel.hidden=false;
+        panel.scrollIntoView({block:"nearest",behavior:"smooth"});
+      };
+      bar.addEventListener("click",open);
+      bar.addEventListener("keydown",event=>{ if(event.key==="Enter" || event.key===" "){event.preventDefault();open();} });
+    });
+    host.querySelectorAll("[data-r1-histogram-close]").forEach(button=>button.addEventListener("click",()=>{
+      const section=button.closest(".r1-rate-histogram");
+      const panel=section?.querySelector("[data-r1-histogram-details]");
+      if(panel) panel.hidden=true;
+      section?.querySelectorAll(".r1-histogram-bar.is-selected").forEach(node=>node.classList.remove("is-selected"));
+    }));
   }
 
   function r1OrdinaryMatrixHtml(model) {
@@ -802,7 +841,7 @@
       <div class="r1-matrix-stat-grid"><article class="r1-matrix-stat"><h4>普通預金</h4><div><span>最高</span><strong>${fmtRate(model.maximum)}</strong><small>${esc(names || "—")}</small></div><div><span>平均</span><strong>${fmtRate(model.average)}</strong><small>${fmt(model.allCount)}金融機関</small></div></article></div>
       <p class="r1-matrix-scroll-hint">普通預金には預入期間がないため、専用の1列で比較します。金融機関ごとの最新金利を表示します。</p>
       <div class="r1-matrix-scroll"><table class="r1-analytics-matrix"><thead><tr><th>金融機関</th><th>普通預金</th></tr></thead><tbody>${rows}</tbody></table></div>
-      ${rateHistogramHtml(model.entries.map(item=>item.rate),"普通預金")}
+      ${rateHistogramHtml(model.entries.map(item=>({rate:item.rate,institution:item.institution,institutionType:item.institutionType,prefecture:item.prefecture})),"普通預金")}
     </section>`;
   }
 
@@ -935,7 +974,7 @@
       : `実効金利は解決済みデータのみ。各金融機関・年限の最高実効金利を表示。相当利回り除外 ${fmt(model.excludedEquivalent)}件。`;
 
     const chartTerm = R1_MATRIX_TERMS.find(term=>term.months===R1.analyticsChartTerm) || R1_MATRIX_TERMS[1];
-    const chartRates = model.institutions.map(name=>model.cells.get(`${name}|||${chartTerm.months}`)?.rate).filter(Number.isFinite);
+    const chartPoints = model.institutions.map(name=>{ const cell=model.cells.get(`${name}|||${chartTerm.months}`); const meta=model.institutionMeta.get(name); return {rate:cell?.rate,institution:name,institutionType:meta?.institutionType||"",prefecture:meta?.prefecture||""}; }).filter(item=>Number.isFinite(item.rate));
     const chartControls = `<div class="r1-histogram-term-switch" aria-label="グラフの預入期間">${R1_MATRIX_TERMS.map(term=>`<button type="button" class="r1-histogram-term ${term.months===chartTerm.months ? "is-active" : ""}" data-r1-chart-term="${term.months}">${esc(term.label)}</button>`).join("")}</div>`;
     return `<div class="r1-analytics-matrix-summary">
       <span>全${fmt(model.institutions.length)}金融機関・全順位</span>
@@ -947,7 +986,7 @@
       <thead><tr><th>金融機関</th>${R1_MATRIX_TERMS.map(t=>`<th>${esc(t.label)}</th>`).join("")}</tr></thead>
       <tbody>${body}</tbody>
     </table></div>
-    ${rateHistogramHtml(chartRates,chartTerm.label,chartControls)}`;
+    ${rateHistogramHtml(chartPoints,chartTerm.label,chartControls)}`;
   }
 
   function populateR1MatrixFilters(shell) {
@@ -988,7 +1027,8 @@
     document.querySelectorAll("[data-r1-matrix-mode]").forEach(b => {
       b.classList.toggle("is-active", b.dataset.r1MatrixMode === R1.analyticsMatrixMode);
     });
-    host.querySelectorAll("[data-r1-chart-term]").forEach(button => {
+    wireHistogramInteractions(host);
++    host.querySelectorAll("[data-r1-chart-term]").forEach(button => {
       button.addEventListener("click", () => {
         R1.analyticsChartTerm = Number(button.dataset.r1ChartTerm);
         renderR1AnalyticsMatrix();
