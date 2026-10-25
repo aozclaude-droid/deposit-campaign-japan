@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.25.9";
+const APP_VERSION = "2026.10.25.16";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -36,43 +36,27 @@ function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
 const DATA_URL = "campaign_all.json?v=20261024-5";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261025-9";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261025-16";
 const LATEST_UPDATE = {
   publishedOn: "2026-10-25",
-  label: "2026年10月25日 信用組合20先の普通預金金利を反映",
-  expectedTotalRecords: 16419,
-  addedStartIndex: 16419,
+  label: "2026年10月25日 未到達・接続不可・過年度18先を再巡回し2先を追加反映",
+  expectedTotalRecords: 16420,
+  addedStartIndex: 16420,
   addedCount: 0,
-  movedToBaseHistoryCount: 254,
-  movedInstitutionCount: 32,
-  reclassifiedCount: 1,
+  movedToBaseHistoryCount: 259,
+  movedInstitutionCount: 37,
+  reclassifiedCount: 16,
   ordinaryCampaignRetainedCount: 29,
-  ordinaryBaseAddedCount: 20,
-  baseHistoryTotalCount: 5060,
-  creditUnionOrdinaryTotalCount: 108,
-  reviewedInstitutionCount: 52,
-  withheldInstitutionCount: 32,
+  ordinaryBaseAddedCount: 2,
+  baseHistoryTotalCount: 5251,
+  ordinaryInstitutionTotalCount: 199,
+  reviewedInstitutionCount: 18,
+  withheldInstitutionCount: 16,
+  segmentLabel: "単位農協（未到達・接続不可・過年度の再巡回）",
+  segmentMetricLabel: "JAの収録",
   ordinaryAddedInstitutions: [
-    ["青森県信用組合", "0.15％"],
-    ["大阪府医師信用組合", "0.4％"],
-    ["長野県信用組合", "0.4％"],
-    ["釧路信用組合", "0.3％"],
-    ["東京消防信用組合", "0.3％"],
-    ["警視庁職員信用組合", "0.4％"],
-    ["文化産業信用組合", "0.2％"],
-    ["ミレ信用組合", "0.015％"],
-    ["あすか信用組合", "0.02％"],
-    ["西海みずき信用組合", "0.2％"],
-    ["君津信用組合", "0.001％"],
-    ["杜陵信用組合", "0.3％"],
-    ["熊本県医師信用組合", "0.4％"],
-    ["ぐんまみらい信用組合", "0.3％"],
-    ["宿毛商銀信用組合", "0.17％"],
-    ["土佐信用組合", "0.4％"],
-    ["熊谷商工信用組合", "0.2％"],
-    ["埼玉信用組合", "0.36％"],
-    ["山口県信用組合", "0.1％"],
-    ["滋賀県信用組合", "0.3％"]
+    ["JAようてい", "0.4％"],
+    ["JAよこすか葉山", "0.2％"]
   ],
   updatedRecordKeys: []
 };
@@ -1147,16 +1131,16 @@ function renderLatestUpdate() {
   });
 
   $("#latestUpdateDate").textContent = LATEST_UPDATE.label;
-  $("#latestUpdateLead").textContent = `信用組合${fmt(LATEST_UPDATE.reviewedInstitutionCount)}先を再照査し、現行金利を確認できた${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先を普通預金金利履歴へ追加しました。`;
+  $("#latestUpdateLead").textContent = `${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.reviewedInstitutionCount)}先を再照査し、現行金利を確認できた${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先を普通預金金利履歴へ追加しました。`;
   $("#latestUpdateMetrics").innerHTML = [
     ["普通預金を追加", LATEST_UPDATE.ordinaryBaseAddedCount, "先"],
-    ["信用組合の収録", LATEST_UPDATE.creditUnionOrdinaryTotalCount, "先"],
+    [LATEST_UPDATE.segmentMetricLabel, LATEST_UPDATE.ordinaryInstitutionTotalCount, "先"],
     ["保留", LATEST_UPDATE.withheldInstitutionCount, "先"],
     ["通常金利履歴", LATEST_UPDATE.baseHistoryTotalCount, "件"]
   ].map(([label, value, unit]) => `<div class="latest-update-metric"><span>${esc(label)}</span><strong>${fmt(value)}</strong><small>${unit}</small></div>`).join("");
 
   $("#latestUpdateCompact").innerHTML = `<div class="latest-update-summary-text">
-    <strong>信用組合${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先・${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}明細</strong>を普通預金金利履歴へ追加
+    <strong>${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先・${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}明細</strong>を普通預金金利履歴へ追加
   </div><div class="latest-update-region-list" aria-label="今回の整理内容">
     <span>照査対象 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}先</span>
     <span>現行値未確定・非公開 ${fmt(LATEST_UPDATE.withheldInstitutionCount)}先</span>
