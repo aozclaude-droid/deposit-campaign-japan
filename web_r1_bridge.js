@@ -737,7 +737,7 @@
 
   function buildRateHistogram(rates) {
     const values = rates.filter(Number.isFinite).sort((a,b)=>a-b);
-    if (!values.length) return {bins:[],maximumCount:0};
+    if (!values.length) return {bins:[],maximumCount:0,step:0};
     const minimum = values[0];
     const maximum = values.at(-1);
     const step = niceHistogramStep(maximum-minimum);
@@ -755,7 +755,7 @@
       index = Math.max(0,Math.min(bins.length-1,index));
       bins[index].count++;
     });
-    return {bins,maximumCount:Math.max(...bins.map(bin=>bin.count),0)};
+    return {bins,maximumCount:Math.max(...bins.map(bin=>bin.count),0),step:actualStep};
   }
 
   function histogramRateLabel(value) {
@@ -780,13 +780,12 @@
       const x=left+index*slot+(slot-barWidth)/2;
       const barHeight=bin.count/yTop*chartHeight;
       const y=top+chartHeight-barHeight;
-      const middle=bin.from+(bin.to-bin.from)/2;
-      const rangeLabel=`${histogramRateLabel(bin.from)}～${histogramRateLabel(bin.to)}%`;
-      return `<g class="r1-histogram-bar"><title>${esc(rangeLabel)}：${fmt(bin.count)}金融機関</title><rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="3"/><text class="r1-histogram-count" x="${x+barWidth/2}" y="${Math.max(top+10,y-5)}" text-anchor="middle">${bin.count ? fmt(bin.count) : ""}</text><text class="r1-histogram-xlabel" x="${x+barWidth/2}" y="${height-bottom+18}" transform="rotate(-42 ${x+barWidth/2} ${height-bottom+18})" text-anchor="end">${esc(histogramRateLabel(middle))}</text></g>`;
+      const rangeLabel=`${histogramRateLabel(bin.from)}%以上・${histogramRateLabel(bin.to)}%未満`;
+      return `<g class="r1-histogram-bar"><title>${esc(rangeLabel)}：${fmt(bin.count)}金融機関</title><rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="3"/><text class="r1-histogram-count" x="${x+barWidth/2}" y="${Math.max(top+10,y-5)}" text-anchor="middle">${bin.count ? fmt(bin.count) : ""}</text><text class="r1-histogram-xlabel" x="${x+barWidth/2}" y="${height-bottom+18}" transform="rotate(-42 ${x+barWidth/2} ${height-bottom+18})" text-anchor="end">${esc(histogramRateLabel(bin.from))}</text></g>`;
     }).join("");
     return `<section class="r1-rate-histogram">
-      <div class="r1-rate-histogram-head"><div><h4>${esc(label)}の金利分布</h4><p>X軸：金利（年率％）／Y軸：金融機関数　対象：${fmt(rates.length)}金融機関</p></div>${controls}</div>
-      <div class="r1-rate-histogram-scroll"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(label)}の金利帯別金融機関数"><g class="r1-histogram-grid">${grid}</g><line class="r1-histogram-axis" x1="${left}" y1="${top}" x2="${left}" y2="${height-bottom}"/><line class="r1-histogram-axis" x1="${left}" y1="${height-bottom}" x2="${width-right}" y2="${height-bottom}"/>${bars}<text class="r1-histogram-axis-label" x="${(left+width-right)/2}" y="${height-8}" text-anchor="middle">金利（年率％）</text><text class="r1-histogram-axis-label" x="15" y="${top+chartHeight/2}" transform="rotate(-90 15 ${top+chartHeight/2})" text-anchor="middle">金融機関数</text></svg></div>
+      <div class="r1-rate-histogram-head"><div><h4>${esc(label)}の金利分布</h4><p>X軸：金利（年率％）／Y軸：金融機関数　階級幅：${esc(histogramRateLabel(model.step))}%　対象：${fmt(rates.length)}金融機関</p></div>${controls}</div>
+      <div class="r1-rate-histogram-scroll"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(label)}の金利帯別金融機関数"><g class="r1-histogram-grid">${grid}</g><line class="r1-histogram-axis" x1="${left}" y1="${top}" x2="${left}" y2="${height-bottom}"/><line class="r1-histogram-axis" x1="${left}" y1="${height-bottom}" x2="${width-right}" y2="${height-bottom}"/>${bars}<text class="r1-histogram-axis-label" x="${(left+width-right)/2}" y="${height-8}" text-anchor="middle">金利（年率％、${esc(histogramRateLabel(model.step))}%刻み）</text><text class="r1-histogram-axis-label" x="15" y="${top+chartHeight/2}" transform="rotate(-90 15 ${top+chartHeight/2})" text-anchor="middle">金融機関数</text></svg></div>
     </section>`;
   }
 
