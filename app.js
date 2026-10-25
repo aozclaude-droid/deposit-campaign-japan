@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.25.3";
+const APP_VERSION = "2026.10.25.5";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -498,6 +498,7 @@ function analyticsCellHtml(analytics, institution, term) {
   return `<td class="matrix-rate-cell ${rank ? `top-rank rank-${rank}` : ""}" title="${esc(title)}"><span class="matrix-rate">${esc(formatRate(entry.rate))}</span>${rank ? `<span class="rank-badge">${rank}位</span>` : ""}</td>`;
 }
 function productAnalyticsHtml(analytics, displayMode = "top5") {
+  if (ORDINARY_PRODUCT_TYPES.has(analytics.productType)) return "";
   const showAll = displayMode === "all";
   const institutions = showAll ? analytics.allInstitutions : analytics.topInstitutions;
   const averageCards = ANALYTICS_TERMS.map((term) => {
@@ -561,11 +562,13 @@ function renderRateAnalytics() {
   const displayMode = $("#analyticsDisplayMode").value === "all" ? "all" : "top5";
   const displayLabel = displayMode === "all" ? "全金融機関" : "上位5";
   $("#analyticsSummary").textContent = `${regionLabel} / ${prefectureLabel} / ${periodLabel} / ${displayLabel} / 比較可能 ${fmt(comparable.length)}明細`;
+  const ordinarySelected = productTypes.some((productType) => ORDINARY_PRODUCT_TYPES.has(productType));
   const sections = productTypes
     .map((productType) => buildProductAnalytics(productType, periodRecords))
     .map((analytics) => productAnalyticsHtml(analytics, displayMode))
     .join("");
-  $("#analyticsResults").innerHTML = `<div class="analytics-data-summary"><strong>${fmt(institutionCount)}金融機関・${fmt(comparable.length)}比較可能明細</strong><span>対象明細 ${fmt(periodRecords.length)}件</span><span>対象外年限 ${fmt(noTerm)}件</span><span>絶対金利を算出不可 ${fmt(noRate)}件</span></div>${sections || '<div class="analytics-empty">条件に一致するデータがありません。</div>'}`;
+  const ordinaryNotice = ordinarySelected ? '<div class="analytics-data-summary"><strong>普通預金は通常金利履歴で集計</strong><span>下段の「R1 金利比較マトリクス」に専用の普通預金ランキングを表示します。</span></div>' : "";
+  $("#analyticsResults").innerHTML = `<div class="analytics-data-summary"><strong>${fmt(institutionCount)}金融機関・${fmt(comparable.length)}比較可能明細</strong><span>対象明細 ${fmt(periodRecords.length)}件</span><span>対象外年限 ${fmt(noTerm)}件</span><span>絶対金利を算出不可 ${fmt(noRate)}件</span></div>${ordinaryNotice}${sections || (ordinarySelected ? "" : '<div class="analytics-empty">条件に一致するデータがありません。</div>')}`;
 }
 
 function selectedHeatmapProduct() {

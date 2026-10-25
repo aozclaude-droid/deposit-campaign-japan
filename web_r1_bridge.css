@@ -92,6 +92,7 @@
 .r1-matrix-inherit-note{margin-left:auto;color:#8490a0;font-size:9px}
 .r1-analytics-matrix-summary{display:flex;gap:10px;flex-wrap:wrap;padding:8px 10px;border-radius:9px;background:#f5f8fc;color:#66768c;font-size:9px}
 .r1-matrix-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.r1-ordinary-matrix{margin-top:14px;padding-top:14px;border-top:2px solid #dce9f6}.r1-ordinary-matrix:first-child{margin-top:0;padding-top:0;border-top:0}.r1-ordinary-matrix .r1-matrix-stat-grid{grid-template-columns:minmax(240px,360px)}.r1-ordinary-matrix .r1-analytics-matrix{min-width:460px}.r1-ordinary-matrix .rank-badge{display:inline-block;margin-left:6px}
 .r1-matrix-stat{padding:10px;border:1px solid #e0e7ef;border-radius:10px;background:#fbfcfe}
 .r1-matrix-stat h4{margin:0 0 7px;color:#334f70;font-size:11px}
 .r1-matrix-stat>div{display:grid;grid-template-columns:34px 1fr;gap:2px 6px;padding:4px 0;border-top:1px solid #edf1f5}

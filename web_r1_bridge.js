@@ -48,7 +48,7 @@
   ));
 
   const inst = (row) => String(pick(row, "institution_name", "金融機関名")).trim();
-  const instType = (row) => String(pick(row, "institution_type", "金融機関種別")).trim();
+  const instType = (row) => String(pick(row, "institution_type_normalized", "institution_type", "金融機関種別", "institution_type_raw")).trim();
   const pref = (row) => String(pick(row, "prefecture", "都道府県")).trim();
   const region = (row) => String(pick(row, "region", "地域")).trim();
   const sourceDate = (row) => String(pick(row, "source_as_of_date", "effective_from", "base_rate_source_date")).trim();
@@ -584,6 +584,126 @@
     };
   }
 
+
+  const ORDINARY_MATRIX_PRODUCTS = new Set(["普通預金", "普通貯金"]);
+  const ORDINARY_MATRIX_REGIONS = new Map([
+    ["北海道","北海道・東北"],["青森県","北海道・東北"],["岩手県","北海道・東北"],["宮城県","北海道・東北"],["秋田県","北海道・東北"],["山形県","北海道・東北"],["福島県","北海道・東北"],
+    ["茨城県","関東"],["栃木県","関東"],["群馬県","関東"],["埼玉県","関東"],["千葉県","関東"],["神奈川県","関東"],["東京都","東京"],
+    ["新潟県","甲信越・北陸"],["富山県","甲信越・北陸"],["石川県","甲信越・北陸"],["福井県","甲信越・北陸"],["山梨県","甲信越・北陸"],["長野県","甲信越・北陸"],
+    ["岐阜県","東海"],["静岡県","東海"],["愛知県","東海"],["三重県","東海"],
+    ["滋賀県","近畿"],["京都府","近畿"],["兵庫県","近畿"],["奈良県","近畿"],["和歌山県","近畿"],["大阪府","大阪"],
+    ["鳥取県","中国"],["島根県","中国"],["岡山県","中国"],["広島県","中国"],["山口県","中国"],
+    ["徳島県","四国"],["香川県","四国"],["愛媛県","四国"],["高知県","四国"],
+    ["福岡県","九州・沖縄"],["佐賀県","九州・沖縄"],["長崎県","九州・沖縄"],["熊本県","九州・沖縄"],["大分県","九州・沖縄"],["宮崎県","九州・沖縄"],["鹿児島県","九州・沖縄"],["沖縄県","九州・沖縄"]
+  ]);
+
+  function ordinaryMatrixRegion(row) {
+    return region(row) || ORDINARY_MATRIX_REGIONS.get(pref(row)) || "";
+  }
+
+  function ordinaryMatrixDate(value) {
+    const s = String(value || "").trim().slice(0,10);
+    return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : "";
+  }
+
+  function ordinaryMatrixToday() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+
+  function isOrdinaryHistoryRow(row) {
+    const family = String(pick(row,"product_family","product_category")).trim().toUpperCase();
+    const label = String(pick(row,"product_label","product_type","商品区分","product_name")).trim();
+    return family === "ORDINARY_DEPOSIT" || /普通預金|普通貯金/.test(label);
+  }
+
+  function currentOrdinaryHistoryRows() {
+    const today = ordinaryMatrixToday();
+    const latest = new Map();
+    (R1.data.history || []).forEach(row => {
+      if (!isOrdinaryHistoryRow(row) || rateValue(row) === null) return;
+      if (String(pick(row,"record_eligible")).trim() === "0") return;
+      const from = ordinaryMatrixDate(pick(row,"effective_from","source_as_of_date"));
+      const to = ordinaryMatrixDate(pick(row,"effective_to"));
+      if (from && from > today) return;
+      if (to && to < today) return;
+      const name = inst(row);
+      if (!name) return;
+      const key = `${name}|||${pref(row)}|||${instType(row)}`;
+      const date = from || ordinaryMatrixDate(sourceDate(row));
+      const current = latest.get(key);
+      if (!current || date > current.date) latest.set(key,{date,rows:[row]});
+      else if (date === current.date) current.rows.push(row);
+    });
+    return [...latest.values()].flatMap(item => item.rows);
+  }
+
+  function buildR1OrdinaryMatrix() {
+    const f = matrixFilters();
+    const groups = new Map();
+    currentOrdinaryHistoryRows().forEach(row => {
+      if (f.prefecture && pref(row) !== f.prefecture) return;
+      if (f.prefectures.size && !f.prefectures.has(pref(row))) return;
+      if (f.institutionType && instType(row) !== f.institutionType) return;
+      if (f.regions.size && !f.regions.has(ordinaryMatrixRegion(row))) return;
+      const name = inst(row);
+      if (!groups.has(name)) groups.set(name,[]);
+      groups.get(name).push(row);
+    });
+
+    let entries = [...groups.entries()].map(([institution,rows]) => {
+      const rates = rows.map(rateValue).filter(v => v !== null);
+      const dates = rows.map(sourceDate).filter(Boolean).sort();
+      return {
+        institution,
+        rate: rates.length ? rates.reduce((a,b)=>a+b,0)/rates.length : null,
+        institutionType: instType(rows[0]),
+        prefecture: pref(rows[0]),
+        sourceDate: dates.at(-1) || "",
+        sourceCount: rows.length
+      };
+    }).filter(item => item.rate !== null)
+      .sort((a,b)=>b.rate-a.rate || a.institution.localeCompare(b.institution,"ja"));
+
+    const allCount = entries.length;
+    if (f.displayMode === "top5") entries = entries.slice(0,5);
+    const allRates = [...groups.values()].map(rows => {
+      const rates = rows.map(rateValue).filter(v => v !== null);
+      return rates.length ? rates.reduce((a,b)=>a+b,0)/rates.length : null;
+    }).filter(v => v !== null);
+    const maximum = allRates.length ? Math.max(...allRates) : null;
+    const maximumInstitutions = maximum === null ? [] : [...groups.entries()].filter(([,rows]) => {
+      const rates = rows.map(rateValue).filter(v => v !== null);
+      const average = rates.length ? rates.reduce((a,b)=>a+b,0)/rates.length : null;
+      return average !== null && Math.abs(average-maximum)<1e-12;
+    }).map(([name])=>name);
+    return {
+      filters:f,
+      entries,
+      allCount,
+      average:allRates.length ? allRates.reduce((a,b)=>a+b,0)/allRates.length : null,
+      maximum,
+      maximumInstitutions,
+      sourceRowCount:currentOrdinaryHistoryRows().length
+    };
+  }
+
+  function r1OrdinaryMatrixHtml(model) {
+    const names = model.maximumInstitutions.length > 2
+      ? `${model.maximumInstitutions.slice(0,2).join("・")}ほか${fmt(model.maximumInstitutions.length-2)}先`
+      : model.maximumInstitutions.join("・");
+    const rows = model.entries.length ? model.entries.map((item,index)=>`<tr>
+      <th scope="row"><strong>${esc(item.institution)}</strong><small>${esc(item.institutionType)}${item.prefecture ? ` / ${esc(item.prefecture)}` : ""}</small></th>
+      <td class="r1-matrix-cell"><strong>${fmtRate(item.rate)}</strong><small>${esc(item.sourceDate || "基準日不明")}${item.sourceCount>1 ? ` / ${fmt(item.sourceCount)}行平均` : ""}</small><span class="rank-badge">${index+1}位</span></td>
+    </tr>`).join("") : `<tr><td colspan="2" class="r1-empty">条件に一致する普通預金データがありません。</td></tr>`;
+    return `<section class="r1-ordinary-matrix">
+      <div class="r1-analytics-matrix-summary"><span>${model.filters.displayMode === "all" ? `全${fmt(model.allCount)}金融機関` : `普通預金 上位${fmt(model.entries.length)}金融機関`}</span><span>通常金利履歴の最新スナップショットを使用（読込 ${fmt(model.sourceRowCount)}行）</span></div>
+      <div class="r1-matrix-stat-grid"><article class="r1-matrix-stat"><h4>普通預金</h4><div><span>最高</span><strong>${fmtRate(model.maximum)}</strong><small>${esc(names || "—")}</small></div><div><span>平均</span><strong>${fmtRate(model.average)}</strong><small>${fmt(model.allCount)}金融機関</small></div></article></div>
+      <p class="r1-matrix-scroll-hint">普通預金には預入期間がないため、専用の1列で比較します。金融機関ごとの最新金利を表示します。</p>
+      <div class="r1-matrix-scroll"><table class="r1-analytics-matrix"><thead><tr><th>金融機関</th><th>普通預金</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </section>`;
+  }
+
   function matrixFilters() {
     const ownPref = $("#r1MatrixPref")?.value || "";
     const ownType = $("#r1MatrixType")?.value || "";
@@ -593,8 +713,11 @@
     const existingProducts = $("#analyticsProductFilter")
       ? Array.from($("#analyticsProductFilter").selectedOptions).map(o=>o.value).filter(Boolean)
       : [];
+    const existingPrefectures = $("#analyticsPrefectureFilter")
+      ? Array.from($("#analyticsPrefectureFilter").selectedOptions).map(o=>o.value).filter(Boolean)
+      : [];
     const displayMode = $("#analyticsDisplayMode")?.value === "all" ? "all" : "top5";
-    return {prefecture:ownPref,institutionType:ownType,regions:new Set(existingRegions),products:new Set(existingProducts),displayMode};
+    return {prefecture:ownPref,institutionType:ownType,regions:new Set(existingRegions),prefectures:new Set(existingPrefectures),products:new Set(existingProducts),displayMode};
   }
 
   function buildR1Matrix(mode) {
@@ -609,6 +732,7 @@
       const name = inst(r);
       if (!name) return;
       if (f.prefecture && pref(r) !== f.prefecture) return;
+      if (f.prefectures.size && !f.prefectures.has(pref(r))) return;
       if (f.institutionType && instType(r) !== f.institutionType) return;
       if (f.regions.size && region(r) && !f.regions.has(region(r))) return;
       if (mode === "effective" && f.products.size) {
@@ -719,7 +843,7 @@
   }
 
   function populateR1MatrixFilters(shell) {
-    const source = [...(R1.data.current||[]),...(R1.data.resolved||[])];
+    const source = [...(R1.data.current||[]),...(R1.data.resolved||[]),...(R1.data.history||[])];
     const availablePrefs = new Set(source.map(pref).filter(Boolean));
     const prefs = PREFECTURES_NORTH_TO_SOUTH.filter(p=>availablePrefs.has(p));
     const types = [...new Set(source.map(instType).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ja"));
@@ -736,8 +860,23 @@
   function renderR1AnalyticsMatrix() {
     const host = $("#r1AnalyticsMatrixBody");
     if (!host || !R1.loaded) return;
-    const model = buildR1Matrix(R1.analyticsMatrixMode);
-    host.innerHTML = r1MatrixHtml(model);
+    const filters = matrixFilters();
+    const ordinaryRequested = filters.products.size === 0 || [...filters.products].some(value => ORDINARY_MATRIX_PRODUCTS.has(value));
+    const ordinaryOnly = filters.products.size > 0 && [...filters.products].every(value => ORDINARY_MATRIX_PRODUCTS.has(value));
+    const sections = [];
+    let ordinaryModel = null;
+    if (!ordinaryOnly) sections.push(r1MatrixHtml(buildR1Matrix(R1.analyticsMatrixMode)));
+    if (ordinaryRequested) {
+      ordinaryModel = buildR1OrdinaryMatrix();
+      sections.push(r1OrdinaryMatrixHtml(ordinaryModel));
+    }
+    host.innerHTML = sections.join("") || '<div class="r1-empty">条件に一致する比較データがありません。</div>';
+    if (ordinaryOnly && ordinaryModel) {
+      const summary = $("#analyticsSummary");
+      if (summary) summary.textContent = `普通預金 / 通常金利履歴の最新スナップショット / ${fmt(ordinaryModel.allCount)}金融機関`;
+      const legacySummary = $("#analyticsResults")?.querySelector(".analytics-data-summary");
+      if (legacySummary) legacySummary.innerHTML = `<strong>${fmt(ordinaryModel.allCount)}金融機関</strong><span>最高 ${fmtRate(ordinaryModel.maximum)}</span><span>平均 ${fmtRate(ordinaryModel.average)}</span><span>最新スナップショット ${fmt(ordinaryModel.sourceRowCount)}行</span>`;
+    }
     document.querySelectorAll("[data-r1-matrix-mode]").forEach(b => {
       b.classList.toggle("is-active", b.dataset.r1MatrixMode === R1.analyticsMatrixMode);
     });
@@ -756,7 +895,7 @@
           <div>
             <div class="r1-kicker">R1 MATRIX</div>
             <h3>R1 金利比較マトリクス</h3>
-            <p>既存のキャンペーン金利マトリクスと同じ6か月・1年・3年・5年の比較軸で、通常金利と解決済み実効金利を比較します。</p>
+            <p>定期預金は6か月・1年・3年・5年、普通預金は預入期間のない専用列で、通常金利履歴の最新値を比較します。</p>
           </div>
           <div class="r1-matrix-mode-switch">
             <button type="button" class="r1-matrix-mode is-active" data-r1-matrix-mode="base">通常金利</button>
@@ -785,7 +924,7 @@
   }
 
   function bindExistingAnalyticsR1Sync() {
-    const targets = ["#analyticsRegionFilter","#analyticsProductFilter","#analyticsDisplayMode","#analyticsDateFrom","#analyticsDateTo"];
+    const targets = ["#analyticsRegionFilter","#analyticsPrefectureFilter","#analyticsProductFilter","#analyticsDisplayMode","#analyticsDateFrom","#analyticsDateTo"];
     targets.forEach(sel => {
       const el=$(sel);
       if (el && !el.dataset.r1MatrixBound) {
