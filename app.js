@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.24.5";
+const APP_VERSION = "2026.10.25.1";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -37,8 +37,8 @@ function canonicalRegion(region, prefecture) {
 }
 const DATA_URL = "campaign_all.json?v=20261024-5";
 const LATEST_UPDATE = {
-  publishedOn: "2026-10-24",
-  label: "2026年10月24日 普通預金データ整理反映",
+  publishedOn: "2026-10-25",
+  label: "2026年10月25日 信用組合11先の普通預金金利を反映",
   expectedTotalRecords: 16419,
   addedStartIndex: 16419,
   addedCount: 0,
@@ -46,9 +46,25 @@ const LATEST_UPDATE = {
   movedInstitutionCount: 32,
   reclassifiedCount: 1,
   ordinaryCampaignRetainedCount: 29,
-  updatedRecordKeys: [
-    "UI銀行␟UI銀行3rd はたらくサイフ(普通預金)リリース記念 Anniversary定期預金キャンペーン␟2025-06-18␟2025-09-30␟1年␟1.35％␟␟https://www.uibank.co.jp/cms_source/data/campaign/detail/2025/000647.html"
-  ]
+  ordinaryBaseAddedCount: 11,
+  baseHistoryTotalCount: 5051,
+  creditUnionOrdinaryTotalCount: 99,
+  reviewedInstitutionCount: 42,
+  withheldInstitutionCount: 31,
+  ordinaryAddedInstitutions: [
+    ["青森県信用組合", "0.15％"],
+    ["大阪府医師信用組合", "0.4％"],
+    ["長野県信用組合", "0.4％"],
+    ["釧路信用組合", "0.3％"],
+    ["東京消防信用組合", "0.3％"],
+    ["警視庁職員信用組合", "0.4％"],
+    ["文化産業信用組合", "0.2％"],
+    ["ミレ信用組合", "0.015％"],
+    ["あすか信用組合", "0.02％"],
+    ["西海みずき信用組合", "0.2％"],
+    ["君津信用組合", "0.001％"]
+  ],
+  updatedRecordKeys: []
 };
 const TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
@@ -1050,39 +1066,34 @@ function renderLatestUpdate() {
   });
 
   $("#latestUpdateDate").textContent = LATEST_UPDATE.label;
-  $("#latestUpdateLead").textContent = `キャンペーン一覧から通常金利・優遇商品金利${fmt(LATEST_UPDATE.movedToBaseHistoryCount)}件を金利履歴へ移し、普通預金キャンペーン${fmt(LATEST_UPDATE.ordinaryCampaignRetainedCount)}件はキャンペーン一覧に残しました。`;
+  $("#latestUpdateLead").textContent = `信用組合${fmt(LATEST_UPDATE.reviewedInstitutionCount)}先を再照査し、現行金利を確認できた${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先を普通預金金利履歴へ追加しました。`;
   $("#latestUpdateMetrics").innerHTML = [
-    ["新しく追加", added.length, "件"],
-    ["通常金利へ移行", LATEST_UPDATE.movedToBaseHistoryCount, "件"],
-    ["商品区分を訂正", LATEST_UPDATE.reclassifiedCount, "件"],
-    ["現在の総件数", state.records.length, "件"]
+    ["普通預金を追加", LATEST_UPDATE.ordinaryBaseAddedCount, "先"],
+    ["信用組合の収録", LATEST_UPDATE.creditUnionOrdinaryTotalCount, "先"],
+    ["保留", LATEST_UPDATE.withheldInstitutionCount, "先"],
+    ["通常金利履歴", LATEST_UPDATE.baseHistoryTotalCount, "件"]
   ].map(([label, value, unit]) => `<div class="latest-update-metric"><span>${esc(label)}</span><strong>${fmt(value)}</strong><small>${unit}</small></div>`).join("");
 
   $("#latestUpdateCompact").innerHTML = `<div class="latest-update-summary-text">
-    <strong>${fmt(LATEST_UPDATE.movedInstitutionCount)}金融機関・${fmt(LATEST_UPDATE.movedToBaseHistoryCount)}明細</strong>を通常金利履歴へ移行
+    <strong>信用組合${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先・${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}明細</strong>を普通預金金利履歴へ追加
   </div><div class="latest-update-region-list" aria-label="今回の整理内容">
-    <span>普通預金キャンペーン保持 ${fmt(LATEST_UPDATE.ordinaryCampaignRetainedCount)}件</span>
-    <span>商品区分訂正 ${fmt(LATEST_UPDATE.reclassifiedCount)}件</span>
+    <span>照査対象 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}先</span>
+    <span>現行値未確定・非公開 ${fmt(LATEST_UPDATE.withheldInstitutionCount)}先</span>
   </div>`;
 
   const detailsToggle = $("#latestUpdateDetailsToggle");
-  if (detailsToggle) detailsToggle.textContent = `金融機関別の内訳（${fmt(institutions.size)}機関）を表示`;
+  if (detailsToggle) detailsToggle.textContent = `金融機関別の内訳（${fmt(LATEST_UPDATE.ordinaryAddedInstitutions.length)}機関）を表示`;
 
-  $("#latestUpdateList").innerHTML = [...institutions.entries()].map(([institution, items]) => {
-    const addedCount = items.filter((item) => item._latestUpdateType === "added").length;
-    const updatedCount = items.filter((item) => item._latestUpdateType === "updated").length;
-    const campaigns = [...new Set(items.map((item) => item.campaign_name).filter(Boolean))];
-    const rates = [...new Set(items.map((item) => item.interest_rate).filter(Boolean))];
-    const badges = [
-      addedCount ? `<span class="update-badge added">追加 ${fmt(addedCount)}件</span>` : "",
-      updatedCount ? `<span class="update-badge updated">更新 ${fmt(updatedCount)}件</span>` : ""
-    ].join("");
+  $("#latestUpdateList").innerHTML = LATEST_UPDATE.ordinaryAddedInstitutions.map(([institution, rate]) => {
     return `<article class="latest-update-item">
-      <div class="latest-update-item-head"><h3>${esc(institution)}</h3><div>${badges}</div></div>
-      <p>${campaigns.slice(0, 3).map(esc).join(" / ")}${campaigns.length > 3 ? ` ほか${fmt(campaigns.length - 3)}商品` : ""}</p>
-      <small>${rates.slice(0, 3).map(esc).join(" / ")}${rates.length > 3 ? ` ほか${fmt(rates.length - 3)}件` : ""}</small>
+      <div class="latest-update-item-head"><h3>${esc(institution)}</h3><div><span class="update-badge added">普通預金追加</span></div></div>
+      <p>普通預金金利 ${esc(rate)}</p>
+      <small>公式資料を照査済み</small>
     </article>`;
   }).join("");
+
+  const showLatestOnly = $("#showLatestOnly");
+  if (showLatestOnly) showLatestOnly.hidden = true;
 
   const countsMatch = state.records.length === LATEST_UPDATE.expectedTotalRecords
     && added.length === LATEST_UPDATE.addedCount
