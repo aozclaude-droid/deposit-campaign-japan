@@ -666,7 +666,14 @@
       .sort((a,b)=>b.rate-a.rate || a.institution.localeCompare(b.institution,"ja"));
 
     const allCount = entries.length;
-    if (f.displayMode === "top5") entries = entries.slice(0,5);
+    let previousRate = null;
+    let previousRank = 0;
+    entries = entries.map((item,index) => {
+      const rank = previousRate !== null && Math.abs(item.rate-previousRate)<1e-12 ? previousRank : index+1;
+      previousRate = item.rate;
+      previousRank = rank;
+      return {...item,rank};
+    });
     const allRates = [...groups.values()].map(rows => {
       const rates = rows.map(rateValue).filter(v => v !== null);
       return rates.length ? rates.reduce((a,b)=>a+b,0)/rates.length : null;
@@ -694,10 +701,10 @@
       : model.maximumInstitutions.join("・");
     const rows = model.entries.length ? model.entries.map((item,index)=>`<tr>
       <th scope="row"><strong>${esc(item.institution)}</strong><small>${esc(item.institutionType)}${item.prefecture ? ` / ${esc(item.prefecture)}` : ""}</small></th>
-      <td class="r1-matrix-cell"><strong>${fmtRate(item.rate)}</strong><small>${esc(item.sourceDate || "基準日不明")}${item.sourceCount>1 ? ` / ${fmt(item.sourceCount)}行平均` : ""}</small><span class="rank-badge">${index+1}位</span></td>
+      <td class="r1-matrix-cell"><strong>${fmtRate(item.rate)}</strong><small>${esc(item.sourceDate || "基準日不明")}${item.sourceCount>1 ? ` / ${fmt(item.sourceCount)}行平均` : ""}</small><span class="rank-badge">${item.rank}位</span></td>
     </tr>`).join("") : `<tr><td colspan="2" class="r1-empty">条件に一致する普通預金データがありません。</td></tr>`;
     return `<section class="r1-ordinary-matrix">
-      <div class="r1-analytics-matrix-summary"><span>${model.filters.displayMode === "all" ? `全${fmt(model.allCount)}金融機関` : `普通預金 上位${fmt(model.entries.length)}金融機関`}</span><span>通常金利履歴の最新スナップショットを使用（読込 ${fmt(model.sourceRowCount)}行）</span></div>
+      <div class="r1-analytics-matrix-summary"><span>全${fmt(model.allCount)}金融機関・全順位</span><span>通常金利履歴の最新スナップショットを使用（読込 ${fmt(model.sourceRowCount)}行・同一金利は同順位）</span></div>
       <div class="r1-matrix-stat-grid"><article class="r1-matrix-stat"><h4>普通預金</h4><div><span>最高</span><strong>${fmtRate(model.maximum)}</strong><small>${esc(names || "—")}</small></div><div><span>平均</span><strong>${fmtRate(model.average)}</strong><small>${fmt(model.allCount)}金融機関</small></div></article></div>
       <p class="r1-matrix-scroll-hint">普通預金には預入期間がないため、専用の1列で比較します。金融機関ごとの最新金利を表示します。</p>
       <div class="r1-matrix-scroll"><table class="r1-analytics-matrix"><thead><tr><th>金融機関</th><th>普通預金</th></tr></thead><tbody>${rows}</tbody></table></div>
@@ -716,7 +723,7 @@
     const existingPrefectures = $("#analyticsPrefectureFilter")
       ? Array.from($("#analyticsPrefectureFilter").selectedOptions).map(o=>o.value).filter(Boolean)
       : [];
-    const displayMode = $("#analyticsDisplayMode")?.value === "all" ? "all" : "top5";
+    const displayMode = "all";
     return {prefecture:ownPref,institutionType:ownType,regions:new Set(existingRegions),prefectures:new Set(existingPrefectures),products:new Set(existingProducts),displayMode};
   }
 
@@ -771,6 +778,15 @@
       const rates = arr.map(x=>x.rate);
       const max = rates.length ? Math.max(...rates) : null;
       const topNames = max === null ? [] : arr.filter(x=>Math.abs(x.rate-max)<1e-12).map(x=>x.institution);
+      const ranked = arr.slice().sort((a,b)=>b.rate-a.rate || a.institution.localeCompare(b.institution,"ja"));
+      let previousRate = null;
+      let previousRank = 0;
+      ranked.forEach((item,index) => {
+        const rank = previousRate !== null && Math.abs(item.rate-previousRate)<1e-12 ? previousRank : index+1;
+        item.cell.rank = rank;
+        previousRate = item.rate;
+        previousRank = rank;
+      });
       stats[t.months] = {
         count:arr.length,
         average:rates.length ? rates.reduce((a,b)=>a+b,0)/rates.length : null,
@@ -783,14 +799,7 @@
     const rowScore = name => Math.max(...R1_MATRIX_TERMS.map(t => cells.get(`${name}|||${t.months}`)?.rate ?? -Infinity));
     institutions.sort((a,b)=>rowScore(b)-rowScore(a) || a.localeCompare(b,"ja"));
 
-    if (f.displayMode === "top5") {
-      const wanted = new Set();
-      R1_MATRIX_TERMS.forEach(t => {
-        const ranked = termStats.get(t.months).slice().sort((a,b)=>b.rate-a.rate || a.institution.localeCompare(b.institution,"ja"));
-        ranked.slice(0,5).forEach(x=>wanted.add(x.institution));
-      });
-      institutions = institutions.filter(x=>wanted.has(x));
-    }
+    // 全金融機関を表示するため、上位件数による切り捨ては行わない。
 
     return {mode,filters:f,institutions,institutionMeta,cells,stats,excludedEquivalent,ambiguousBase};
   }
@@ -804,7 +813,7 @@
     const detail = model.mode === "effective"
       ? `${c.rows}件${c.campaign ? ` / ${c.campaign}` : ""}`
       : `${c.status === "CONSENSUS" ? "代表金利" : "標準小口帯"}${c.rows>1 ? ` / ${c.rows}行` : ""}`;
-    return `<td class="r1-matrix-cell"><strong>${fmtRate(c.rate)}</strong><small title="${esc(detail)}">${esc(detail)}</small></td>`;
+    return `<td class="r1-matrix-cell"><strong>${fmtRate(c.rate)}</strong><small title="${esc(detail)}">${esc(detail)}</small>${c.rank ? `<span class="rank-badge">${c.rank}位</span>` : ""}</td>`;
   }
 
   function r1MatrixHtml(model) {
@@ -831,7 +840,7 @@
       : `実効金利は解決済みデータのみ。各金融機関・年限の最高実効金利を表示。相当利回り除外 ${fmt(model.excludedEquivalent)}件。`;
 
     return `<div class="r1-analytics-matrix-summary">
-      <span>${model.filters.displayMode === "all" ? `全${fmt(model.institutions.length)}金融機関` : `各年限上位5の金融機関集合 ${fmt(model.institutions.length)}先`}</span>
+      <span>全${fmt(model.institutions.length)}金融機関・全順位</span>
       <span>${esc(baseNote)}</span>
     </div>
     <div class="r1-matrix-stat-grid">${averageCards}</div>
@@ -850,10 +859,10 @@
     const prefSel = shell.querySelector("#r1MatrixPref");
     const typeSel = shell.querySelector("#r1MatrixType");
     if (prefSel && prefSel.options.length <= 1) {
-      prefSel.innerHTML = `<option value="">全国</option>${prefs.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join("")}`;
+      prefSel.innerHTML = `<option value="">全国（全都道府県）</option>${prefs.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join("")}`;
     }
     if (typeSel && typeSel.options.length <= 1) {
-      typeSel.innerHTML = `<option value="">すべて</option>${types.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join("")}`;
+      typeSel.innerHTML = `<option value="">すべての金融機関</option>${types.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join("")}`;
     }
   }
 
@@ -903,8 +912,8 @@
           </div>
         </div>
         <div class="r1-matrix-filterbar">
-          <label>都道府県<select id="r1MatrixPref"><option value="">全国</option></select></label>
-          <label>金融機関種別<select id="r1MatrixType"><option value="">すべて</option></select></label>
+          <label>都道府県<select id="r1MatrixPref"><option value="">全国（全都道府県）</option></select></label>
+          <label>金融機関種別<select id="r1MatrixType"><option value="">すべての金融機関</option></select></label>
           <span class="r1-matrix-inherit-note">地域・商品・表示件数は上の既存分析条件を参照します。</span>
         </div>
         <div id="r1AnalyticsMatrixBody"></div>`;

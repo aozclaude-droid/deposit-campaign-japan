@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.25.5";
+const APP_VERSION = "2026.10.25.6";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -403,7 +403,7 @@ function resetAnalyticsControls(render = true) {
   updateAnalyticsPrefectureOptions([]);
   const products = uniqueSorted("product_type");
   setSelectedValues("#analyticsProductFilter", products.includes("定期預金") ? ["定期預金"] : products.slice(0, 1));
-  $("#analyticsDisplayMode").value = "top5";
+  $("#analyticsDisplayMode").value = "all";
   if (render && state.activeView === "analytics") renderRateAnalytics();
   else state.analyticsRendered = false;
 }
@@ -463,7 +463,14 @@ function buildProductAnalytics(productType, records) {
       maximumInstitutions,
       average: entries.length ? entries.reduce((sum, item) => sum + item.rate, 0) / entries.length : null
     };
-    topRanks[term.key] = new Map(entries.slice(0, 5).map((item, index) => [item.institution, index + 1]));
+    let previousRate = null;
+    let previousRank = 0;
+    topRanks[term.key] = new Map(entries.map((item, index) => {
+      const rank = previousRate !== null && Math.abs(item.rate - previousRate) < 1e-12 ? previousRank : index + 1;
+      previousRate = item.rate;
+      previousRank = rank;
+      return [item.institution, rank];
+    }));
     entries.forEach((item) => {
       if (!allUnion.has(item.institution)) allUnion.set(item.institution, { maxRate: item.rate, coverage: 1 });
       else {
@@ -497,7 +504,7 @@ function analyticsCellHtml(analytics, institution, term) {
   const title = `${r.campaign_name} / ${r.campaign_start_date || "開始日不明"}～${r.campaign_end_date || "終了日未設定"} / ${r.interest_rate}${r.rate_condition ? ` / ${r.rate_condition}` : ""}`;
   return `<td class="matrix-rate-cell ${rank ? `top-rank rank-${rank}` : ""}" title="${esc(title)}"><span class="matrix-rate">${esc(formatRate(entry.rate))}</span>${rank ? `<span class="rank-badge">${rank}位</span>` : ""}</td>`;
 }
-function productAnalyticsHtml(analytics, displayMode = "top5") {
+function productAnalyticsHtml(analytics, displayMode = "all") {
   if (ORDINARY_PRODUCT_TYPES.has(analytics.productType)) return "";
   const showAll = displayMode === "all";
   const institutions = showAll ? analytics.allInstitutions : analytics.topInstitutions;
