@@ -112,3 +112,15 @@
 .r1-matrix-cell.is-empty span{color:#9aa5b3;font-size:8px}
 @media(max-width:900px){.r1-matrix-stat-grid{grid-template-columns:repeat(2,1fr)}.r1-matrix-inherit-note{width:100%;margin-left:0}}
 @media(max-width:560px){.r1-analytics-matrix-head{flex-direction:column}.r1-matrix-mode-switch{width:100%}.r1-matrix-mode{flex:1}.r1-matrix-filterbar{display:grid;grid-template-columns:1fr}.r1-matrix-filterbar select{width:100%}.r1-matrix-stat-grid{display:flex;overflow-x:auto}.r1-matrix-stat{flex:0 0 210px}.r1-matrix-scroll{max-height:64vh}}
+
+
+/* W4: interest-rate distribution histogram */
+.r1-rate-histogram{margin-top:16px;padding:14px;border:1px solid #dfe7f0;border-radius:12px;background:#fbfdff}
+.r1-rate-histogram-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.r1-rate-histogram-head h4{margin:0;color:#29496e;font-size:14px}.r1-rate-histogram-head p{margin:3px 0 0;color:#7a899c;font-size:9px}
+.r1-rate-histogram-scroll{overflow-x:auto}.r1-rate-histogram svg{display:block;width:100%;min-width:720px;height:auto}
+.r1-histogram-grid line{stroke:#e6ebf2;stroke-width:1}.r1-histogram-grid text{fill:#7d8a9b;font-size:9px}.r1-histogram-axis{stroke:#9dabbc;stroke-width:1.2}
+.r1-histogram-bar rect{fill:#2c6bd8;opacity:.86;transition:opacity .12s ease}.r1-histogram-bar:hover rect{opacity:1;fill:#184fae}
+.r1-histogram-count{fill:#24486f;font-size:8px;font-weight:800}.r1-histogram-xlabel{fill:#61738a;font-size:8px}.r1-histogram-axis-label{fill:#405873;font-size:10px;font-weight:800}
+.r1-histogram-term-switch{display:flex;gap:5px;flex-wrap:wrap}.r1-histogram-term{padding:6px 9px;border:1px solid #cbd7e6;border-radius:999px;background:#fff;color:#45627f;font-size:9px;font-weight:800;cursor:pointer}.r1-histogram-term.is-active{border-color:#275a9e;background:#275a9e;color:#fff}
+@media(max-width:600px){.r1-rate-histogram{padding:10px}.r1-rate-histogram-head{flex-direction:column}.r1-rate-histogram svg{min-width:680px}}

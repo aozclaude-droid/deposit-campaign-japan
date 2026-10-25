@@ -11,7 +11,8 @@
     error: "",
     mapSvgText: "",
     mapLoadError: "",
-    analyticsMatrixMode: "base"
+    analyticsMatrixMode: "base",
+    analyticsChartTerm: 12
   };
 
   const $ = (sel, root=document) => root.querySelector(sel);
@@ -695,6 +696,70 @@
     };
   }
 
+  function niceHistogramStep(range, targetBars=14) {
+    if (!Number.isFinite(range) || range <= 0) return 0.01;
+    const rough = range / targetBars;
+    const magnitude = 10 ** Math.floor(Math.log10(rough));
+    const normalized = rough / magnitude;
+    const nice = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
+    return nice * magnitude;
+  }
+
+  function buildRateHistogram(rates) {
+    const values = rates.filter(Number.isFinite).sort((a,b)=>a-b);
+    if (!values.length) return {bins:[],maximumCount:0};
+    const minimum = values[0];
+    const maximum = values.at(-1);
+    const step = niceHistogramStep(maximum-minimum);
+    const start = Math.floor(minimum/step)*step;
+    const rawCount = maximum === minimum ? 1 : Math.ceil((maximum-start)/step)+1;
+    const binCount = Math.max(1,Math.min(24,rawCount));
+    const actualStep = binCount === rawCount ? step : niceHistogramStep((maximum-start)/20,1);
+    const bins = Array.from({length:Math.max(1,Math.ceil((maximum-start)/actualStep)+1)},(_,index)=>({
+      from:start+index*actualStep,
+      to:start+(index+1)*actualStep,
+      count:0
+    })).slice(0,24);
+    values.forEach(value => {
+      let index = Math.floor((value-start)/actualStep+1e-10);
+      index = Math.max(0,Math.min(bins.length-1,index));
+      bins[index].count++;
+    });
+    return {bins,maximumCount:Math.max(...bins.map(bin=>bin.count),0)};
+  }
+
+  function histogramRateLabel(value) {
+    return Number(value).toFixed(3).replace(/0+$/,"").replace(/\.$/,"");
+  }
+
+  function rateHistogramHtml(rates, label, controls="") {
+    const model = buildRateHistogram(rates);
+    if (!model.bins.length) return `<section class="r1-rate-histogram"><div class="r1-rate-histogram-head"><div><h4>金利分布</h4><p>X軸：金利（年率％）／Y軸：金融機関数</p></div>${controls}</div><div class="r1-empty">グラフ化できる金利データがありません。</div></section>`;
+    const width=960, height=360, left=64, right=22, top=24, bottom=78;
+    const chartWidth=width-left-right, chartHeight=height-top-bottom;
+    const slot=chartWidth/model.bins.length;
+    const barWidth=Math.max(3,slot*.72);
+    const yTop=Math.max(1,model.maximumCount);
+    const grid = Array.from({length:5},(_,index)=>{
+      const ratio=index/4;
+      const y=top+chartHeight*(1-ratio);
+      const value=Math.round(yTop*ratio);
+      return `<line x1="${left}" y1="${y}" x2="${width-right}" y2="${y}"/><text x="${left-10}" y="${y+4}" text-anchor="end">${fmt(value)}</text>`;
+    }).join("");
+    const bars=model.bins.map((bin,index)=>{
+      const x=left+index*slot+(slot-barWidth)/2;
+      const barHeight=bin.count/yTop*chartHeight;
+      const y=top+chartHeight-barHeight;
+      const middle=bin.from+(bin.to-bin.from)/2;
+      const rangeLabel=`${histogramRateLabel(bin.from)}～${histogramRateLabel(bin.to)}%`;
+      return `<g class="r1-histogram-bar"><title>${esc(rangeLabel)}：${fmt(bin.count)}金融機関</title><rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="3"/><text class="r1-histogram-count" x="${x+barWidth/2}" y="${Math.max(top+10,y-5)}" text-anchor="middle">${bin.count ? fmt(bin.count) : ""}</text><text class="r1-histogram-xlabel" x="${x+barWidth/2}" y="${height-bottom+18}" transform="rotate(-42 ${x+barWidth/2} ${height-bottom+18})" text-anchor="end">${esc(histogramRateLabel(middle))}</text></g>`;
+    }).join("");
+    return `<section class="r1-rate-histogram">
+      <div class="r1-rate-histogram-head"><div><h4>${esc(label)}の金利分布</h4><p>X軸：金利（年率％）／Y軸：金融機関数　対象：${fmt(rates.length)}金融機関</p></div>${controls}</div>
+      <div class="r1-rate-histogram-scroll"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(label)}の金利帯別金融機関数"><g class="r1-histogram-grid">${grid}</g><line class="r1-histogram-axis" x1="${left}" y1="${top}" x2="${left}" y2="${height-bottom}"/><line class="r1-histogram-axis" x1="${left}" y1="${height-bottom}" x2="${width-right}" y2="${height-bottom}"/>${bars}<text class="r1-histogram-axis-label" x="${(left+width-right)/2}" y="${height-8}" text-anchor="middle">金利（年率％）</text><text class="r1-histogram-axis-label" x="15" y="${top+chartHeight/2}" transform="rotate(-90 15 ${top+chartHeight/2})" text-anchor="middle">金融機関数</text></svg></div>
+    </section>`;
+  }
+
   function r1OrdinaryMatrixHtml(model) {
     const names = model.maximumInstitutions.length > 2
       ? `${model.maximumInstitutions.slice(0,2).join("・")}ほか${fmt(model.maximumInstitutions.length-2)}先`
@@ -708,6 +773,7 @@
       <div class="r1-matrix-stat-grid"><article class="r1-matrix-stat"><h4>普通預金</h4><div><span>最高</span><strong>${fmtRate(model.maximum)}</strong><small>${esc(names || "—")}</small></div><div><span>平均</span><strong>${fmtRate(model.average)}</strong><small>${fmt(model.allCount)}金融機関</small></div></article></div>
       <p class="r1-matrix-scroll-hint">普通預金には預入期間がないため、専用の1列で比較します。金融機関ごとの最新金利を表示します。</p>
       <div class="r1-matrix-scroll"><table class="r1-analytics-matrix"><thead><tr><th>金融機関</th><th>普通預金</th></tr></thead><tbody>${rows}</tbody></table></div>
+      ${rateHistogramHtml(model.entries.map(item=>item.rate),"普通預金")}
     </section>`;
   }
 
@@ -839,6 +905,9 @@
       ? `通常金利は同一金融機関・同一年限を1セルへ正規化。判定不能な金額帯 ${fmt(model.ambiguousBase)}セルは推測せず要確認。`
       : `実効金利は解決済みデータのみ。各金融機関・年限の最高実効金利を表示。相当利回り除外 ${fmt(model.excludedEquivalent)}件。`;
 
+    const chartTerm = R1_MATRIX_TERMS.find(term=>term.months===R1.analyticsChartTerm) || R1_MATRIX_TERMS[1];
+    const chartRates = model.institutions.map(name=>model.cells.get(`${name}|||${chartTerm.months}`)?.rate).filter(Number.isFinite);
+    const chartControls = `<div class="r1-histogram-term-switch" aria-label="グラフの預入期間">${R1_MATRIX_TERMS.map(term=>`<button type="button" class="r1-histogram-term ${term.months===chartTerm.months ? "is-active" : ""}" data-r1-chart-term="${term.months}">${esc(term.label)}</button>`).join("")}</div>`;
     return `<div class="r1-analytics-matrix-summary">
       <span>全${fmt(model.institutions.length)}金融機関・全順位</span>
       <span>${esc(baseNote)}</span>
@@ -848,7 +917,8 @@
     <div class="r1-matrix-scroll"><table class="r1-analytics-matrix">
       <thead><tr><th>金融機関</th>${R1_MATRIX_TERMS.map(t=>`<th>${esc(t.label)}</th>`).join("")}</tr></thead>
       <tbody>${body}</tbody>
-    </table></div>`;
+    </table></div>
+    ${rateHistogramHtml(chartRates,chartTerm.label,chartControls)}`;
   }
 
   function populateR1MatrixFilters(shell) {
@@ -888,6 +958,12 @@
     }
     document.querySelectorAll("[data-r1-matrix-mode]").forEach(b => {
       b.classList.toggle("is-active", b.dataset.r1MatrixMode === R1.analyticsMatrixMode);
+    });
+    host.querySelectorAll("[data-r1-chart-term]").forEach(button => {
+      button.addEventListener("click", () => {
+        R1.analyticsChartTerm = Number(button.dataset.r1ChartTerm);
+        renderR1AnalyticsMatrix();
+      });
     });
   }
 
