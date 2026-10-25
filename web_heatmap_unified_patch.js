@@ -13,9 +13,9 @@
  */
 
 (() => {
-  const PATCH_VERSION = "20261025.2";
+  const PATCH_VERSION = "20261025.3";
   const R1_CURRENT_URL = "./r1_data/current_default_ranking.json";
-  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261025-2";
+  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261025-3";
 
   const PRODUCT_MODES = [
     ["base_term", "定期預金"],
@@ -488,6 +488,25 @@
     return mode === "campaign" ? buildCampaignData() : buildBaseData(mode);
   }
 
+
+  function updateInstitutionCoverage(data) {
+    const grid = q("#heatmapInstitutionCoverageGrid");
+    const note = q("#heatmapInstitutionCoverageNote");
+    if (!grid || !note) return;
+    const regional = data.regionalInstitutions.length;
+    const nationwide = data.onlineInstitutions.length;
+    const total = regional + nationwide;
+    const records = data.regionalRecords.length + data.onlineRecords.length;
+    const periodLabel = data.mode === "base_ordinary" ? "期間指定なし" : data.term.label;
+    note.textContent = `${data.label}・${periodLabel}・現在の絞り込み条件を反映`;
+    grid.innerHTML = [
+      `<div class="heatmap-institution-stat primary"><span class="heatmap-institution-stat-label">対象金融機関 合計</span><strong class="heatmap-institution-stat-value">${total.toLocaleString("ja-JP")}先</strong><span class="heatmap-institution-stat-meta">現在のヒートマップ条件</span></div>`,
+      `<div class="heatmap-institution-stat"><span class="heatmap-institution-stat-label">都道府県別の対象</span><strong class="heatmap-institution-stat-value">${regional.toLocaleString("ja-JP")}先</strong><span class="heatmap-institution-stat-meta">地域金融機関</span></div>`,
+      `<div class="heatmap-institution-stat"><span class="heatmap-institution-stat-label">全国向けの対象</span><strong class="heatmap-institution-stat-value">${nationwide.toLocaleString("ja-JP")}先</strong><span class="heatmap-institution-stat-meta">ネット銀行等</span></div>`,
+      `<div class="heatmap-institution-stat"><span class="heatmap-institution-stat-label">比較可能な明細</span><strong class="heatmap-institution-stat-value">${records.toLocaleString("ja-JP")}件</strong><span class="heatmap-institution-stat-meta">${data.rankedPrefectures.length}都道府県を算出</span></div>`
+    ].join("");
+  }
+
   function configureControls(force = false) {
     const product = q("#heatmapProductFilter");
     if (!product) return;
@@ -546,6 +565,7 @@
     }
     const data = dataForCurrentMode();
     state.heatmapData = data;
+    updateInstitutionCoverage(data);
 
     const values = data.rankedPrefectures.map((x) => x.averageRate);
     const min = values.length ? Math.min(...values) : null;

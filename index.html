@@ -23,7 +23,7 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.10.25.2</span>
+<span class="app-version" id="appVersion">画面版 2026.10.25.3</span>
 </div>
 </div>
 </header>
@@ -396,6 +396,13 @@
 <span class="analytics-auto-update-note">条件を変更すると自動更新されます。</span>
 </div>
 </div>
+<section class="heatmap-institution-coverage" id="heatmapInstitutionCoverage" aria-live="polite">
+<div class="heatmap-institution-coverage-heading">
+<div><span class="section-kicker">INSTITUTION COVERAGE</span><strong>現在の条件で対象となる金融機関数</strong></div>
+<span class="muted" id="heatmapInstitutionCoverageNote">対象金融機関を集計中…</span>
+</div>
+<div class="heatmap-institution-coverage-grid" id="heatmapInstitutionCoverageGrid"></div>
+</section>
 <p class="heatmap-help">商品区分で「普通預金」または「普通貯金」を選ぶと、年限を指定せず数値化可能な金利を集計します。定期預金・定期貯金では1年・3年・5年を選択できます。同じ金融機関に複数の対象明細がある場合は、その金融機関内で平均した後、各金融機関を均等に扱って都道府県平均を算出します。</p>
 <div class="heatmap-summary-grid" id="heatmapSummaryCards"></div>
 <div class="heatmap-main-grid">
@@ -652,8 +659,8 @@
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="app.js?v=20261025-2"></script>
+<script defer="" src="app.js?v=20261025-3"></script>
   <script defer src="web_r1_bridge.js" data-r1-web-bridge="1"></script>
-  <script defer src="./web_heatmap_unified_patch.js?v=20261025-2"></script>
+  <script defer src="./web_heatmap_unified_patch.js?v=20261025-3"></script>
 </body>
 </html>
