@@ -303,7 +303,20 @@
       else if (date === current.date) current.rows.push(row);
     }
 
-    return [...latest.values()].flatMap((item) => item.rows);
+    // When the latest snapshot contains amount tiers, use the small-balance
+    // tier as the institution's representative rate. This keeps, for example,
+    // Aozora Bank's <= 1 million yen rate (1.20%) instead of averaging it with
+    // the > 1 million yen rate (0.75%).
+    const smallBalanceScore = (row) => {
+      const band = String(pick(row, "amount_band") || pick(row, "product_label") || "").replace(/[,，\s]/g, "");
+      if (/100万円以下|100万円まで|百万円以下|百万円まで/.test(band)) return 0;
+      if (/以下|まで|未満/.test(band)) return 1;
+      if (/GENERAL_OR_UNSPECIFIED|一般|指定なし/.test(band)) return 2;
+      return 3;
+    };
+    return [...latest.values()].map((item) => item.rows.slice().sort((a, b) =>
+      smallBalanceScore(a) - smallBalanceScore(b) || (rate(b) ?? -Infinity) - (rate(a) ?? -Infinity)
+    )[0]).filter(Boolean);
   }
 
   function campaignOrdinaryRows() {

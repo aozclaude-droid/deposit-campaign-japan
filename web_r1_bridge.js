@@ -639,6 +639,20 @@
     return [...latest.values()].flatMap(item => item.rows);
   }
 
+  function ordinarySmallBalanceScore(row) {
+    const band = String(pick(row,"amount_band","product_label","rate_condition")).replace(/[,，\s]/g,"");
+    if (/100万円以下|100万円まで|百万円以下|百万円まで/.test(band)) return 0;
+    if (/以下|まで|未満/.test(band)) return 1;
+    if (/GENERAL_OR_UNSPECIFIED|一般|指定なし/.test(band)) return 2;
+    return 3;
+  }
+
+  function representativeOrdinaryRow(rows) {
+    return rows.slice().sort((a,b) => ordinarySmallBalanceScore(a)-ordinarySmallBalanceScore(b)
+      || rateValue(b)-rateValue(a)
+      || String(sourceDate(b)).localeCompare(String(sourceDate(a))))[0] || null;
+  }
+
   function buildR1OrdinaryMatrix() {
     const f = matrixFilters();
     const groups = new Map();
@@ -653,14 +667,14 @@
     });
 
     let entries = [...groups.entries()].map(([institution,rows]) => {
-      const rates = rows.map(rateValue).filter(v => v !== null);
-      const dates = rows.map(sourceDate).filter(Boolean).sort();
+      const selected = representativeOrdinaryRow(rows);
       return {
         institution,
-        rate: rates.length ? rates.reduce((a,b)=>a+b,0)/rates.length : null,
-        institutionType: instType(rows[0]),
-        prefecture: pref(rows[0]),
-        sourceDate: dates.at(-1) || "",
+        rate: selected ? rateValue(selected) : null,
+        institutionType: selected ? instType(selected) : instType(rows[0]),
+        prefecture: selected ? pref(selected) : pref(rows[0]),
+        sourceDate: selected ? sourceDate(selected) : "",
+        amountBand: selected ? String(pick(selected,"amount_band","product_label")).trim() : "",
         sourceCount: rows.length
       };
     }).filter(item => item.rate !== null)
@@ -676,14 +690,14 @@
       return {...item,rank};
     });
     const allRates = [...groups.values()].map(rows => {
-      const rates = rows.map(rateValue).filter(v => v !== null);
-      return rates.length ? rates.reduce((a,b)=>a+b,0)/rates.length : null;
+      const selected = representativeOrdinaryRow(rows);
+      return selected ? rateValue(selected) : null;
     }).filter(v => v !== null);
     const maximum = allRates.length ? Math.max(...allRates) : null;
     const maximumInstitutions = maximum === null ? [] : [...groups.entries()].filter(([,rows]) => {
-      const rates = rows.map(rateValue).filter(v => v !== null);
-      const average = rates.length ? rates.reduce((a,b)=>a+b,0)/rates.length : null;
-      return average !== null && Math.abs(average-maximum)<1e-12;
+      const selected = representativeOrdinaryRow(rows);
+      const representativeRate = selected ? rateValue(selected) : null;
+      return representativeRate !== null && Math.abs(representativeRate-maximum)<1e-12;
     }).map(([name])=>name);
     return {
       filters:f,
@@ -766,7 +780,7 @@
       : model.maximumInstitutions.join("・");
     const rows = model.entries.length ? model.entries.map((item,index)=>`<tr>
       <th scope="row"><strong>${esc(item.institution)}</strong><small>${esc(item.institutionType)}${item.prefecture ? ` / ${esc(item.prefecture)}` : ""}</small></th>
-      <td class="r1-matrix-cell"><strong>${fmtRate(item.rate)}</strong><small>${esc(item.sourceDate || "基準日不明")}${item.sourceCount>1 ? ` / ${fmt(item.sourceCount)}行平均` : ""}</small><span class="rank-badge">${item.rank}位</span></td>
+      <td class="r1-matrix-cell"><strong>${fmtRate(item.rate)}</strong><small>${esc(item.sourceDate || "基準日不明")}${item.amountBand ? ` / ${esc(item.amountBand)}を採用` : ""}</small><span class="rank-badge">${item.rank}位</span></td>
     </tr>`).join("") : `<tr><td colspan="2" class="r1-empty">条件に一致する普通預金データがありません。</td></tr>`;
     return `<section class="r1-ordinary-matrix">
       <div class="r1-analytics-matrix-summary"><span>全${fmt(model.allCount)}金融機関・全順位</span><span>通常金利履歴の最新スナップショットを使用（読込 ${fmt(model.sourceRowCount)}行・同一金利は同順位）</span></div>

@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.25.7";
+const APP_VERSION = "2026.10.25.9";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -36,6 +36,7 @@ function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
 const DATA_URL = "campaign_all.json?v=20261024-5";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261025-9";
 const LATEST_UPDATE = {
   publishedOn: "2026-10-25",
   label: "2026年10月25日 信用組合20先の普通預金金利を反映",
@@ -98,6 +99,7 @@ const HEATMAP_NO_DATA_COLOR = "#e5e9ef";
 const state = {
   metadata: {},
   records: [],
+  baseRateHistory: [],
   filtered: [],
   sortKey: "campaign_start_date",
   sortDir: "desc",
@@ -751,6 +753,64 @@ function buildInstitutionRateGroups(records) {
     minimumRate: item.rates.length ? Math.min(...item.rates) : null
   })).sort((a, b) => b.averageRate - a.averageRate || a.institution.localeCompare(b.institution, "ja"));
 }
+function ordinaryHistoryDate(value) {
+  const normalized = text(value).trim().slice(0,10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(normalized) ? normalized : "";
+}
+function ordinaryHistorySmallBalanceScore(row) {
+  const band = text(row.amount_band || row.product_label || row.rate_condition).replace(/[,，\s]/g, "");
+  if (/100万円以下|100万円まで|百万円以下|百万円まで/.test(band)) return 0;
+  if (/以下|まで|未満/.test(band)) return 1;
+  if (/GENERAL_OR_UNSPECIFIED|一般|指定なし/.test(band)) return 2;
+  return 3;
+}
+function ordinaryHeatmapRecords() {
+  const latest = new Map();
+  state.baseRateHistory.forEach((row) => {
+    const family = text(row.product_family).toUpperCase();
+    const label = text(row.product_label || row.product_type);
+    if (family !== "ORDINARY_DEPOSIT" && !/普通預金|普通貯金/.test(label)) return;
+    const rate = Number(row.rate_percent);
+    if (!Number.isFinite(rate) || text(row.record_eligible) === "0") return;
+    const from = ordinaryHistoryDate(row.effective_from || row.source_as_of_date);
+    const to = ordinaryHistoryDate(row.effective_to);
+    if (from && from > TODAY_ISO) return;
+    if (to && to < TODAY_ISO) return;
+    const institution = text(row.institution_name).trim();
+    if (!institution) return;
+    const institutionType = text(row.institution_type_normalized || row.institution_type_raw || row.institution_type).trim();
+    const prefecture = text(row.prefecture).trim();
+    const key = [institution,prefecture,institutionType].join("\u241f");
+    const date = from || ordinaryHistoryDate(row.source_as_of_date);
+    const current = latest.get(key);
+    if (!current || date > current.date) latest.set(key,{date,rows:[row]});
+    else if (date === current.date) current.rows.push(row);
+  });
+  return [...latest.values()].map((item) => item.rows.slice().sort((a,b) => ordinaryHistorySmallBalanceScore(a)-ordinaryHistorySmallBalanceScore(b)
+    || Number(b.rate_percent)-Number(a.rate_percent))[0]).filter(Boolean).map((row) => {
+      const institutionType = text(row.institution_type_normalized || row.institution_type_raw || row.institution_type).trim();
+      const nationwideOnly = text(row.ranking_scope) === "NATIONWIDE_ONLY" || text(row.prefecture_aggregation_eligible) === "0";
+      return {
+        institution_name:text(row.institution_name).trim(),
+        institution_type:institutionType,
+        prefecture:text(row.prefecture).trim(),
+        region:canonicalRegion(row.region,row.prefecture),
+        product_type:"普通預金",
+        campaign_name:text(row.product_label || "普通預金"),
+        campaign_start_date:ordinaryHistoryDate(row.effective_from || row.source_as_of_date),
+        campaign_end_date:ordinaryHistoryDate(row.effective_to),
+        term:"",
+        interest_rate:`${row.rate_percent}％`,
+        rate_condition:text(row.amount_band),
+        status:"開催中",
+        _analyticsTermKey:null,
+        _comparableRate:Number(row.rate_percent),
+        _ordinaryNationwideOnly:nationwideOnly,
+        _ordinarySourceRow:row
+      };
+    });
+}
+
 function buildHeatmapData() {
   const selectedProduct = selectedHeatmapProduct();
   const products = new Set(selectedProduct ? [selectedProduct] : []);
@@ -760,7 +820,8 @@ function buildHeatmapData() {
   const productFilterActive = products.size > 0;
   const typeFilterActive = institutionTypes.size > 0;
   const statusFilterActive = statuses.size > 0;
-  const termRecords = state.records.filter((record) => {
+  const sourceRecords = term.key === "ordinary" ? ordinaryHeatmapRecords() : state.records;
+  const termRecords = sourceRecords.filter((record) => {
     const matchesTerm = term.key === "ordinary"
       ? ORDINARY_PRODUCT_TYPES.has(record.product_type)
       : record._analyticsTermKey === term.key;
@@ -769,10 +830,11 @@ function buildHeatmapData() {
     if (statusFilterActive && !statuses.has(record.status)) return false;
     return true;
   });
-  const regionalRecords = termRecords.filter((record) => record.institution_type !== "ネット銀行"
+  const regionalRecords = termRecords.filter((record) => !/ネット銀行/.test(record.institution_type)
+    && !record._ordinaryNationwideOnly
     && PREFECTURE_RANK.has(record.prefecture)
     && (!typeFilterActive || institutionTypes.has(record.institution_type)));
-  const onlineRecords = termRecords.filter((record) => record.institution_type === "ネット銀行");
+  const onlineRecords = termRecords.filter((record) => /ネット銀行/.test(record.institution_type) || record._ordinaryNationwideOnly);
   const byPrefectureRecords = new Map(PREFECTURE_ORDER.map((prefecture) => [prefecture, []]));
   regionalRecords.forEach((record) => byPrefectureRecords.get(record.prefecture)?.push(record));
   const prefectures = new Map();
@@ -1136,10 +1198,18 @@ function renderMetadataHistory() {
 
 async function loadData() {
   try {
-    const response = await fetch(DATA_URL, { cache: "no-store" });
+    const [response,baseHistoryResponse] = await Promise.all([
+      fetch(DATA_URL, { cache: "no-store" }),
+      fetch(BASE_RATE_HISTORY_URL, { cache: "no-store" })
+    ]);
     if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`);
+    if (!baseHistoryResponse.ok) throw new Error(`base_rate_history.json: HTTP ${baseHistoryResponse.status} ${baseHistoryResponse.statusText}`);
     let payload;
-    try { payload = await response.json(); }
+    try {
+      payload = await response.json();
+      const baseHistoryPayload = await baseHistoryResponse.json();
+      state.baseRateHistory = Array.isArray(baseHistoryPayload) ? baseHistoryPayload : (baseHistoryPayload.records || []);
+    }
     catch (error) { throw new Error(`JSONの解析に失敗しました: ${error.message}`); }
     if (!payload || !Array.isArray(payload.records)) throw new Error("JSONに records 配列がありません。");
 
