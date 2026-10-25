@@ -49,7 +49,23 @@
   ));
 
   const inst = (row) => String(pick(row, "institution_name", "金融機関名")).trim();
-  const instType = (row) => String(pick(row, "institution_type_normalized", "institution_type", "金融機関種別", "institution_type_raw")).trim();
+  const INSTITUTION_TYPE_ORDER = ["都市銀行","地方銀行","信託銀行","ネット銀行","その他銀行","信用金庫","信用組合","JA等","労働金庫","ゆうちょ銀行"];
+  function canonicalInstitutionType(value, institutionName = "") {
+    let type = String(value || "").trim();
+    const name = String(institutionName || "").trim();
+    if (["新たな形態の銀行","ネット銀行等","インターネット銀行"].includes(type)) type = "ネット銀行";
+    else if (["地銀","第二地銀","第二地方銀行"].includes(type)) type = "地方銀行";
+    else if (type === "その他の銀行") type = "その他銀行";
+    else if (["JA","農業協同組合","信用農業協同組合連合会"].includes(type)) type = "JA等";
+    if (name === "ゆうちょ銀行") type = "ゆうちょ銀行";
+    return type;
+  }
+  const instType = (row) => canonicalInstitutionType(pick(row, "institution_type_normalized", "institution_type", "金融機関種別", "institution_type_raw"), inst(row));
+  const orderedInstitutionTypes = (values) => [...new Set(values.filter(Boolean))].sort((a,b) => {
+    const ai = INSTITUTION_TYPE_ORDER.indexOf(a), bi = INSTITUTION_TYPE_ORDER.indexOf(b);
+    if (ai !== bi) return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi);
+    return a.localeCompare(b,"ja");
+  });
   const pref = (row) => String(pick(row, "prefecture", "都道府県")).trim();
   const region = (row) => String(pick(row, "region", "地域")).trim();
   const sourceDate = (row) => String(pick(row, "source_as_of_date", "effective_from", "base_rate_source_date")).trim();
@@ -142,7 +158,7 @@
   function populateFilters() {
     const rows = R1.data.current || [];
     const prefs = [...new Set(rows.map(pref).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ja"));
-    const types = [...new Set(rows.map(instType).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ja"));
+    const types = orderedInstitutionTypes(rows.map(instType));
     $("#r1Pref").innerHTML = `<option value="">全国</option>${prefs.map(x=>`<option>${esc(x)}</option>`).join("")}`;
     $("#r1Type").innerHTML = `<option value="">すべて</option>${types.map(x=>`<option>${esc(x)}</option>`).join("")}`;
   }
@@ -939,7 +955,7 @@
     const source = [...(R1.data.current||[]),...(R1.data.resolved||[]),...(R1.data.history||[])];
     const availablePrefs = new Set(source.map(pref).filter(Boolean));
     const prefs = PREFECTURES_NORTH_TO_SOUTH.filter(p=>availablePrefs.has(p));
-    const types = [...new Set(source.map(instType).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ja"));
+    const types = orderedInstitutionTypes(source.map(instType));
     const prefSel = shell.querySelector("#r1MatrixPref");
     const typeSel = shell.querySelector("#r1MatrixType");
     if (prefSel && prefSel.options.length <= 1) {

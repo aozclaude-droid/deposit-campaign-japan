@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.25.16";
+const APP_VERSION = "2026.10.25.18";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -36,27 +36,33 @@ function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
 const DATA_URL = "campaign_all.json?v=20261024-5";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261025-16";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261025-18";
 const LATEST_UPDATE = {
   publishedOn: "2026-10-25",
-  label: "2026年10月25日 未到達・接続不可・過年度18先を再巡回し2先を追加反映",
+  label: "2026年10月25日 ネット銀行13行とDanDanBANKを再照査・UI銀行の一般普通預金金利を補正",
   expectedTotalRecords: 16420,
   addedStartIndex: 16420,
   addedCount: 0,
-  movedToBaseHistoryCount: 259,
-  movedInstitutionCount: 37,
-  reclassifiedCount: 16,
+  movedToBaseHistoryCount: 268,
+  movedInstitutionCount: 46,
+  reclassifiedCount: 0,
   ordinaryCampaignRetainedCount: 29,
-  ordinaryBaseAddedCount: 2,
-  baseHistoryTotalCount: 5251,
-  ordinaryInstitutionTotalCount: 199,
-  reviewedInstitutionCount: 18,
-  withheldInstitutionCount: 16,
-  segmentLabel: "単位農協（未到達・接続不可・過年度の再巡回）",
-  segmentMetricLabel: "JAの収録",
+  ordinaryBaseAddedCount: 14,
+  baseHistoryTotalCount: 5260,
+  ordinaryInstitutionTotalCount: 14,
+  reviewedInstitutionCount: 14,
+  withheldInstitutionCount: 0,
+  segmentLabel: "ネット銀行等",
+  segmentMetricLabel: "全国向け普通預金の収録",
+  primaryMetricLabel: "普通預金を照査",
+  leadText: "ネット銀行13行と全国向けスマホ専用サービス1先を再照査し、全14先の現行普通預金金利を確認しました。UI銀行は一般金利を0.40%へ補正しました。",
+  compactText: "ネット銀行等14先の普通預金を照査・全国向け区分へ統一",
   ordinaryAddedInstitutions: [
-    ["JAようてい", "0.4％"],
-    ["JAよこすか葉山", "0.2％"]
+    ["セブン銀行", "0.4%"], ["PayPay銀行", "0.3%"], ["ソニー銀行", "0.4%"],
+    ["楽天銀行", "0.4%"], ["ドコモSMTBネット銀行", "0.5%"], ["auじぶん銀行", "0.41%"],
+    ["イオン銀行", "0.4%"], ["大和ネクスト銀行", "0.4%"], ["ローソン銀行", "0.7%"],
+    ["みんなの銀行", "0.6%"], ["UI銀行", "0.4%（一般金利へ補正）"], ["０１銀行", "0.2%"],
+    ["GMOあおぞらネット銀行", "0.4%"], ["DanDanBANK", "0.5%（通常金利）"]
   ],
   updatedRecordKeys: []
 };
@@ -1131,16 +1137,16 @@ function renderLatestUpdate() {
   });
 
   $("#latestUpdateDate").textContent = LATEST_UPDATE.label;
-  $("#latestUpdateLead").textContent = `${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.reviewedInstitutionCount)}先を再照査し、現行金利を確認できた${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先を普通預金金利履歴へ追加しました。`;
+  $("#latestUpdateLead").textContent = LATEST_UPDATE.leadText || `${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.reviewedInstitutionCount)}先を再照査し、現行金利を確認できた${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先を普通預金金利履歴へ追加しました。`;
   $("#latestUpdateMetrics").innerHTML = [
-    ["普通預金を追加", LATEST_UPDATE.ordinaryBaseAddedCount, "先"],
+    [LATEST_UPDATE.primaryMetricLabel || "普通預金を追加", LATEST_UPDATE.ordinaryBaseAddedCount, "先"],
     [LATEST_UPDATE.segmentMetricLabel, LATEST_UPDATE.ordinaryInstitutionTotalCount, "先"],
     ["保留", LATEST_UPDATE.withheldInstitutionCount, "先"],
     ["通常金利履歴", LATEST_UPDATE.baseHistoryTotalCount, "件"]
   ].map(([label, value, unit]) => `<div class="latest-update-metric"><span>${esc(label)}</span><strong>${fmt(value)}</strong><small>${unit}</small></div>`).join("");
 
   $("#latestUpdateCompact").innerHTML = `<div class="latest-update-summary-text">
-    <strong>${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先・${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}明細</strong>を普通預金金利履歴へ追加
+    <strong>${LATEST_UPDATE.compactText || `${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先・${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}明細を普通預金金利履歴へ追加`}</strong>
   </div><div class="latest-update-region-list" aria-label="今回の整理内容">
     <span>照査対象 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}先</span>
     <span>現行値未確定・非公開 ${fmt(LATEST_UPDATE.withheldInstitutionCount)}先</span>
