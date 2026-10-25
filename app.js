@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.25.1";
+const APP_VERSION = "2026.10.25.2";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -38,7 +38,7 @@ function canonicalRegion(region, prefecture) {
 const DATA_URL = "campaign_all.json?v=20261024-5";
 const LATEST_UPDATE = {
   publishedOn: "2026-10-25",
-  label: "2026年10月25日 信用組合11先の普通預金金利を反映",
+  label: "2026年10月25日 信用組合20先の普通預金金利を反映",
   expectedTotalRecords: 16419,
   addedStartIndex: 16419,
   addedCount: 0,
@@ -46,11 +46,11 @@ const LATEST_UPDATE = {
   movedInstitutionCount: 32,
   reclassifiedCount: 1,
   ordinaryCampaignRetainedCount: 29,
-  ordinaryBaseAddedCount: 11,
-  baseHistoryTotalCount: 5051,
-  creditUnionOrdinaryTotalCount: 99,
-  reviewedInstitutionCount: 42,
-  withheldInstitutionCount: 31,
+  ordinaryBaseAddedCount: 20,
+  baseHistoryTotalCount: 5060,
+  creditUnionOrdinaryTotalCount: 108,
+  reviewedInstitutionCount: 52,
+  withheldInstitutionCount: 32,
   ordinaryAddedInstitutions: [
     ["青森県信用組合", "0.15％"],
     ["大阪府医師信用組合", "0.4％"],
@@ -62,7 +62,16 @@ const LATEST_UPDATE = {
     ["ミレ信用組合", "0.015％"],
     ["あすか信用組合", "0.02％"],
     ["西海みずき信用組合", "0.2％"],
-    ["君津信用組合", "0.001％"]
+    ["君津信用組合", "0.001％"],
+    ["杜陵信用組合", "0.3％"],
+    ["熊本県医師信用組合", "0.4％"],
+    ["ぐんまみらい信用組合", "0.3％"],
+    ["宿毛商銀信用組合", "0.17％"],
+    ["土佐信用組合", "0.4％"],
+    ["熊谷商工信用組合", "0.2％"],
+    ["埼玉信用組合", "0.36％"],
+    ["山口県信用組合", "0.1％"],
+    ["滋賀県信用組合", "0.3％"]
   ],
   updatedRecordKeys: []
 };
