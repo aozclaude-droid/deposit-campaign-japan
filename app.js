@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.26.1";
+const APP_VERSION = "2026.10.27.2";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -35,41 +35,30 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261026-1";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261025-18";
+const DATA_URL = "campaign_all.json?v=20261027-2";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261027-2";
 const LATEST_UPDATE = {
-  publishedOn: "2026-10-26",
-  label: "2026年10月26日 全国巡回の確認待ちを全件公式照査して反映",
-  expectedTotalRecords: 16762,
-  addedStartIndex: 16728,
-  addedCount: 34,
+  publishedOn: "2026-10-27",
+  label: "2026年10月27日 SBJ銀行の単独再検証を反映",
+  expectedTotalRecords: 16768,
+  addedStartIndex: 16762,
+  addedCount: 6,
   movedToBaseHistoryCount: 0,
   movedInstitutionCount: 0,
   reclassifiedCount: 0,
   ordinaryCampaignRetainedCount: 0,
   ordinaryBaseAddedCount: 0,
-  baseHistoryTotalCount: 5260,
+  baseHistoryTotalCount: 5265,
   ordinaryInstitutionTotalCount: 14,
-  reviewedInstitutionCount: 12,
+  reviewedInstitutionCount: 1,
   withheldInstitutionCount: 0,
-  segmentLabel: "全国巡回",
-  segmentMetricLabel: "公式照査済みの反映",
+  segmentLabel: "SBJ銀行",
+  segmentMetricLabel: "単独再検証の反映",
   primaryMetricLabel: "新しく追加",
-  leadText: "全国巡回後に残っていたAI照査9件・人確認17件を公式資料で再照査し、12金融機関・34明細を追加しました。確認待ちは0件です。",
-  compactText: "全国巡回の確認待ちを全件解消し、12金融機関・34明細を反映",
+  leadText: "SBJ銀行を単独再検証し、2026年10月1日改定の「はじめての定期預金〈はじめくん〉」6明細を追加しました。普通預金の現行金利も更新済みです。",
+  compactText: "SBJ銀行の定期預金6明細と普通預金の現行金利を反映",
   ordinaryAddedInstitutions: [
-    ["愛知県医師信用組合", "ウエルカム・プレゼント 8明細"],
-    ["GMOあおぞらネット銀行", "外貨定期プレゼント 6明細"],
-    ["十八親和銀行", "長崎ヴェルカ応援定期 4明細"],
-    ["警視庁職員信用組合", "退職記念定期 3明細"],
-    ["JA大阪中河内", "きらめき 3明細"],
-    ["京葉銀行", "株主優待・アプリ特典 3明細"],
-    ["西武信用金庫", "金利優遇定期 2明細"],
-    ["JA松山市", "春夢一番 1明細"],
-    ["JAかみましき", "熊本復興応援 1明細"],
-    ["イオン銀行", "新規口座開設特典 1明細"],
-    ["みずほ銀行", "貯蓄預金キャンペーン 1明細"],
-    ["SBI新生銀行", "こども口座開設特典 1明細"]
+    ["SBJ銀行", "はじめての定期預金〈はじめくん〉 6明細／普通預金金利を更新"]
   ],
   updatedRecordKeys: []
 };
@@ -1055,7 +1044,7 @@ function canonicalInstitutionType(value, institutionName = "") {
     type = "地方銀行";
   } else if (["ネット銀行", "ネット銀行等", "新たな形態の銀行", "インターネット銀行"].includes(type)) {
     type = "ネット銀行";
-  } else if (["その他銀行", "その他の銀行", "銀行", "政府系金融機関", "外国銀行"].includes(type)) {
+  } else if (["その他銀行", "その他の銀行", "銀行", "政府系金融機関", "外国銀行", "外国銀行（在日拠点）"].includes(type)) {
     type = "その他銀行";
   }
   if (name.includes("商工中金") || name.includes("商工組合中央金庫")) type = "その他銀行";
