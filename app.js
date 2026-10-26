@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.25.22";
+const APP_VERSION = "2026.10.26.1";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -35,14 +35,14 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261025-22";
+const DATA_URL = "campaign_all.json?v=20261026-1";
 const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261025-18";
 const LATEST_UPDATE = {
-  publishedOn: "2026-10-25",
-  label: "2026年10月25日 全国巡回・高確度4明細を公式照査して反映",
-  expectedTotalRecords: 16424,
-  addedStartIndex: 16420,
-  addedCount: 4,
+  publishedOn: "2026-10-26",
+  label: "2026年10月26日 全国巡回の確認待ちを全件公式照査して反映",
+  expectedTotalRecords: 16762,
+  addedStartIndex: 16728,
+  addedCount: 34,
   movedToBaseHistoryCount: 0,
   movedInstitutionCount: 0,
   reclassifiedCount: 0,
@@ -50,16 +50,26 @@ const LATEST_UPDATE = {
   ordinaryBaseAddedCount: 0,
   baseHistoryTotalCount: 5260,
   ordinaryInstitutionTotalCount: 14,
-  reviewedInstitutionCount: 2,
-  withheldInstitutionCount: 10,
+  reviewedInstitutionCount: 12,
+  withheldInstitutionCount: 0,
   segmentLabel: "全国巡回",
   segmentMetricLabel: "公式照査済みの反映",
   primaryMetricLabel: "新しく追加",
-  leadText: "全国1,018金融機関・1,802巡回先を再巡回しました。新規・更新候補を精査し、公式資料で条件を確定できた2金融機関・4明細だけを反映しました。",
-  compactText: "全国巡回後、公式照査済み2金融機関・4明細を反映",
+  leadText: "全国巡回後に残っていたAI照査9件・人確認17件を公式資料で再照査し、12金融機関・34明細を追加しました。確認待ちは0件です。",
+  compactText: "全国巡回の確認待ちを全件解消し、12金融機関・34明細を反映",
   ordinaryAddedInstitutions: [
-    ["JA糸島", "つなぐ・夢プラン 各0.80%"],
-    ["武蔵野銀行", "1年1.10%・2年1.20%"]
+    ["愛知県医師信用組合", "ウエルカム・プレゼント 8明細"],
+    ["GMOあおぞらネット銀行", "外貨定期プレゼント 6明細"],
+    ["十八親和銀行", "長崎ヴェルカ応援定期 4明細"],
+    ["警視庁職員信用組合", "退職記念定期 3明細"],
+    ["JA大阪中河内", "きらめき 3明細"],
+    ["京葉銀行", "株主優待・アプリ特典 3明細"],
+    ["西武信用金庫", "金利優遇定期 2明細"],
+    ["JA松山市", "春夢一番 1明細"],
+    ["JAかみましき", "熊本復興応援 1明細"],
+    ["イオン銀行", "新規口座開設特典 1明細"],
+    ["みずほ銀行", "貯蓄預金キャンペーン 1明細"],
+    ["SBI新生銀行", "こども口座開設特典 1明細"]
   ],
   updatedRecordKeys: []
 };
