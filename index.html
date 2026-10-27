@@ -11,7 +11,7 @@
 <title>全国預金キャンペーン・データベース</title>
 <link href="favicon_C_rate.svg?v=20260806-2" rel="icon" type="image/svg+xml"/>
 <meta content="#0B7C93" name="theme-color"/>
-<link href="styles.css?v=20261018-1" rel="stylesheet"/>
+<link href="styles.css?v=20261028-2" rel="stylesheet"/>
   <link rel="stylesheet" href="web_r1_bridge.css?v=20261025-20" data-r1-web-bridge="1">
 </head>
 <body>
@@ -23,7 +23,7 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.10.27.2</span>
+<span class="app-version" id="appVersion">画面版 2026.10.28.2</span>
 </div>
 </div>
 </header>
@@ -195,6 +195,39 @@
 <span class="muted" id="ganttPageInfo">—</span>
 <button class="btn small" id="ganttNext">次の金融機関</button>
 </div>
+</div>
+</section><section class="panel institution-detail-panel hidden" id="institutionDetailPanel" aria-labelledby="institutionDetailTitle">
+<div class="institution-detail-hero">
+<div>
+<p class="section-kicker">FINANCIAL INSTITUTION PROFILE</p>
+<h2 id="institutionDetailTitle">金融機関の詳細</h2>
+<p id="institutionDetailMeta" class="muted"></p>
+</div>
+<button class="btn institution-detail-close" id="institutionDetailClose" type="button">一覧へ戻る</button>
+</div>
+<div class="institution-detail-body">
+<div class="institution-summary-grid" id="institutionSummaryGrid"></div>
+<section class="institution-subpanel">
+<div class="institution-subpanel-heading">
+<div><h3>金利履歴とTIBOR比較</h3><p class="muted">選択した預金金利と全銀協日本円TIBORの月次平均を比較します。</p></div>
+<div class="institution-chart-controls">
+<label>表示する金利<select id="institutionSeriesSelect"></select></label>
+<label>TIBOR期間<select id="institutionTiborTenor"><option value="one_month">1か月</option><option value="three_month">3か月</option><option value="six_month">6か月</option><option value="twelve_month">12か月</option></select></label>
+</div>
+</div>
+<div class="institution-chart-legend"><span><i class="deposit-line"></i>預金金利</span><span><i class="tibor-line"></i>日本円TIBOR月次平均</span><span><i class="spread-dot"></i>金利差</span></div>
+<div class="institution-rate-chart" id="institutionRateChart"></div>
+<div class="institution-spread-summary" id="institutionSpreadSummary"></div>
+<p class="institution-tibor-note" id="institutionTiborNote"></p>
+</section>
+<section class="institution-subpanel">
+<div class="institution-subpanel-heading"><div><h3>キャンペーン・預金商品の明細</h3><p class="muted" id="institutionCampaignCount"></p></div></div>
+<div class="table-scroll"><table class="data-table institution-detail-table"><thead><tr><th>状況</th><th>商品区分</th><th>商品・キャンペーン名</th><th>募集・適用期間</th><th>年限</th><th>金利</th><th>条件</th><th>公式資料</th></tr></thead><tbody id="institutionCampaignBody"></tbody></table></div>
+</section>
+<section class="institution-subpanel">
+<div class="institution-subpanel-heading"><div><h3>普通預金・店頭金利の履歴</h3><p class="muted" id="institutionBaseRateCount"></p></div></div>
+<div class="table-scroll"><table class="data-table institution-detail-table"><thead><tr><th>基準日</th><th>商品分類</th><th>商品名</th><th>年限</th><th>金利</th><th>金額・条件</th><th>比較区分</th><th>公式資料</th></tr></thead><tbody id="institutionBaseRateBody"></tbody></table></div>
+</section>
 </div>
 </section><section class="panel" id="tablePanel">
 <div class="panel-header">
@@ -658,7 +691,8 @@
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="app.js?v=20261027-2"></script>
+<script defer="" src="app.js?v=20261028-2"></script>
+  <script defer src="institution_detail.js?v=20261028-2"></script>
   <script defer src="web_r1_bridge.js?v=20261025-20" data-r1-web-bridge="1"></script>
   <script defer src="./web_heatmap_unified_patch.js?v=20261025-9"></script>
 </body>

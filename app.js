@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.27.2";
+const APP_VERSION = "2026.10.28.2";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -1253,6 +1253,7 @@ function initializeUi() {
   applyFilters();
   if (state.activeView === "analytics") renderRateAnalytics();
   if (state.activeView === "heatmap") renderPrefectureHeatmap();
+  document.dispatchEvent(new CustomEvent("deposit-data-ready"));
 }
 
 function bindEvents() {
@@ -1617,7 +1618,7 @@ function renderGantt() {
   pageInstitutions.forEach((institution) => {
     const instGroups = institutionMap.get(institution);
     const first = instGroups[0];
-    html.push(`<section class="institution-group"><div class="institution-title"><div class="institution-name">${esc(institution || "（金融機関名なし）")}</div><div class="institution-meta">${esc(first.prefecture)} / ${esc(first.institutionType)} ・ ${fmt(instGroups.length)}期間</div></div>`);
+    html.push(`<section class="institution-group"><div class="institution-title"><button type="button" class="institution-name institution-detail-trigger" data-institution="${esc(institution)}" title="${esc(institution)}の詳細・金利履歴を表示">${esc(institution || "（金融機関名なし）")}<span aria-hidden="true"> ›</span></button><div class="institution-meta">${esc(first.prefecture)} / ${esc(first.institutionType)} ・ ${fmt(instGroups.length)}期間</div></div>`);
     instGroups.forEach((g) => {
       const start = parseIso(g.start);
       const end = parseIso(g.end);
@@ -1753,7 +1754,7 @@ function renderTable() {
 function detailRowHtml(r) {
   const url = r.product_url ? `<a class="url-link" href="${esc(r.product_url)}" target="_blank" rel="noopener noreferrer">開く ↗</a>` : "—";
   return `<tr>
-    <td data-label="地域">${esc(r.region)}</td><td data-label="都道府県">${esc(r.prefecture)}</td><td data-label="金融機関名">${esc(r.institution_name)}</td><td data-label="金融機関種別">${esc(r.institution_type)}</td><td data-label="商品区分">${esc(r.product_type)}</td>
+    <td data-label="地域">${esc(r.region)}</td><td data-label="都道府県">${esc(r.prefecture)}</td><td data-label="金融機関名"><button type="button" class="institution-table-link institution-detail-trigger" data-institution="${esc(r.institution_name)}">${esc(r.institution_name)}</button></td><td data-label="金融機関種別">${esc(r.institution_type)}</td><td data-label="商品区分">${esc(r.product_type)}</td>
     <td data-label="キャンペーン名">${esc(r.campaign_name)}</td><td data-label="開始日">${esc(r.campaign_start_date || "不明")}</td><td data-label="終了日">${esc(r.campaign_end_date || "未設定")}</td><td data-label="預入期間・年限">${esc(r.term)}</td>
     <td data-label="想定満期期間" class="maturity-text ${r.estimated_maturity_period ? "" : "unavailable"}" title="${esc(r.maturity_estimation_note)}">${esc(r.estimated_maturity_period || "推定不可")}</td>
     <td data-label="預金金利" class="rate">${esc(r.interest_rate)}</td><td data-label="金利条件">${esc(r.rate_condition)}</td><td data-label="対象者・条件">${esc(r.eligibility_conditions)}</td><td data-label="預入金額">${esc(r.deposit_amount)}</td>

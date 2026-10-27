@@ -1,0 +1,1212 @@
+{
+  "metadata": {
+    "schema_version": "1.0",
+    "series": "JBA Japanese Yen TIBOR monthly arithmetic mean",
+    "unit": "percent_per_annum",
+    "period_start": "2015-01",
+    "period_end": "2026-09",
+    "month_count": 141,
+    "daily_observations_used": 2868,
+    "created_at": "2026-10-28T00:05:03+09:00",
+    "source_page": "https://www.jbatibor.or.jp/rate/log.html",
+    "methodology": "Official daily Japanese Yen TIBOR observations from 2015 onward are aggregated into calendar-month arithmetic means. Only 1M, 3M, 6M, and 12M series are retained.",
+    "notice": "Reference comparison only. JBA TIBOR Administration states that parties wishing to redistribute the source information should contact the administrator.",
+    "source_files": [
+      {
+        "year": 2014,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2014.pdf",
+        "daily_rows_used": 58
+      },
+      {
+        "year": 2015,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2015.pdf",
+        "daily_rows_used": 244
+      },
+      {
+        "year": 2016,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2016.pdf",
+        "daily_rows_used": 245
+      },
+      {
+        "year": 2017,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2017.pdf",
+        "daily_rows_used": 247
+      },
+      {
+        "year": 2018,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2018.pdf",
+        "daily_rows_used": 245
+      },
+      {
+        "year": 2019,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2019.pdf",
+        "daily_rows_used": 241
+      },
+      {
+        "year": 2020,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2020.pdf",
+        "daily_rows_used": 243
+      },
+      {
+        "year": 2021,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2021.pdf",
+        "daily_rows_used": 245
+      },
+      {
+        "year": 2022,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2022.pdf",
+        "daily_rows_used": 244
+      },
+      {
+        "year": 2023,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2023.pdf",
+        "daily_rows_used": 246
+      },
+      {
+        "year": 2024,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2024.pdf",
+        "daily_rows_used": 245
+      },
+      {
+        "year": 2025,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2025.pdf",
+        "daily_rows_used": 243
+      },
+      {
+        "year": 2026,
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2026.pdf",
+        "daily_rows_used": 180
+      }
+    ]
+  },
+  "records": [
+    {
+      "month": "2015-01",
+      "one_month": 0.13091,
+      "three_month": 0.17732,
+      "six_month": 0.26469,
+      "twelve_month": 0.29201,
+      "daily_observations": 19
+    },
+    {
+      "month": "2015-02",
+      "one_month": 0.13,
+      "three_month": 0.17259,
+      "six_month": 0.25818,
+      "twelve_month": 0.28378,
+      "daily_observations": 19
+    },
+    {
+      "month": "2015-03",
+      "one_month": 0.13,
+      "three_month": 0.17182,
+      "six_month": 0.25752,
+      "twelve_month": 0.28364,
+      "daily_observations": 22
+    },
+    {
+      "month": "2015-04",
+      "one_month": 0.13,
+      "three_month": 0.15091,
+      "six_month": 0.17182,
+      "twelve_month": 0.25727,
+      "daily_observations": 21
+    },
+    {
+      "month": "2015-05",
+      "one_month": 0.13,
+      "three_month": 0.15,
+      "six_month": 0.17091,
+      "twelve_month": 0.25727,
+      "daily_observations": 18
+    },
+    {
+      "month": "2015-06",
+      "one_month": 0.13,
+      "three_month": 0.15,
+      "six_month": 0.17091,
+      "twelve_month": 0.25727,
+      "daily_observations": 22
+    },
+    {
+      "month": "2015-07",
+      "one_month": 0.13,
+      "three_month": 0.15,
+      "six_month": 0.17091,
+      "twelve_month": 0.25727,
+      "daily_observations": 22
+    },
+    {
+      "month": "2015-08",
+      "one_month": 0.13,
+      "three_month": 0.15,
+      "six_month": 0.17091,
+      "twelve_month": 0.25727,
+      "daily_observations": 21
+    },
+    {
+      "month": "2015-09",
+      "one_month": 0.13,
+      "three_month": 0.15,
+      "six_month": 0.17091,
+      "twelve_month": 0.25727,
+      "daily_observations": 19
+    },
+    {
+      "month": "2015-10",
+      "one_month": 0.13,
+      "three_month": 0.15,
+      "six_month": 0.17091,
+      "twelve_month": 0.25727,
+      "daily_observations": 21
+    },
+    {
+      "month": "2015-11",
+      "one_month": 0.13,
+      "three_month": 0.15,
+      "six_month": 0.17091,
+      "twelve_month": 0.25727,
+      "daily_observations": 19
+    },
+    {
+      "month": "2015-12",
+      "one_month": 0.13,
+      "three_month": 0.15,
+      "six_month": 0.17091,
+      "twelve_month": 0.25727,
+      "daily_observations": 21
+    },
+    {
+      "month": "2016-01",
+      "one_month": 0.13,
+      "three_month": 0.15,
+      "six_month": 0.17091,
+      "twelve_month": 0.25727,
+      "daily_observations": 19
+    },
+    {
+      "month": "2016-02",
+      "one_month": 0.091,
+      "three_month": 0.10609,
+      "six_month": 0.11727,
+      "twelve_month": 0.1835,
+      "daily_observations": 20
+    },
+    {
+      "month": "2016-03",
+      "one_month": 0.07364,
+      "three_month": 0.09,
+      "six_month": 0.09909,
+      "twelve_month": 0.16273,
+      "daily_observations": 22
+    },
+    {
+      "month": "2016-04",
+      "one_month": 0.05918,
+      "three_month": 0.07623,
+      "six_month": 0.08609,
+      "twelve_month": 0.14655,
+      "daily_observations": 20
+    },
+    {
+      "month": "2016-05",
+      "one_month": 0.03455,
+      "three_month": 0.05182,
+      "six_month": 0.06273,
+      "twelve_month": 0.11321,
+      "daily_observations": 19
+    },
+    {
+      "month": "2016-06",
+      "one_month": 0.03405,
+      "three_month": 0.05132,
+      "six_month": 0.06223,
+      "twelve_month": 0.11252,
+      "daily_observations": 22
+    },
+    {
+      "month": "2016-07",
+      "one_month": 0.03223,
+      "three_month": 0.0495,
+      "six_month": 0.06041,
+      "twelve_month": 0.10968,
+      "daily_observations": 20
+    },
+    {
+      "month": "2016-08",
+      "one_month": 0.03182,
+      "three_month": 0.04909,
+      "six_month": 0.06,
+      "twelve_month": 0.10909,
+      "daily_observations": 22
+    },
+    {
+      "month": "2016-09",
+      "one_month": 0.03136,
+      "three_month": 0.04841,
+      "six_month": 0.05932,
+      "twelve_month": 0.10854,
+      "daily_observations": 20
+    },
+    {
+      "month": "2016-10",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2016-11",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2016-12",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2017-01",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2017-02",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2017-03",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 22
+    },
+    {
+      "month": "2017-04",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2017-05",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2017-06",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 22
+    },
+    {
+      "month": "2017-07",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2017-08",
+      "one_month": 0.03,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 22
+    },
+    {
+      "month": "2017-09",
+      "one_month": 0.03073,
+      "three_month": 0.04636,
+      "six_month": 0.05727,
+      "twelve_month": 0.10636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2017-10",
+      "one_month": 0.04234,
+      "three_month": 0.04636,
+      "six_month": 0.06584,
+      "twelve_month": 0.11493,
+      "daily_observations": 21
+    },
+    {
+      "month": "2017-11",
+      "one_month": 0.04382,
+      "three_month": 0.04636,
+      "six_month": 0.06727,
+      "twelve_month": 0.11636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2017-12",
+      "one_month": 0.04545,
+      "three_month": 0.04636,
+      "six_month": 0.06727,
+      "twelve_month": 0.11636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2018-01",
+      "one_month": 0.05387,
+      "three_month": 0.04789,
+      "six_month": 0.06823,
+      "twelve_month": 0.12478,
+      "daily_observations": 19
+    },
+    {
+      "month": "2018-02",
+      "one_month": 0.05545,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2018-03",
+      "one_month": 0.05545,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2018-04",
+      "one_month": 0.05391,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2018-05",
+      "one_month": 0.05364,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2018-06",
+      "one_month": 0.05364,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2018-07",
+      "one_month": 0.05355,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2018-08",
+      "one_month": 0.05593,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 23
+    },
+    {
+      "month": "2018-09",
+      "one_month": 0.0653,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 18
+    },
+    {
+      "month": "2018-10",
+      "one_month": 0.06372,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 22
+    },
+    {
+      "month": "2018-11",
+      "one_month": 0.06273,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2018-12",
+      "one_month": 0.06273,
+      "three_month": 0.04799,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2019-01",
+      "one_month": 0.06144,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2019-02",
+      "one_month": 0.0611,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2019-03",
+      "one_month": 0.06264,
+      "three_month": 0.04818,
+      "six_month": 0.06909,
+      "twelve_month": 0.12636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2019-04",
+      "one_month": 0.06091,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2019-05",
+      "one_month": 0.05971,
+      "three_month": 0.0689,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2019-06",
+      "one_month": 0.06882,
+      "three_month": 0.06727,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2019-07",
+      "one_month": 0.06545,
+      "three_month": 0.06727,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 22
+    },
+    {
+      "month": "2019-08",
+      "one_month": 0.07458,
+      "three_month": 0.06727,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2019-09",
+      "one_month": 0.07727,
+      "three_month": 0.06727,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2019-10",
+      "one_month": 0.07727,
+      "three_month": 0.06727,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2019-11",
+      "one_month": 0.06995,
+      "three_month": 0.06727,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2019-12",
+      "one_month": 0.06909,
+      "three_month": 0.06744,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2020-01",
+      "one_month": 0.06909,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2020-02",
+      "one_month": 0.07025,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.13636,
+      "daily_observations": 18
+    },
+    {
+      "month": "2020-03",
+      "one_month": 0.07931,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.14017,
+      "daily_observations": 21
+    },
+    {
+      "month": "2020-04",
+      "one_month": 0.07952,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.14636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2020-05",
+      "one_month": 0.05535,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.14636,
+      "daily_observations": 18
+    },
+    {
+      "month": "2020-06",
+      "one_month": 0.05864,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.14636,
+      "daily_observations": 22
+    },
+    {
+      "month": "2020-07",
+      "one_month": 0.04849,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.14636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2020-08",
+      "one_month": 0.05245,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.14636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2020-09",
+      "one_month": 0.078,
+      "three_month": 0.07009,
+      "six_month": 0.12736,
+      "twelve_month": 0.14736,
+      "daily_observations": 20
+    },
+    {
+      "month": "2020-10",
+      "one_month": 0.05818,
+      "three_month": 0.07909,
+      "six_month": 0.13636,
+      "twelve_month": 0.15636,
+      "daily_observations": 22
+    },
+    {
+      "month": "2020-11",
+      "one_month": 0.06134,
+      "three_month": 0.07909,
+      "six_month": 0.13636,
+      "twelve_month": 0.15636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2020-12",
+      "one_month": 0.08727,
+      "three_month": 0.07909,
+      "six_month": 0.13636,
+      "twelve_month": 0.15636,
+      "daily_observations": 22
+    },
+    {
+      "month": "2021-01",
+      "one_month": 0.07818,
+      "three_month": 0.07909,
+      "six_month": 0.13636,
+      "twelve_month": 0.15636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2021-02",
+      "one_month": 0.07808,
+      "three_month": 0.07909,
+      "six_month": 0.13636,
+      "twelve_month": 0.15636,
+      "daily_observations": 18
+    },
+    {
+      "month": "2021-03",
+      "one_month": 0.07727,
+      "three_month": 0.07822,
+      "six_month": 0.13549,
+      "twelve_month": 0.15636,
+      "daily_observations": 23
+    },
+    {
+      "month": "2021-04",
+      "one_month": 0.08104,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.15636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2021-05",
+      "one_month": 0.08535,
+      "three_month": 0.06909,
+      "six_month": 0.12636,
+      "twelve_month": 0.15636,
+      "daily_observations": 18
+    },
+    {
+      "month": "2021-06",
+      "one_month": 0.08545,
+      "three_month": 0.06818,
+      "six_month": 0.12545,
+      "twelve_month": 0.15545,
+      "daily_observations": 22
+    },
+    {
+      "month": "2021-07",
+      "one_month": 0.08545,
+      "three_month": 0.059,
+      "six_month": 0.11636,
+      "twelve_month": 0.14636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2021-08",
+      "one_month": 0.08545,
+      "three_month": 0.05727,
+      "six_month": 0.11636,
+      "twelve_month": 0.14636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2021-09",
+      "one_month": 0.08445,
+      "three_month": 0.05727,
+      "six_month": 0.11736,
+      "twelve_month": 0.14736,
+      "daily_observations": 20
+    },
+    {
+      "month": "2021-10",
+      "one_month": 0.07545,
+      "three_month": 0.05727,
+      "six_month": 0.12636,
+      "twelve_month": 0.15636,
+      "daily_observations": 21
+    },
+    {
+      "month": "2021-11",
+      "one_month": 0.07645,
+      "three_month": 0.05727,
+      "six_month": 0.12636,
+      "twelve_month": 0.15636,
+      "daily_observations": 20
+    },
+    {
+      "month": "2021-12",
+      "one_month": 0.08454,
+      "three_month": 0.05818,
+      "six_month": 0.12727,
+      "twelve_month": 0.15636,
+      "daily_observations": 22
+    },
+    {
+      "month": "2022-01",
+      "one_month": 0.07545,
+      "three_month": 0.06727,
+      "six_month": 0.13636,
+      "twelve_month": 0.15636,
+      "daily_observations": 19
+    },
+    {
+      "month": "2022-02",
+      "one_month": 0.07656,
+      "three_month": 0.06727,
+      "six_month": 0.13636,
+      "twelve_month": 0.15636,
+      "daily_observations": 18
+    },
+    {
+      "month": "2022-03",
+      "one_month": 0.08545,
+      "three_month": 0.06727,
+      "six_month": 0.13636,
+      "twelve_month": 0.15669,
+      "daily_observations": 22
+    },
+    {
+      "month": "2022-04",
+      "one_month": 0.07995,
+      "three_month": 0.06727,
+      "six_month": 0.13636,
+      "twelve_month": 0.16,
+      "daily_observations": 20
+    },
+    {
+      "month": "2022-05",
+      "one_month": 0.07383,
+      "three_month": 0.06727,
+      "six_month": 0.13636,
+      "twelve_month": 0.16,
+      "daily_observations": 19
+    },
+    {
+      "month": "2022-06",
+      "one_month": 0.08182,
+      "three_month": 0.06727,
+      "six_month": 0.13636,
+      "twelve_month": 0.16331,
+      "daily_observations": 22
+    },
+    {
+      "month": "2022-07",
+      "one_month": 0.08463,
+      "three_month": 0.06727,
+      "six_month": 0.13636,
+      "twelve_month": 0.18013,
+      "daily_observations": 20
+    },
+    {
+      "month": "2022-08",
+      "one_month": 0.0788,
+      "three_month": 0.06397,
+      "six_month": 0.13636,
+      "twelve_month": 0.18322,
+      "daily_observations": 22
+    },
+    {
+      "month": "2022-09",
+      "one_month": 0.07768,
+      "three_month": 0.06264,
+      "six_month": 0.13636,
+      "twelve_month": 0.17727,
+      "daily_observations": 20
+    },
+    {
+      "month": "2022-10",
+      "one_month": 0.05686,
+      "three_month": 0.05364,
+      "six_month": 0.13636,
+      "twelve_month": 0.17727,
+      "daily_observations": 20
+    },
+    {
+      "month": "2022-11",
+      "one_month": 0.05718,
+      "three_month": 0.05364,
+      "six_month": 0.13473,
+      "twelve_month": 0.17155,
+      "daily_observations": 20
+    },
+    {
+      "month": "2022-12",
+      "one_month": 0.06818,
+      "three_month": 0.05682,
+      "six_month": 0.13703,
+      "twelve_month": 0.18918,
+      "daily_observations": 22
+    },
+    {
+      "month": "2023-01",
+      "one_month": 0.06158,
+      "three_month": 0.07464,
+      "six_month": 0.1466,
+      "twelve_month": 0.20651,
+      "daily_observations": 19
+    },
+    {
+      "month": "2023-02",
+      "one_month": 0.05273,
+      "three_month": 0.07455,
+      "six_month": 0.14909,
+      "twelve_month": 0.23278,
+      "daily_observations": 19
+    },
+    {
+      "month": "2023-03",
+      "one_month": 0.06273,
+      "three_month": 0.07455,
+      "six_month": 0.14909,
+      "twelve_month": 0.23364,
+      "daily_observations": 22
+    },
+    {
+      "month": "2023-04",
+      "one_month": 0.06159,
+      "three_month": 0.07455,
+      "six_month": 0.14909,
+      "twelve_month": 0.23364,
+      "daily_observations": 20
+    },
+    {
+      "month": "2023-05",
+      "one_month": 0.04855,
+      "three_month": 0.07455,
+      "six_month": 0.14909,
+      "twelve_month": 0.23364,
+      "daily_observations": 20
+    },
+    {
+      "month": "2023-06",
+      "one_month": 0.04541,
+      "three_month": 0.07434,
+      "six_month": 0.14909,
+      "twelve_month": 0.23364,
+      "daily_observations": 22
+    },
+    {
+      "month": "2023-07",
+      "one_month": 0.04464,
+      "three_month": 0.07,
+      "six_month": 0.14909,
+      "twelve_month": 0.23364,
+      "daily_observations": 20
+    },
+    {
+      "month": "2023-08",
+      "one_month": 0.04735,
+      "three_month": 0.07,
+      "six_month": 0.14909,
+      "twelve_month": 0.23364,
+      "daily_observations": 22
+    },
+    {
+      "month": "2023-09",
+      "one_month": 0.06527,
+      "three_month": 0.07,
+      "six_month": 0.14909,
+      "twelve_month": 0.23364,
+      "daily_observations": 20
+    },
+    {
+      "month": "2023-10",
+      "one_month": 0.05636,
+      "three_month": 0.07,
+      "six_month": 0.14909,
+      "twelve_month": 0.23572,
+      "daily_observations": 21
+    },
+    {
+      "month": "2023-11",
+      "one_month": 0.04895,
+      "three_month": 0.07,
+      "six_month": 0.14909,
+      "twelve_month": 0.23545,
+      "daily_observations": 20
+    },
+    {
+      "month": "2023-12",
+      "one_month": 0.05688,
+      "three_month": 0.0781,
+      "six_month": 0.15593,
+      "twelve_month": 0.23545,
+      "daily_observations": 21
+    },
+    {
+      "month": "2024-01",
+      "one_month": 0.06516,
+      "three_month": 0.08019,
+      "six_month": 0.15598,
+      "twelve_month": 0.23626,
+      "daily_observations": 19
+    },
+    {
+      "month": "2024-02",
+      "one_month": 0.06101,
+      "three_month": 0.09723,
+      "six_month": 0.15622,
+      "twelve_month": 0.24364,
+      "daily_observations": 19
+    },
+    {
+      "month": "2024-03",
+      "one_month": 0.13146,
+      "three_month": 0.18986,
+      "six_month": 0.19505,
+      "twelve_month": 0.26073,
+      "daily_observations": 20
+    },
+    {
+      "month": "2024-04",
+      "one_month": 0.19273,
+      "three_month": 0.25796,
+      "six_month": 0.26273,
+      "twelve_month": 0.30701,
+      "daily_observations": 21
+    },
+    {
+      "month": "2024-05",
+      "one_month": 0.18347,
+      "three_month": 0.27537,
+      "six_month": 0.2813,
+      "twelve_month": 0.32113,
+      "daily_observations": 21
+    },
+    {
+      "month": "2024-06",
+      "one_month": 0.19572,
+      "three_month": 0.29127,
+      "six_month": 0.29673,
+      "twelve_month": 0.33205,
+      "daily_observations": 20
+    },
+    {
+      "month": "2024-07",
+      "one_month": 0.20901,
+      "three_month": 0.33161,
+      "six_month": 0.34294,
+      "twelve_month": 0.34967,
+      "daily_observations": 22
+    },
+    {
+      "month": "2024-08",
+      "one_month": 0.33891,
+      "three_month": 0.44727,
+      "six_month": 0.44247,
+      "twelve_month": 0.53818,
+      "daily_observations": 21
+    },
+    {
+      "month": "2024-09",
+      "one_month": 0.35077,
+      "three_month": 0.43464,
+      "six_month": 0.43364,
+      "twelve_month": 0.53818,
+      "daily_observations": 19
+    },
+    {
+      "month": "2024-10",
+      "one_month": 0.34041,
+      "three_month": 0.45182,
+      "six_month": 0.45046,
+      "twelve_month": 0.55545,
+      "daily_observations": 22
+    },
+    {
+      "month": "2024-11",
+      "one_month": 0.3495,
+      "three_month": 0.50295,
+      "six_month": 0.52164,
+      "twelve_month": 0.58827,
+      "daily_observations": 20
+    },
+    {
+      "month": "2024-12",
+      "one_month": 0.4329,
+      "three_month": 0.61212,
+      "six_month": 0.60983,
+      "twelve_month": 0.64035,
+      "daily_observations": 21
+    },
+    {
+      "month": "2025-01",
+      "one_month": 0.51292,
+      "three_month": 0.67493,
+      "six_month": 0.66823,
+      "twelve_month": 0.70383,
+      "daily_observations": 19
+    },
+    {
+      "month": "2025-02",
+      "one_month": 0.59914,
+      "three_month": 0.77995,
+      "six_month": 0.76166,
+      "twelve_month": 0.79874,
+      "daily_observations": 18
+    },
+    {
+      "month": "2025-03",
+      "one_month": 0.63691,
+      "three_month": 0.80696,
+      "six_month": 0.81627,
+      "twelve_month": 0.80854,
+      "daily_observations": 20
+    },
+    {
+      "month": "2025-04",
+      "one_month": 0.61788,
+      "three_month": 0.80957,
+      "six_month": 0.86156,
+      "twelve_month": 0.81675,
+      "daily_observations": 21
+    },
+    {
+      "month": "2025-05",
+      "one_month": 0.60382,
+      "three_month": 0.77132,
+      "six_month": 0.84777,
+      "twelve_month": 0.79018,
+      "daily_observations": 20
+    },
+    {
+      "month": "2025-06",
+      "one_month": 0.6042,
+      "three_month": 0.7729,
+      "six_month": 0.84727,
+      "twelve_month": 0.79818,
+      "daily_observations": 21
+    },
+    {
+      "month": "2025-07",
+      "one_month": 0.60314,
+      "three_month": 0.77273,
+      "six_month": 0.85025,
+      "twelve_month": 0.79818,
+      "daily_observations": 22
+    },
+    {
+      "month": "2025-08",
+      "one_month": 0.59291,
+      "three_month": 0.77273,
+      "six_month": 0.85091,
+      "twelve_month": 0.80018,
+      "daily_observations": 20
+    },
+    {
+      "month": "2025-09",
+      "one_month": 0.60182,
+      "three_month": 0.78105,
+      "six_month": 0.85241,
+      "twelve_month": 0.81927,
+      "daily_observations": 20
+    },
+    {
+      "month": "2025-10",
+      "one_month": 0.60934,
+      "three_month": 0.81624,
+      "six_month": 0.88091,
+      "twelve_month": 0.86272,
+      "daily_observations": 22
+    },
+    {
+      "month": "2025-11",
+      "one_month": 0.60192,
+      "three_month": 0.80566,
+      "six_month": 0.88091,
+      "twelve_month": 0.85783,
+      "daily_observations": 18
+    },
+    {
+      "month": "2025-12",
+      "one_month": 0.78058,
+      "three_month": 1.00079,
+      "six_month": 1.00636,
+      "twelve_month": 0.90814,
+      "daily_observations": 22
+    },
+    {
+      "month": "2026-01",
+      "one_month": 0.85751,
+      "three_month": 1.08593,
+      "six_month": 1.14775,
+      "twelve_month": 1.1067,
+      "daily_observations": 19
+    },
+    {
+      "month": "2026-02",
+      "one_month": 0.86899,
+      "three_month": 1.17369,
+      "six_month": 1.29147,
+      "twelve_month": 1.31258,
+      "daily_observations": 18
+    },
+    {
+      "month": "2026-03",
+      "one_month": 0.9735,
+      "three_month": 1.26921,
+      "six_month": 1.35467,
+      "twelve_month": 1.33091,
+      "daily_observations": 21
+    },
+    {
+      "month": "2026-04",
+      "one_month": 0.93353,
+      "three_month": 1.26545,
+      "six_month": 1.35534,
+      "twelve_month": 1.33091,
+      "daily_observations": 21
+    },
+    {
+      "month": "2026-05",
+      "one_month": 0.91334,
+      "three_month": 1.24519,
+      "six_month": 1.36091,
+      "twelve_month": 1.33091,
+      "daily_observations": 18
+    },
+    {
+      "month": "2026-06",
+      "one_month": 1.11231,
+      "three_month": 1.37571,
+      "six_month": 1.47909,
+      "twelve_month": 1.36614,
+      "daily_observations": 22
+    },
+    {
+      "month": "2026-07",
+      "one_month": 1.14961,
+      "three_month": 1.43871,
+      "six_month": 1.52591,
+      "twelve_month": 1.38591,
+      "daily_observations": 22
+    },
+    {
+      "month": "2026-08",
+      "one_month": 1.16364,
+      "three_month": 1.50734,
+      "six_month": 1.59051,
+      "twelve_month": 1.46213,
+      "daily_observations": 20
+    },
+    {
+      "month": "2026-09",
+      "one_month": 1.33765,
+      "three_month": 1.62618,
+      "six_month": 1.79144,
+      "twelve_month": 1.58375,
+      "daily_observations": 19
+    }
+  ]
+}
