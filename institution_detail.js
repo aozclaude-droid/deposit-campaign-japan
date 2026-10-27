@@ -1,12 +1,15 @@
 "use strict";
 
-const INSTITUTION_TIBOR_URL = "tibor_monthly.json?v=20261028-1";
+const INSTITUTION_TIBOR_URL = "tibor_monthly.json?v=20261028-3";
+const INSTITUTION_TIBOR_DAILY_URL = "tibor_daily.json?v=20261028-2";
 const institutionDetailState = {
   institution: "",
   tiborMetadata: {},
   tiborRecords: [],
+  tiborDailyMetadata: {},
+  tiborDailyRecords: [],
   seriesKey: "",
-  tiborTenor: "three_month"
+  tiborTenor: "one_month"
 };
 
 const institutionDetailText = (value) => value == null ? "" : String(value);
@@ -96,9 +99,16 @@ function institutionDetailRatePoints(campaigns, baseRows, seriesKey) {
   })));
 }
 
-function institutionDetailTiborForDate(date, key) {
+function institutionDetailTiborForDate(date, key, useDaily = false) {
   const month = institutionDetailMonth(date);
-  if (!month || !institutionDetailState.tiborRecords.length) return null;
+  if (!month) return null;
+  if (useDaily) {
+    const eligible = institutionDetailState.tiborDailyRecords.filter((row) => row.date <= date && Number.isFinite(Number(row[key])));
+    if (!eligible.length) return null;
+    const row = eligible[eligible.length - 1];
+    return { value: Number(row[key]), date: row.date, month: row.date.slice(0, 7), exact: row.date === date };
+  }
+  if (!institutionDetailState.tiborRecords.length) return null;
   const eligible = institutionDetailState.tiborRecords.filter((row) => row.month <= month && Number.isFinite(Number(row[key])));
   if (!eligible.length) return null;
   const row = eligible[eligible.length - 1];
@@ -106,7 +116,8 @@ function institutionDetailTiborForDate(date, key) {
 }
 
 function institutionDetailSeriesWithTibor(points) {
-  return points.map((point) => ({ ...point, tibor: institutionDetailTiborForDate(point.date, institutionDetailState.tiborTenor) }));
+  const useDaily = institutionDetailState.seriesKey === "campaign";
+  return points.map((point) => ({ ...point, tibor: institutionDetailTiborForDate(point.date, institutionDetailState.tiborTenor, useDaily) }));
 }
 
 function institutionDetailChart(points) {
@@ -129,7 +140,8 @@ function institutionDetailChart(points) {
   const minTime = Math.min(...parsed.map((point) => point.time));
   const maxTimeRaw = Math.max(...parsed.map((point) => point.time));
   const maxTime = maxTimeRaw === minTime ? minTime + 86400000 * 31 : maxTimeRaw;
-  const values = parsed.flatMap((point) => [point.rate, point.tibor?.value]).filter(Number.isFinite);
+  const spreadPoints = parsed.filter((point) => point.tibor).map((point) => ({ ...point, spread: point.rate - point.tibor.value }));
+  const values = parsed.flatMap((point) => [point.rate, point.tibor?.value, point.tibor ? point.rate - point.tibor.value : null]).filter(Number.isFinite);
   let minValue = Math.min(0, ...values);
   let maxValue = Math.max(...values);
   const padding = Math.max(0.1, (maxValue - minValue) * 0.12);
@@ -138,10 +150,20 @@ function institutionDetailChart(points) {
   if (maxValue <= minValue) maxValue = minValue + 0.5;
   const x = (time) => margin.left + ((time - minTime) / (maxTime - minTime)) * plotWidth;
   const y = (value) => margin.top + (1 - (value - minValue) / (maxValue - minValue)) * plotHeight;
-  const line = (items, accessor) => items.filter((item) => Number.isFinite(accessor(item))).map((item, index) => `${index ? "L" : "M"}${x(item.time).toFixed(1)},${y(accessor(item)).toFixed(1)}`).join(" ");
+  const stepped = institutionDetailState.seriesKey === "campaign";
+  const line = (items, accessor) => {
+    const valid = items.filter((item) => Number.isFinite(accessor(item)));
+    return valid.map((item, index) => {
+      const px = x(item.time).toFixed(1);
+      const py = y(accessor(item)).toFixed(1);
+      if (!index) return `M${px},${py}`;
+      return stepped ? `H${px} V${py}` : `L${px},${py}`;
+    }).join(" ");
+  };
   const depositPath = line(parsed, (point) => point.rate);
   const tiborPoints = parsed.filter((point) => point.tibor);
   const tiborPath = line(tiborPoints, (point) => point.tibor.value);
+  const spreadPath = line(spreadPoints, (point) => point.spread);
   const yTicks = Array.from({ length: 6 }, (_, index) => minValue + ((maxValue - minValue) * index) / 5);
   const xTickCount = Math.min(6, parsed.length);
   const xTicks = Array.from({ length: xTickCount }, (_, index) => parsed[Math.round((parsed.length - 1) * index / Math.max(1, xTickCount - 1))]);
@@ -152,8 +174,10 @@ function institutionDetailChart(points) {
     ${xTicks.map((tick) => `<text class="institution-axis-label" x="${x(tick.time)}" y="${height - 24}" text-anchor="middle">${esc(tick.date.slice(0, 7))}</text>`).join("")}
     ${tiborPath ? `<path class="institution-tibor-path" d="${tiborPath}"></path>` : ""}
     <path class="institution-deposit-path" d="${depositPath}"></path>
+    ${spreadPath ? `<path class="institution-spread-path" d="${spreadPath}"></path>` : ""}
     ${parsed.map((point) => `<circle class="institution-deposit-point" cx="${x(point.time)}" cy="${y(point.rate)}" r="5"><title>${esc(point.date)} ${esc(point.label)} ${institutionDetailPercent(point.rate)}</title></circle>`).join("")}
-    ${tiborPoints.map((point) => `<circle class="institution-tibor-point" cx="${x(point.time)}" cy="${y(point.tibor.value)}" r="4"><title>${esc(point.tibor.month)} TIBOR ${institutionDetailPercent(point.tibor.value)}</title></circle>`).join("")}
+    ${tiborPoints.map((point) => `<circle class="institution-tibor-point" cx="${x(point.time)}" cy="${y(point.tibor.value)}" r="4"><title>${esc(point.tibor.date || `${point.tibor.month}月平均`)} TIBOR ${institutionDetailPercent(point.tibor.value)}${point.tibor.date && !point.tibor.exact ? "（開始日の直前営業日）" : ""}</title></circle>`).join("")}
+    ${spreadPoints.map((point) => `<circle class="institution-spread-point" cx="${x(point.time)}" cy="${y(point.spread)}" r="4"><title>${esc(point.date)} 金利差 ${point.spread >= 0 ? "+" : ""}${Math.round(point.spread * 100)}bp</title></circle>`).join("")}
   </svg>`;
 }
 
@@ -170,10 +194,34 @@ function institutionDetailRenderSpread(points) {
   const orderedSpreads = spreads.slice().sort((a, b) => a - b);
   const middle = Math.floor(orderedSpreads.length / 2);
   const medianSpread = orderedSpreads.length % 2 ? orderedSpreads[middle] : (orderedSpreads[middle - 1] + orderedSpreads[middle]) / 2;
+  const tiborBasis = latest.tibor.date
+    ? `${latest.tibor.date}${latest.tibor.exact ? "（開始日）" : "（開始日の直前営業日）"}`
+    : `${latest.tibor.month}月平均`;
   target.innerHTML = `<article><span>直近の預金金利</span><strong>${institutionDetailPercent(latest.rate)}</strong><small>${esc(latest.date)}</small></article>
-    <article><span>比較TIBOR</span><strong>${institutionDetailPercent(latest.tibor.value)}</strong><small>${esc(latest.tibor.month)}月平均</small></article>
+    <article><span>比較TIBOR</span><strong>${institutionDetailPercent(latest.tibor.value)}</strong><small>${esc(tiborBasis)}</small></article>
     <article class="${latestSpread >= 0 ? "positive" : "negative"}"><span>直近の金利差</span><strong>${latestSpread >= 0 ? "+" : ""}${Math.round(latestSpread * 100)}bp</strong><small>預金金利 - TIBOR</small></article>
     <article><span>期間中央値の金利差</span><strong>${medianSpread >= 0 ? "+" : ""}${Math.round(medianSpread * 100)}bp</strong><small>${fmt(compared.length)}時点</small></article>`;
+}
+
+function institutionDetailRenderSpreadDetails(points) {
+  const target = document.querySelector("#institutionSpreadDetails");
+  if (!target) return;
+  if (institutionDetailState.seriesKey !== "campaign") {
+    target.innerHTML = "";
+    target.classList.add("hidden");
+    return;
+  }
+  const compared = points.filter((point) => point.tibor && Number.isFinite(point.rate)).slice().reverse();
+  target.classList.remove("hidden");
+  target.innerHTML = `<h4>キャンペーン開始日ごとのTIBOR差</h4>
+    <p>同じ開始日に複数年限がある場合は、その日の最高キャンペーン金利を表示します。</p>
+    <div class="institution-spread-table-wrap"><table class="institution-spread-table"><thead><tr><th>キャンペーン開始日</th><th>キャンペーン金利</th><th>採用TIBOR日</th><th>TIBOR</th><th>金利差</th><th>商品・年限</th></tr></thead><tbody>
+      ${compared.map((point) => {
+        const spread = point.rate - point.tibor.value;
+        const basis = point.tibor.exact ? point.tibor.date : `${point.tibor.date}（直前営業日）`;
+        return `<tr><td>${esc(point.date)}</td><td class="rate">${institutionDetailPercent(point.rate)}</td><td>${esc(basis)}</td><td>${institutionDetailPercent(point.tibor.value)}</td><td class="rate ${spread >= 0 ? "positive" : "negative"}">${spread >= 0 ? "+" : ""}${Math.round(spread * 100)}bp</td><td>${esc(point.label)}</td></tr>`;
+      }).join("")}
+    </tbody></table></div>`;
 }
 
 function institutionDetailRenderChart(campaigns, baseRows) {
@@ -185,10 +233,12 @@ function institutionDetailRenderChart(campaigns, baseRows) {
   const points = institutionDetailSeriesWithTibor(institutionDetailRatePoints(campaigns, baseRows, institutionDetailState.seriesKey));
   institutionDetailChart(points);
   institutionDetailRenderSpread(points);
+  institutionDetailRenderSpreadDetails(points);
   const note = document.querySelector("#institutionTiborNote");
   const meta = institutionDetailState.tiborMetadata;
+  const dailyMeta = institutionDetailState.tiborDailyMetadata;
   note.innerHTML = meta.period_start
-    ? `TIBORは、<a href="${esc(meta.source_page)}" target="_blank" rel="noopener noreferrer">全銀協TIBOR運営機関の公式履歴</a>から作成した${esc(meta.period_start)}～${esc(meta.period_end)}の月次算術平均です。比較は参考値で、預金商品の収益性や金融機関の調達原価を直接示すものではありません。チャートは特典率などの混入による縮尺崩れを防ぐため年10％超を除外しますが、明細表には表示します。公式資料には再配信時の問い合わせ案内があります。`
+    ? `通常金利は、<a href="${esc(meta.source_page)}" target="_blank" rel="noopener noreferrer">全銀協TIBOR運営機関の公式履歴</a>から作成した${esc(meta.period_start)}～${esc(meta.period_end)}の月次算術平均と比較します。キャンペーン預金は開始日の日次TIBORと比較し、開始日が非公表日・休業日の場合のみ直前営業日を採用します（日次データ ${esc(dailyMeta.period_start || "—")}～${esc(dailyMeta.period_end || "—")}）。金利差は「預金金利－TIBOR」で、100bp＝1％ポイントです。比較は参考値です。チャートは年10％超を除外しますが、明細表には表示します。公式資料には再配信時の問い合わせ案内があります。`
     : `TIBOR比較データを読み込めませんでした。<a href="https://www.jbatibor.or.jp/rate/log.html" target="_blank" rel="noopener noreferrer">公式履歴</a>をご確認ください。`;
 }
 
@@ -266,15 +316,22 @@ function closeInstitutionDetail(options = {}) {
 }
 
 async function institutionDetailLoadTibor() {
-  try {
-    const response = await fetch(INSTITUTION_TIBOR_URL, { cache: "no-store" });
+  const load = async (url) => {
+    const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
-    institutionDetailState.tiborMetadata = payload.metadata || {};
-    institutionDetailState.tiborRecords = Array.isArray(payload.records) ? payload.records : [];
+    return response.json();
+  };
+  try {
+    const [monthly, daily] = await Promise.all([load(INSTITUTION_TIBOR_URL), load(INSTITUTION_TIBOR_DAILY_URL)]);
+    institutionDetailState.tiborMetadata = monthly.metadata || {};
+    institutionDetailState.tiborRecords = Array.isArray(monthly.records) ? monthly.records : [];
+    institutionDetailState.tiborDailyMetadata = daily.metadata || {};
+    institutionDetailState.tiborDailyRecords = Array.isArray(daily.records) ? daily.records : [];
   } catch (error) {
     institutionDetailState.tiborMetadata = {};
     institutionDetailState.tiborRecords = [];
+    institutionDetailState.tiborDailyMetadata = {};
+    institutionDetailState.tiborDailyRecords = [];
   }
   if (institutionDetailState.institution) renderInstitutionDetail();
 }

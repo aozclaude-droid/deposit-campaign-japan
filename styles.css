@@ -55,17 +55,19 @@ body.institution-detail-mode #timelineTabPanel > :not(#institutionDetailPanel) {
 .institution-chart-legend i { display: inline-block; width: 24px; height: 4px; border-radius: 4px; }
 .institution-chart-legend .deposit-line { background: #168866; }
 .institution-chart-legend .tibor-line { background: #3978d6; }
-.institution-chart-legend .spread-dot { width: 9px; height: 9px; border-radius: 50%; background: #ec8a25; }
+.institution-chart-legend .spread-dot { background: #ec8a25; }
 .institution-rate-chart { width: 100%; max-width: 100%; min-height: 310px; overflow-x: auto; border: 1px solid #e0e8f2; border-radius: 12px; background: linear-gradient(#fbfdff,#f6f9fd); }
 .institution-rate-svg { display: block; width: 100%; min-width: 720px; height: auto; }
 .institution-grid-line { stroke: #dfe7f0; stroke-width: 1; }
 .institution-axis { stroke: #91a4bb; stroke-width: 1.2; }
 .institution-axis-label { fill: #677a91; font-size: 12px; }
-.institution-deposit-path, .institution-tibor-path { fill: none; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.institution-deposit-path, .institution-tibor-path, .institution-spread-path { fill: none; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
 .institution-deposit-path { stroke: #168866; }
 .institution-tibor-path { stroke: #3978d6; }
+.institution-spread-path { stroke: #ec8a25; stroke-width: 3; stroke-dasharray: 8 5; }
 .institution-deposit-point { fill: #fff; stroke: #168866; stroke-width: 3; }
 .institution-tibor-point { fill: #fff; stroke: #3978d6; stroke-width: 2.5; }
+.institution-spread-point { fill: #fff7ed; stroke: #ec8a25; stroke-width: 2.5; }
 .institution-chart-empty { display: grid; min-height: 310px; place-items: center; color: #71839a; }
 .institution-spread-summary { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin-top: 12px; }
 .institution-spread-summary article, .institution-spread-empty { padding: 12px 14px; border: 1px solid #dbe5f0; border-radius: 10px; background: #f9fbfe; }
@@ -74,6 +76,16 @@ body.institution-detail-mode #timelineTabPanel > :not(#institutionDetailPanel) {
 .institution-spread-summary .positive strong { color: #087a61; }
 .institution-spread-summary .negative strong { color: #b34141; }
 .institution-tibor-note { margin: 12px 0 0; color: #66788e; font-size: 11px; line-height: 1.7; }
+.institution-spread-details { margin-top: 14px; padding: 14px; border: 1px solid #dbe5f0; border-radius: 12px; background: #fffaf5; }
+.institution-spread-details h4 { margin: 0; color: #173f77; font-size: 14px; }
+.institution-spread-details > p { margin: 4px 0 10px; color: #687a92; font-size: 11px; }
+.institution-spread-table-wrap { max-height: 310px; overflow: auto; border: 1px solid #e5eaf1; border-radius: 9px; background: #fff; }
+.institution-spread-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.institution-spread-table th, .institution-spread-table td { padding: 8px 10px; border-bottom: 1px solid #edf1f6; text-align: left; white-space: nowrap; }
+.institution-spread-table th { position: sticky; top: 0; z-index: 1; background: #f4f7fb; color: #536982; }
+.institution-spread-table td:last-child { min-width: 280px; white-space: normal; }
+.institution-spread-table .positive { color: #087a61; }
+.institution-spread-table .negative { color: #b34141; }
 .institution-detail-table { min-width: 1120px; }
 .institution-detail-table td { max-width: 360px; vertical-align: top; }
 

@@ -4,78 +4,96 @@
     "series": "JBA Japanese Yen TIBOR monthly arithmetic mean",
     "unit": "percent_per_annum",
     "period_start": "2015-01",
-    "period_end": "2026-09",
-    "month_count": 141,
-    "daily_observations_used": 2868,
-    "created_at": "2026-10-28T00:05:03+09:00",
+    "period_end": "2026-10",
+    "month_count": 142,
+    "daily_observations_used": 2886,
+    "created_at": "2026-10-28T00:24:10+09:00",
     "source_page": "https://www.jbatibor.or.jp/rate/log.html",
     "methodology": "Official daily Japanese Yen TIBOR observations from 2015 onward are aggregated into calendar-month arithmetic means. Only 1M, 3M, 6M, and 12M series are retained.",
     "notice": "Reference comparison only. JBA TIBOR Administration states that parties wishing to redistribute the source information should contact the administrator.",
     "source_files": [
       {
+        "source_type": "annual_history",
         "year": 2014,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2014.pdf",
         "daily_rows_used": 58
       },
       {
+        "source_type": "annual_history",
         "year": 2015,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2015.pdf",
         "daily_rows_used": 244
       },
       {
+        "source_type": "annual_history",
         "year": 2016,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2016.pdf",
         "daily_rows_used": 245
       },
       {
+        "source_type": "annual_history",
         "year": 2017,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2017.pdf",
         "daily_rows_used": 247
       },
       {
+        "source_type": "annual_history",
         "year": 2018,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2018.pdf",
         "daily_rows_used": 245
       },
       {
+        "source_type": "annual_history",
         "year": 2019,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2019.pdf",
         "daily_rows_used": 241
       },
       {
+        "source_type": "annual_history",
         "year": 2020,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2020.pdf",
         "daily_rows_used": 243
       },
       {
+        "source_type": "annual_history",
         "year": 2021,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2021.pdf",
         "daily_rows_used": 245
       },
       {
+        "source_type": "annual_history",
         "year": 2022,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2022.pdf",
         "daily_rows_used": 244
       },
       {
+        "source_type": "annual_history",
         "year": 2023,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2023.pdf",
         "daily_rows_used": 246
       },
       {
+        "source_type": "annual_history",
         "year": 2024,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2024.pdf",
         "daily_rows_used": 245
       },
       {
+        "source_type": "annual_history",
         "year": 2025,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2025.pdf",
         "daily_rows_used": 243
       },
       {
+        "source_type": "annual_history",
         "year": 2026,
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYEN2026.pdf",
         "daily_rows_used": 180
+      },
+      {
+        "source_type": "current_month",
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYENTIBOR261027.pdf",
+        "daily_rows_used": 18
       }
     ]
   },
@@ -1207,6 +1225,14 @@
       "six_month": 1.79144,
       "twelve_month": 1.58375,
       "daily_observations": 19
+    },
+    {
+      "month": "2026-10",
+      "one_month": 1.39957,
+      "three_month": 1.7074,
+      "six_month": 1.86369,
+      "twelve_month": 1.61947,
+      "daily_observations": 18
     }
   ]
 }
