@@ -87,7 +87,11 @@ function institutionDetailRatePoints(campaigns, baseRows, seriesKey) {
       source: row.product_url
     })));
   }
-  const base = baseRows.filter((row) => institutionDetailRate(row) != null && institutionDetailRate(row) >= 0 && institutionDetailRate(row) <= 10 && institutionDetailText(row.record_eligible) !== "0");
+  const base = baseRows.filter((row) => {
+    const rate = institutionDetailRate(row);
+    const usableHistory = institutionDetailText(row.record_eligible) !== "0" || institutionDetailText(row.history_date_eligible) === "1";
+    return rate != null && rate >= 0 && rate <= 10 && usableHistory;
+  });
   const selected = seriesKey === "ordinary"
     ? base.filter((row) => institutionDetailFamily(row) === "ORDINARY_DEPOSIT" && (institutionDetailText(row.base_rate_role) === "STANDARD_BASE_RATE" || institutionDetailText(row.current_ranking_eligible) === "1"))
     : base.filter((row) => institutionDetailFamily(row).includes("STANDARD_TERM") || institutionDetailFamily(row).includes("TIME_DEPOSIT"));
@@ -244,7 +248,12 @@ function institutionDetailRenderChart(campaigns, baseRows) {
 
 function institutionDetailRenderSummary(name, campaigns, baseRows) {
   const active = campaigns.filter((row) => ["開催中", "開催予定"].includes(row.status));
-  const ordinary = institutionDetailLatest(baseRows, (row) => institutionDetailFamily(row) === "ORDINARY_DEPOSIT" && (institutionDetailText(row.base_rate_role) === "STANDARD_BASE_RATE" || institutionDetailText(row.current_ranking_eligible) === "1"));
+  const ordinary = institutionDetailLatest(baseRows, (row) => {
+    const isOrdinary = institutionDetailFamily(row) === "ORDINARY_DEPOSIT";
+    const isStandard = institutionDetailText(row.base_rate_role) === "STANDARD_BASE_RATE" || institutionDetailText(row.current_ranking_eligible) === "1";
+    const usableHistory = institutionDetailText(row.record_eligible) !== "0" || institutionDetailText(row.history_date_eligible) === "1";
+    return isOrdinary && isStandard && usableHistory;
+  });
   const highestCampaign = active.filter((row) => row._comparableRate != null).sort((a, b) => b._comparableRate - a._comparableRate)[0] || null;
   const standardTerm = institutionDetailLatest(baseRows, (row) => institutionDetailFamily(row).includes("STANDARD_TERM") || institutionDetailFamily(row).includes("TIME_DEPOSIT"));
   const dates = [...campaigns.map((row) => row.campaign_start_date), ...baseRows.map(institutionDetailDate)].filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(date)).sort();
