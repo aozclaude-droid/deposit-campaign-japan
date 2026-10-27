@@ -56,7 +56,7 @@ body.institution-detail-mode #timelineTabPanel > :not(#institutionDetailPanel) {
 .institution-chart-legend .deposit-line { background: #168866; }
 .institution-chart-legend .tibor-line { background: #3978d6; }
 .institution-chart-legend .spread-dot { background: #ec8a25; }
-.institution-rate-chart { width: 100%; max-width: 100%; min-height: 310px; overflow-x: auto; border: 1px solid #e0e8f2; border-radius: 12px; background: linear-gradient(#fbfdff,#f6f9fd); }
+.institution-rate-chart { position: relative; width: 100%; max-width: 100%; min-height: 310px; overflow-x: auto; border: 1px solid #e0e8f2; border-radius: 12px; background: linear-gradient(#fbfdff,#f6f9fd); }
 .institution-rate-svg { display: block; width: 100%; min-width: 720px; height: auto; }
 .institution-grid-line { stroke: #dfe7f0; stroke-width: 1; }
 .institution-axis { stroke: #91a4bb; stroke-width: 1.2; }
@@ -68,6 +68,13 @@ body.institution-detail-mode #timelineTabPanel > :not(#institutionDetailPanel) {
 .institution-deposit-point { fill: #fff; stroke: #168866; stroke-width: 3; }
 .institution-tibor-point { fill: #fff; stroke: #3978d6; stroke-width: 2.5; }
 .institution-spread-point { fill: #fff7ed; stroke: #ec8a25; stroke-width: 2.5; }
+.institution-chart-hit { fill: transparent; stroke: transparent; cursor: help; pointer-events: all; }
+.institution-chart-hit:focus { stroke: rgba(24, 88, 177, .35); stroke-width: 3; outline: none; }
+.institution-chart-tooltip { position: absolute; z-index: 5; display: grid; gap: 4px; width: max-content; min-width: 220px; max-width: min(390px, calc(100vw - 48px)); padding: 11px 13px; border: 1px solid #b8cce4; border-radius: 10px; background: rgba(255,255,255,.97); color: #273a52; box-shadow: 0 10px 30px rgba(27,55,92,.2); font-size: 12px; line-height: 1.45; opacity: 0; pointer-events: none; transform: translate(-50%, calc(-100% - 14px)); transition: opacity .12s ease; }
+.institution-chart-tooltip.visible { opacity: 1; }
+.institution-chart-tooltip strong { max-width: 360px; color: #123f77; font-size: 13px; overflow-wrap: anywhere; }
+.institution-chart-tooltip span { display: block; }
+.institution-chart-tooltip small { color: #687a92; }
 .institution-chart-empty { display: grid; min-height: 310px; place-items: center; color: #71839a; }
 .institution-spread-summary { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin-top: 12px; }
 .institution-spread-summary article, .institution-spread-empty { padding: 12px 14px; border: 1px solid #dbe5f0; border-radius: 10px; background: #f9fbfe; }

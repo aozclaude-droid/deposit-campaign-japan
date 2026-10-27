@@ -62,7 +62,7 @@ function institutionDetailAvailableSeries(campaigns, baseRows) {
   const ordinary = baseRows.filter((row) => institutionDetailFamily(row) === "ORDINARY_DEPOSIT" && institutionDetailRate(row) != null);
   const terms = baseRows.filter((row) => (institutionDetailFamily(row).includes("STANDARD_TERM") || institutionDetailFamily(row).includes("TIME_DEPOSIT")) && institutionDetailRate(row) != null);
   const campaignRates = campaigns.filter((row) => row._comparableRate != null && row.campaign_start_date);
-  if (ordinary.length) options.push({ key: "ordinary", label: "普通預金（標準金利）" });
+  if (ordinary.length) options.push({ key: "ordinary", label: "普通預金（各時点の最高金利）" });
   if (terms.length) options.push({ key: "term", label: "定期預金（各時点の最高金利）" });
   if (campaignRates.length) options.push({ key: "campaign", label: "キャンペーン預金（各時点の最高金利）" });
   return options;
@@ -93,14 +93,18 @@ function institutionDetailRatePoints(campaigns, baseRows, seriesKey) {
     return rate != null && rate >= 0 && rate <= 10 && usableHistory;
   });
   const selected = seriesKey === "ordinary"
-    ? base.filter((row) => institutionDetailFamily(row) === "ORDINARY_DEPOSIT" && (institutionDetailText(row.base_rate_role) === "STANDARD_BASE_RATE" || institutionDetailText(row.current_ranking_eligible) === "1"))
+    ? base.filter((row) => institutionDetailFamily(row) === "ORDINARY_DEPOSIT")
     : base.filter((row) => institutionDetailFamily(row).includes("STANDARD_TERM") || institutionDetailFamily(row).includes("TIME_DEPOSIT"));
-  return institutionDetailGroupedPoints(selected.map((row) => ({
-    date: institutionDetailDate(row),
-    rate: institutionDetailRate(row),
-    label: `${institutionDetailText(row.product_label || institutionDetailProductCategory(row))} / ${institutionDetailTermLabel(row) || "期間なし"}`,
-    source: row.source_url
-  })));
+  return institutionDetailGroupedPoints(selected.map((row) => {
+    const rawCondition = institutionDetailText(row.amount_band || row.evidence_context);
+    return {
+      date: institutionDetailDate(row),
+      rate: institutionDetailRate(row),
+      label: `${institutionDetailText(row.product_label || institutionDetailProductCategory(row))} / ${institutionDetailTermLabel(row) || "期間なし"}`,
+      condition: rawCondition === "GENERAL_OR_UNSPECIFIED" ? "" : rawCondition,
+      source: row.source_url
+    };
+  }));
 }
 
 function institutionDetailTiborForDate(date, key, useDaily = false) {
@@ -131,7 +135,7 @@ function institutionDetailChart(points) {
     target.innerHTML = `<div class="institution-chart-empty">この区分には数値化できる金利履歴がありません。</div>`;
     return;
   }
-  const parsed = points.map((point) => ({ ...point, time: Date.parse(`${point.date}T00:00:00`) })).filter((point) => Number.isFinite(point.time));
+  const parsed = points.map((point) => ({ ...point, time: Date.parse(`${point.date}T00:00:00`) })).filter((point) => Number.isFinite(point.time)).map((point, index) => ({ ...point, chartIndex: index }));
   if (!parsed.length) {
     target.innerHTML = `<div class="institution-chart-empty">日付付きの金利履歴がありません。</div>`;
     return;
@@ -179,10 +183,63 @@ function institutionDetailChart(points) {
     ${tiborPath ? `<path class="institution-tibor-path" d="${tiborPath}"></path>` : ""}
     <path class="institution-deposit-path" d="${depositPath}"></path>
     ${spreadPath ? `<path class="institution-spread-path" d="${spreadPath}"></path>` : ""}
-    ${parsed.map((point) => `<circle class="institution-deposit-point" cx="${x(point.time)}" cy="${y(point.rate)}" r="5"><title>${esc(point.date)} ${esc(point.label)} ${institutionDetailPercent(point.rate)}</title></circle>`).join("")}
-    ${tiborPoints.map((point) => `<circle class="institution-tibor-point" cx="${x(point.time)}" cy="${y(point.tibor.value)}" r="4"><title>${esc(point.tibor.date || `${point.tibor.month}月平均`)} TIBOR ${institutionDetailPercent(point.tibor.value)}${point.tibor.date && !point.tibor.exact ? "（開始日の直前営業日）" : ""}</title></circle>`).join("")}
-    ${spreadPoints.map((point) => `<circle class="institution-spread-point" cx="${x(point.time)}" cy="${y(point.spread)}" r="4"><title>${esc(point.date)} 金利差 ${point.spread >= 0 ? "+" : ""}${Math.round(point.spread * 100)}bp</title></circle>`).join("")}
-  </svg>`;
+    ${parsed.map((point) => `<circle class="institution-deposit-point" cx="${x(point.time)}" cy="${y(point.rate)}" r="5"></circle>`).join("")}
+    ${tiborPoints.map((point) => `<circle class="institution-tibor-point" cx="${x(point.time)}" cy="${y(point.tibor.value)}" r="4"></circle>`).join("")}
+    ${spreadPoints.map((point) => `<circle class="institution-spread-point" cx="${x(point.time)}" cy="${y(point.spread)}" r="4"></circle>`).join("")}
+    ${parsed.flatMap((point) => {
+      const positions = [[x(point.time), y(point.rate), "預金金利"]];
+      if (point.tibor) positions.push([x(point.time), y(point.tibor.value), "TIBOR"]);
+      if (point.tibor) positions.push([x(point.time), y(point.rate - point.tibor.value), "金利差"]);
+      return positions.map(([cx, cy, series]) => `<circle class="institution-chart-hit" cx="${cx}" cy="${cy}" r="11" tabindex="0" role="button" data-point-index="${point.chartIndex}" aria-label="${esc(`${point.date} ${point.label} ${series}`)}"></circle>`);
+    }).join("")}
+  </svg><div class="institution-chart-tooltip" id="institutionChartTooltip" role="tooltip" aria-hidden="true"></div>`;
+
+  const tooltip = target.querySelector("#institutionChartTooltip");
+  const tooltipHtml = (point) => {
+    const isCampaign = institutionDetailState.seriesKey === "campaign";
+    const tiborBasis = point.tibor
+      ? (point.tibor.date ? `${point.tibor.date}${point.tibor.exact ? "（開始日）" : "（直前営業日）"}` : `${point.tibor.month}月平均`)
+      : "対応データなし";
+    const spread = point.tibor ? point.rate - point.tibor.value : null;
+    return `<strong>${esc(isCampaign ? point.label : point.label)}</strong>
+      <span>${isCampaign ? "キャンペーン開始日" : "基準日"}：${esc(point.date)}</span>
+      <span>預金金利：${institutionDetailPercent(point.rate)}</span>
+      ${point.condition ? `<span>採用条件：${esc(point.condition)}</span>` : ""}
+      <span>比較TIBOR：${point.tibor ? institutionDetailPercent(point.tibor.value) : "—"} <small>${esc(tiborBasis)}</small></span>
+      <span>金利差：${Number.isFinite(spread) ? `${spread >= 0 ? "+" : ""}${Math.round(spread * 100)}bp` : "—"}</span>`;
+  };
+  const showTooltip = (event, point) => {
+    if (!tooltip || !point) return;
+    tooltip.innerHTML = tooltipHtml(point);
+    tooltip.classList.add("visible");
+    tooltip.setAttribute("aria-hidden", "false");
+    const rect = target.getBoundingClientRect();
+    const hitRect = event.currentTarget.getBoundingClientRect();
+    const clientX = Number.isFinite(event.clientX) && event.clientX ? event.clientX : hitRect.left + hitRect.width / 2;
+    const clientY = Number.isFinite(event.clientY) && event.clientY ? event.clientY : hitRect.top + hitRect.height / 2;
+    const rawLeft = clientX - rect.left + target.scrollLeft;
+    const rawTop = clientY - rect.top + target.scrollTop;
+    const halfWidth = tooltip.offsetWidth / 2;
+    const minLeft = target.scrollLeft + halfWidth + 10;
+    const maxLeft = target.scrollLeft + target.clientWidth - halfWidth - 10;
+    const left = Math.max(minLeft, Math.min(rawLeft, Math.max(minLeft, maxLeft)));
+    const top = Math.max(rawTop, tooltip.offsetHeight + 22);
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+  };
+  const hideTooltip = () => {
+    if (!tooltip) return;
+    tooltip.classList.remove("visible");
+    tooltip.setAttribute("aria-hidden", "true");
+  };
+  target.querySelectorAll(".institution-chart-hit").forEach((hit) => {
+    const point = parsed[Number(hit.dataset.pointIndex)];
+    hit.addEventListener("pointerenter", (event) => showTooltip(event, point));
+    hit.addEventListener("pointermove", (event) => showTooltip(event, point));
+    hit.addEventListener("pointerleave", hideTooltip);
+    hit.addEventListener("focus", (event) => showTooltip(event, point));
+    hit.addEventListener("blur", hideTooltip);
+  });
 }
 
 function institutionDetailRenderSpread(points) {
