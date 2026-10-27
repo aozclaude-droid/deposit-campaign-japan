@@ -13,7 +13,7 @@
  */
 
 (() => {
-  const PATCH_VERSION = "20261025.3";
+  const PATCH_VERSION = "20261028.1";
   const R1_CURRENT_URL = "./r1_data/current_default_ranking.json";
   const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261025-3";
 
@@ -274,6 +274,10 @@
     return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
   }
 
+  function scaleRate(value) {
+    return Number.isFinite(value) ? Number(value.toFixed(6)) : null;
+  }
+
   function currentOrdinaryRows() {
     const today = todayIsoLocal();
     const source = (R1.historyRows.length ? R1.historyRows : R1.rows)
@@ -414,7 +418,7 @@
 
     const rankedPrefectures = [...prefectures.values()]
       .filter((x) => Number.isFinite(x.averageRate))
-      .sort((a, b) => b.averageRate - a.averageRate || PREFECTURES.indexOf(a.prefecture) - PREFECTURES.indexOf(b.prefecture));
+      .sort((a, b) => scaleRate(b.averageRate) - scaleRate(a.averageRate) || PREFECTURES.indexOf(a.prefecture) - PREFECTURES.indexOf(b.prefecture));
     const regionalInstitutions = representativeInstitutions(regionalRows);
     const onlineInstitutions = representativeInstitutions(onlineRows);
 
@@ -475,7 +479,7 @@
       });
     }
     const rankedPrefectures = [...prefectures.values()].filter((x) => Number.isFinite(x.averageRate))
-      .sort((a, b) => b.averageRate - a.averageRate || PREFECTURES.indexOf(a.prefecture) - PREFECTURES.indexOf(b.prefecture));
+      .sort((a, b) => scaleRate(b.averageRate) - scaleRate(a.averageRate) || PREFECTURES.indexOf(a.prefecture) - PREFECTURES.indexOf(b.prefecture));
     const regionalInstitutions = typeof buildInstitutionRateGroups === "function" ? buildInstitutionRateGroups(regionalRecords) : [];
     const onlineInstitutions = typeof buildInstitutionRateGroups === "function" ? buildInstitutionRateGroups(onlineRecords) : [];
     return {
@@ -580,11 +584,12 @@
     state.heatmapData = data;
     updateInstitutionCoverage(data);
 
-    const values = data.rankedPrefectures.map((x) => x.averageRate);
+    const values = data.rankedPrefectures.map((x) => scaleRate(x.averageRate));
     const min = values.length ? Math.min(...values) : null;
     const max = values.length ? Math.max(...values) : null;
     const highest = data.rankedPrefectures[0] || null;
     const lowest = data.rankedPrefectures.length ? data.rankedPrefectures[data.rankedPrefectures.length - 1] : null;
+    const allPrefecturesTied = Number.isFinite(min) && min === max;
     const termPrefix = data.mode === "base_ordinary" ? "" : `${data.term.label} `;
 
     const title = q("#heatmapMapTitle");
@@ -608,8 +613,8 @@
     if (cards && typeof summaryCardHtml === "function") {
       cards.innerHTML = [
         summaryCardHtml("地域金融機関・全国平均", formatRate(data.nationalAverage), `${data.regionalInstitutions.length}金融機関を均等平均`, "national"),
-        summaryCardHtml("最高の都道府県", highest ? formatRate(highest.averageRate) : "—", highest ? `${highest.prefecture}・${highest.institutionCount}金融機関` : "比較可能データなし", "highest"),
-        summaryCardHtml("最低の都道府県", lowest ? formatRate(lowest.averageRate) : "—", lowest ? `${lowest.prefecture}・${lowest.institutionCount}金融機関` : "比較可能データなし", "lowest"),
+        summaryCardHtml("最高の都道府県", highest ? formatRate(highest.averageRate) : "—", allPrefecturesTied ? `${data.rankedPrefectures.length}都道府県が同率` : highest ? `${highest.prefecture}・${highest.institutionCount}金融機関` : "比較可能データなし", "highest"),
+        summaryCardHtml("最低の都道府県", lowest ? formatRate(lowest.averageRate) : "—", allPrefecturesTied ? `${data.rankedPrefectures.length}都道府県が同率` : lowest ? `${lowest.prefecture}・${lowest.institutionCount}金融機関` : "比較可能データなし", "lowest"),
         summaryCardHtml("算出対象", `${data.rankedPrefectures.length} / 47`, `${data.rateLabel} ${data.regionalRecords.length}レコード`, "coverage")
       ].join("");
     }
@@ -632,8 +637,16 @@
 
     const ranking = q("#heatmapRanking");
     if (ranking) {
-      ranking.innerHTML = data.rankedPrefectures.length
-        ? data.rankedPrefectures.map((item, i) => `<button class="heatmap-ranking-row ${item.prefecture === state.heatmapSelectedPrefecture ? "is-selected" : ""}" data-prefecture="${item.prefecture}" type="button"><span class="heatmap-rank-number">${i + 1}</span><span class="heatmap-rank-name">${item.prefecture}</span><strong>${formatRate(item.averageRate)}</strong><small>${item.institutionCount}金融機関</small></button>`).join("")
+      let previousRate = null;
+      let displayedRank = 0;
+      const rankedWithTies = data.rankedPrefectures.map((item, index) => {
+        const comparableRate = scaleRate(item.averageRate);
+        if (index === 0 || comparableRate !== previousRate) displayedRank = index + 1;
+        previousRate = comparableRate;
+        return { item, rank: displayedRank };
+      });
+      ranking.innerHTML = rankedWithTies.length
+        ? rankedWithTies.map(({ item, rank }) => `<button class="heatmap-ranking-row ${item.prefecture === state.heatmapSelectedPrefecture ? "is-selected" : ""}" data-prefecture="${item.prefecture}" type="button"><span class="heatmap-rank-number">${rank}</span><span class="heatmap-rank-name">${item.prefecture}</span><strong>${formatRate(item.averageRate)}</strong><small>${item.institutionCount}金融機関</small></button>`).join("")
         : `<div class="heatmap-empty">${data.pending ? "通常金利データを読み込み中です。" : data.mode === "base_ordinary" ? "比較可能な開催中の普通預金金利がありません。" : "比較可能な都道府県データがありません。"}</div>`;
       qa(".heatmap-ranking-row", ranking).forEach((button) => button.addEventListener("click", () => {
         state.heatmapSelectedPrefecture = button.dataset.prefecture;

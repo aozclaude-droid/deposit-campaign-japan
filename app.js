@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.28.12";
+const APP_VERSION = "2026.10.28.14";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -841,7 +841,7 @@ function buildHeatmapData() {
     });
   });
   const rankedPrefectures = [...prefectures.values()].filter((item) => Number.isFinite(item.averageRate))
-    .sort((a, b) => b.averageRate - a.averageRate || comparePrefectures(a.prefecture, b.prefecture));
+    .sort((a, b) => heatmapScaleRate(b.averageRate) - heatmapScaleRate(a.averageRate) || comparePrefectures(a.prefecture, b.prefecture));
   const allRegionalInstitutions = buildInstitutionRateGroups(regionalRecords);
   const onlineInstitutions = buildInstitutionRateGroups(onlineRecords);
   return {
@@ -859,8 +859,14 @@ function buildHeatmapData() {
     onlineAverage: average(onlineInstitutions.map((item) => item.averageRate))
   };
 }
+function heatmapScaleRate(value) {
+  return Number.isFinite(value) ? Number(value.toFixed(6)) : null;
+}
 function heatmapColor(value, min, max) {
   if (!Number.isFinite(value)) return HEATMAP_NO_DATA_COLOR;
+  value = heatmapScaleRate(value);
+  min = heatmapScaleRate(min);
+  max = heatmapScaleRate(max);
   if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return HEATMAP_COLORS[3];
   const ratio = Math.max(0, Math.min(1, (value - min) / (max - min)));
   return HEATMAP_COLORS[Math.min(HEATMAP_COLORS.length - 1, Math.floor(ratio * HEATMAP_COLORS.length))];
@@ -900,17 +906,18 @@ function renderPrefectureHeatmap() {
   }
   const data = buildHeatmapData();
   state.heatmapData = data;
-  const values = data.rankedPrefectures.map((item) => item.averageRate);
+  const values = data.rankedPrefectures.map((item) => heatmapScaleRate(item.averageRate));
   const min = values.length ? Math.min(...values) : null;
   const max = values.length ? Math.max(...values) : null;
   const highest = data.rankedPrefectures[0];
   const lowest = data.rankedPrefectures.length ? data.rankedPrefectures[data.rankedPrefectures.length - 1] : null;
+  const allPrefecturesTied = Number.isFinite(min) && min === max;
   $("#heatmapMapTitle").textContent = `${data.term.label}平均金利`;
   $("#heatmapSummary").textContent = `${data.term.label} / ${fmt(data.rankedPrefectures.length)}都道府県 / 地域金融機関 ${fmt(data.regionalInstitutions.length)}先 / ネット銀行 ${fmt(data.onlineInstitutions.length)}先`;
   $("#heatmapSummaryCards").innerHTML = [
     summaryCardHtml("地域金融機関・全国平均", formatRate(data.nationalAverage), `${fmt(data.regionalInstitutions.length)}金融機関を均等平均`, "national"),
-    summaryCardHtml("最高の都道府県", highest ? formatRate(highest.averageRate) : "—", highest ? `${highest.prefecture}・${fmt(highest.institutionCount)}金融機関` : "比較可能データなし", "highest"),
-    summaryCardHtml("最低の都道府県", lowest ? formatRate(lowest.averageRate) : "—", lowest ? `${lowest.prefecture}・${fmt(lowest.institutionCount)}金融機関` : "比較可能データなし", "lowest"),
+    summaryCardHtml("最高の都道府県", highest ? formatRate(highest.averageRate) : "—", allPrefecturesTied ? `${fmt(data.rankedPrefectures.length)}都道府県が同率` : highest ? `${highest.prefecture}・${fmt(highest.institutionCount)}金融機関` : "比較可能データなし", "highest"),
+    summaryCardHtml("最低の都道府県", lowest ? formatRate(lowest.averageRate) : "—", allPrefecturesTied ? `${fmt(data.rankedPrefectures.length)}都道府県が同率` : lowest ? `${lowest.prefecture}・${fmt(lowest.institutionCount)}金融機関` : "比較可能データなし", "lowest"),
     summaryCardHtml("算出対象", `${fmt(data.rankedPrefectures.length)} / 47`, `比較可能 ${fmt(data.regionalRecords.length)}明細`, "coverage")
   ].join("");
   renderHeatmapLegend(min, max);
@@ -931,9 +938,17 @@ function renderPrefectureHeatmap() {
       label.classList.toggle("is-dark-label", labelColor !== "#ffffff");
     }
   });
-  $("#heatmapRanking").innerHTML = data.rankedPrefectures.length ? data.rankedPrefectures.map((item, index) => `
+  let previousHeatmapRate = null;
+  let displayedHeatmapRank = 0;
+  const rankedWithTies = data.rankedPrefectures.map((item, index) => {
+    const comparableRate = heatmapScaleRate(item.averageRate);
+    if (index === 0 || comparableRate !== previousHeatmapRate) displayedHeatmapRank = index + 1;
+    previousHeatmapRate = comparableRate;
+    return { item, rank: displayedHeatmapRank };
+  });
+  $("#heatmapRanking").innerHTML = rankedWithTies.length ? rankedWithTies.map(({ item, rank }) => `
     <button class="heatmap-ranking-row ${item.prefecture === state.heatmapSelectedPrefecture ? "is-selected" : ""}" data-prefecture="${esc(item.prefecture)}" type="button">
-      <span class="heatmap-rank-number">${index + 1}</span><span class="heatmap-rank-name">${esc(item.prefecture)}</span>
+      <span class="heatmap-rank-number">${rank}</span><span class="heatmap-rank-name">${esc(item.prefecture)}</span>
       <strong>${esc(formatRate(item.averageRate))}</strong><small>${fmt(item.institutionCount)}金融機関</small>
     </button>`).join("") : '<div class="heatmap-empty">比較可能な都道府県データがありません。</div>';
   $$(".heatmap-ranking-row").forEach((button) => button.addEventListener("click", () => {
