@@ -13,7 +13,7 @@
  */
 
 (() => {
-  const PATCH_VERSION = "20261028.1";
+  const PATCH_VERSION = "20261028.2";
   const R1_CURRENT_URL = "./r1_data/current_default_ranking.json";
   const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261025-3";
 
@@ -447,6 +447,9 @@
     const term = currentTerm();
     const types = selectedValues("#heatmapInstitutionTypeFilter");
     const statuses = selectedValues("#heatmapStatusFilter");
+    const periodFrom = q("#heatmapCampaignDateFrom")?.value || "";
+    const periodTo = q("#heatmapCampaignDateTo")?.value || "";
+    const invalidPeriod = Boolean(periodFrom && periodTo && periodTo < periodFrom);
     const typeActive = types.size > 0;
     const statusActive = statuses.size > 0;
 
@@ -454,6 +457,7 @@
       if (record._analyticsTermKey !== term.key || !Number.isFinite(record._comparableRate)) return false;
       if (!/預金|貯金/.test(record.product_type || "") || /積金/.test(record.product_type || "")) return false;
       if (statusActive && !statuses.has(record.status)) return false;
+      if (invalidPeriod || (typeof recordOverlapsPeriod === "function" && !recordOverlapsPeriod(record, periodFrom, periodTo))) return false;
       return true;
     });
 
@@ -489,6 +493,9 @@
       term,
       institutionTypes: [...types],
       statuses: [...statuses],
+      periodFrom,
+      periodTo,
+      invalidPeriod,
       regionalRecords,
       onlineRecords,
       prefectures,
@@ -514,7 +521,9 @@
     const nationwide = data.onlineInstitutions.length;
     const total = regional + nationwide;
     const records = data.regionalRecords.length + data.onlineRecords.length;
-    const periodLabel = data.mode === "base_ordinary" ? "期間指定なし" : data.term.label;
+    const periodLabel = data.mode === "campaign"
+      ? `${data.periodFrom || "開始指定なし"}～${data.periodTo || "終了指定なし"}`
+      : data.mode === "base_ordinary" ? "期間指定なし" : data.term.label;
     note.textContent = `${data.label}・${periodLabel}・現在の絞り込み条件を反映`;
     grid.innerHTML = [
       `<div class="heatmap-institution-stat primary"><span class="heatmap-institution-stat-label">対象金融機関 合計</span><strong class="heatmap-institution-stat-value">${total.toLocaleString("ja-JP")}先</strong><span class="heatmap-institution-stat-meta">現在のヒートマップ条件</span></div>`,
@@ -542,9 +551,11 @@
     }
 
     const termField = q(".heatmap-term-switch");
+    const campaignPeriodField = q("#heatmapCampaignPeriod");
     const statusLabel = q("#heatmapStatusFilter")?.closest("label");
     const mode = currentMode();
     if (termField) termField.hidden = mode === "base_ordinary";
+    if (campaignPeriodField) campaignPeriodField.hidden = mode !== "campaign";
     if (statusLabel) statusLabel.hidden = mode !== "campaign";
 
     const heading = q("#prefectureHeatmapPanel h2");
@@ -554,7 +565,7 @@
     const help = q(".heatmap-help");
     if (help) {
       help.textContent = mode === "campaign"
-        ? "キャンペーン預金・貯金の比較可能金利を集計します。店頭表示金利は含みません。"
+        ? "指定した集計対象期間と1日以上重なるキャンペーン預金・貯金の比較可能金利を集計します。開始日が確認できない明細は期間集計から除外します。店頭表示金利は含みません。"
         : mode === "base_ordinary"
           ? "R1の比較可能な普通預金金利を優先し、利用可能なR1データがない場合は全国JSONの開催中普通預金・普通貯金を表示します。普通預金には預入年限がないため期間切替は使用しません。"
           : "R1通常金利データの定期預金・定期貯金の店頭表示金利を表示します。キャンペーン金利は含みません。";
@@ -596,7 +607,8 @@
     if (title) title.textContent = `${termPrefix}${data.rateLabel}・都道府県平均`;
     const summary = q("#heatmapSummary");
     if (summary) {
-      if (data.pending) summary.textContent = "R1通常金利データを読み込み中…";
+      if (data.invalidPeriod) summary.textContent = "期間指定を確認してください（終了日は開始日以後）";
+      else if (data.pending) summary.textContent = "R1通常金利データを読み込み中…";
       else if (data.error && data.mode !== "campaign") summary.textContent = `R1通常金利データ読込エラー: ${data.error}`;
       else if (data.mode === "base_ordinary" && data.ordinarySource === "campaign_all" && (data.regionalInstitutions.length > 0 || data.onlineInstitutions.length > 0)) {
         summary.textContent = `普通預金 / 全国JSON（開催中） / ${data.rankedPrefectures.length}都道府県 / 地域金融機関 ${data.regionalInstitutions.length}先 / 全国向け ${data.onlineInstitutions.length}先`;
@@ -606,7 +618,7 @@
         summary.textContent = `普通預金 / R1履歴 ${R1.historyRows.length}行読込済み / 比較可能な普通預金金利0件（R1普通預金収集を拡充中）`;
       } else if (data.mode !== "campaign" && R1.rows.length > 0 && data.regionalInstitutions.length === 0 && data.onlineInstitutions.length === 0) {
         summary.textContent = `${data.label}${data.mode === "base_ordinary" ? "" : ` / ${data.term.label}`} / R1 ${R1.rows.length}行読込済み / 対象金利0件`;
-      } else summary.textContent = `${data.label}${data.mode === "base_ordinary" ? "" : ` / ${data.term.label}`} / ${data.rankedPrefectures.length}都道府県 / 地域金融機関 ${data.regionalInstitutions.length}先 / 全国向け ${data.onlineInstitutions.length}先`;
+      } else summary.textContent = `${data.label}${data.mode === "base_ordinary" ? "" : ` / ${data.term.label}`}${data.mode === "campaign" ? ` / ${data.periodFrom || "開始指定なし"}～${data.periodTo || "終了指定なし"}` : ""} / ${data.rankedPrefectures.length}都道府県 / 地域金融機関 ${data.regionalInstitutions.length}先 / 全国向け ${data.onlineInstitutions.length}先`;
     }
 
     const cards = q("#heatmapSummaryCards");
@@ -743,6 +755,10 @@
     if (types) Array.from(types.options).forEach((option) => { option.selected = option.value !== "ネット銀行"; });
     const statuses = q("#heatmapStatusFilter");
     if (statuses) Array.from(statuses.options).forEach((option) => { option.selected = option.value === "開催中"; });
+    const periodFrom = q("#heatmapCampaignDateFrom");
+    const periodTo = q("#heatmapCampaignDateTo");
+    if (periodFrom) periodFrom.value = "";
+    if (periodTo) periodTo.value = "";
     configureControls();
     if (render && typeof state !== "undefined" && state.activeView === "heatmap") renderUnifiedSafe();
     else if (typeof state !== "undefined") state.heatmapRendered = false;
@@ -781,7 +797,7 @@
       button.dataset.unifiedBound = "1";
       button.addEventListener("click", () => setTimeout(renderUnifiedSafe, 0));
     });
-    ["#heatmapInstitutionTypeFilter", "#heatmapStatusFilter"].forEach((selector) => {
+    ["#heatmapInstitutionTypeFilter", "#heatmapStatusFilter", "#heatmapCampaignDateFrom", "#heatmapCampaignDateTo"].forEach((selector) => {
       const el = q(selector);
       if (el && !el.dataset.unifiedBound) {
         el.dataset.unifiedBound = "1";

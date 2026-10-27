@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.28.14";
+const APP_VERSION = "2026.10.28.15";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -578,6 +578,7 @@ function heatmapTerm() {
 function syncHeatmapTermControls() {
   const selectedProduct = selectedHeatmapProduct();
   const ordinaryMode = ORDINARY_PRODUCT_TYPES.has(selectedProduct);
+  const campaignMode = selectedProduct === "campaign";
   if (ordinaryMode) state.heatmapTermKey = "ordinary";
   else if (state.heatmapTermKey === "ordinary") state.heatmapTermKey = "1y";
   const legend = $("#heatmapTermLegend");
@@ -588,6 +589,7 @@ function syncHeatmapTermControls() {
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-pressed", active ? "true" : "false");
   });
+  $("#heatmapCampaignPeriod").hidden = !campaignMode;
 }
 function average(values) {
   const valid = values.filter(Number.isFinite);
@@ -606,6 +608,8 @@ function resetHeatmapControls(render = true) {
   syncHeatmapTermControls();
   setSelectedValues("#heatmapInstitutionTypeFilter", uniqueSorted("institution_type").filter((value) => value !== "ネット銀行"));
   setSelectedValues("#heatmapStatusFilter", state.records.some((record) => record.status === "開催中") ? ["開催中"] : []);
+  $("#heatmapCampaignDateFrom").value = "";
+  $("#heatmapCampaignDateTo").value = "";
   if (render && state.activeView === "heatmap") renderPrefectureHeatmap();
   else state.heatmapRendered = false;
 }
@@ -806,6 +810,8 @@ function buildHeatmapData() {
   const productFilterActive = products.size > 0;
   const typeFilterActive = institutionTypes.size > 0;
   const statusFilterActive = statuses.size > 0;
+  const campaignFrom = $("#heatmapCampaignDateFrom")?.value || "";
+  const campaignTo = $("#heatmapCampaignDateTo")?.value || "";
   const sourceRecords = term.key === "ordinary" ? ordinaryHeatmapRecords() : state.records;
   const termRecords = sourceRecords.filter((record) => {
     const matchesTerm = term.key === "ordinary"
@@ -814,6 +820,7 @@ function buildHeatmapData() {
     if (!matchesTerm || !Number.isFinite(record._comparableRate)) return false;
     if (productFilterActive && !products.has(record.product_type)) return false;
     if (statusFilterActive && !statuses.has(record.status)) return false;
+    if (selectedProduct === "campaign" && !recordOverlapsPeriod(record, campaignFrom, campaignTo)) return false;
     return true;
   });
   const regionalRecords = termRecords.filter((record) => !/ネット銀行/.test(record.institution_type)
@@ -1353,7 +1360,7 @@ function bindEvents() {
     state.heatmapRendered = false;
     if (state.activeView === "heatmap") renderPrefectureHeatmap();
   });
-  ["#heatmapInstitutionTypeFilter", "#heatmapStatusFilter"].forEach((id) => $(id).addEventListener("change", () => {
+  ["#heatmapInstitutionTypeFilter", "#heatmapStatusFilter", "#heatmapCampaignDateFrom", "#heatmapCampaignDateTo"].forEach((id) => $(id).addEventListener("change", () => {
     state.heatmapSelectedPrefecture = "";
     scheduleHeatmap();
   }));

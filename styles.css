@@ -253,6 +253,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .analytics-period { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; border: 1px solid var(--line); border-radius: 11px; padding: 9px 10px 11px; min-width: 0; }
 .analytics-period legend { color: var(--muted); font-size: 12px; padding: 0 5px; }
 .analytics-period label { display: flex; flex-direction: column; gap: 5px; color: var(--muted); font-size: 11px; }
+.analytics-period[hidden] { display: none !important; }
 .analytics-actions { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; }
 .analytics-help { margin: 13px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
 .analytics-results { margin-top: 15px; }
