@@ -23,7 +23,7 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.10.28.11</span>
+<span class="app-version" id="appVersion">画面版 2026.10.28.12</span>
 </div>
 </div>
 </header>
@@ -212,6 +212,7 @@
 <div><h3>金利履歴とTIBOR比較</h3><p class="muted">通常金利はTIBOR月次平均、キャンペーン預金は開始日の日次TIBORと比較します。</p></div>
 <div class="institution-chart-controls">
 <label>表示する金利<select id="institutionSeriesSelect"></select></label>
+<label id="institutionTermControl" hidden>預入期間・年限<select id="institutionTermSelect"><option value="all">全年限（各時点の最高金利）</option></select></label>
 <label>TIBOR期間<select id="institutionTiborTenor"><option value="one_month">1か月</option><option value="three_month">3か月</option><option value="six_month">6か月</option><option value="twelve_month">12か月</option></select></label>
 </div>
 </div>
@@ -692,8 +693,8 @@
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="app.js?v=20261028-11"></script>
-  <script defer src="institution_detail.js?v=20261028-11"></script>
+<script defer="" src="app.js?v=20261028-12"></script>
+  <script defer src="institution_detail.js?v=20261028-12"></script>
   <script defer src="web_r1_bridge.js?v=20261025-20" data-r1-web-bridge="1"></script>
   <script defer src="./web_heatmap_unified_patch.js?v=20261025-9"></script>
 </body>

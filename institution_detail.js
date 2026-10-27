@@ -9,6 +9,7 @@ const institutionDetailState = {
   tiborDailyMetadata: {},
   tiborDailyRecords: [],
   seriesKey: "",
+  termKey: "all",
   tiborTenor: "one_month"
 };
 
@@ -49,6 +50,27 @@ function institutionDetailTermLabel(row) {
   return institutionDetailText(row.term_label || (row.term_months ? `${row.term_months}か月` : ""));
 }
 
+function institutionDetailTermInfo(value) {
+  const raw = institutionDetailText(value).trim();
+  const normalized = raw.replace(/[ヵカケ箇]月/g, "か月").replace(/\s+/g, "");
+  let match = normalized.match(/^(\d+(?:\.\d+)?)か月$/);
+  if (match) return { key: `month:${match[1]}`, label: `${match[1]}か月`, order: Number(match[1]) * 30 };
+  match = normalized.match(/^(\d+(?:\.\d+)?)年$/);
+  if (match) return { key: `year:${match[1]}`, label: `${match[1]}年`, order: Number(match[1]) * 365 };
+  match = normalized.match(/^(\d+(?:\.\d+)?)日$/);
+  if (match) return { key: `day:${match[1]}`, label: `${match[1]}日`, order: Number(match[1]) };
+  return { key: `other:${normalized || "期間記載なし"}`, label: raw || "期間記載なし", order: 100000 };
+}
+
+function institutionDetailCampaignTerms(campaigns) {
+  const terms = new Map();
+  campaigns.filter((row) => row.campaign_start_date && row._comparableRate != null).forEach((row) => {
+    const info = institutionDetailTermInfo(row.term);
+    if (!terms.has(info.key)) terms.set(info.key, info);
+  });
+  return [...terms.values()].sort((a, b) => a.order - b.order || a.label.localeCompare(b.label, "ja"));
+}
+
 function institutionDetailProductCategory(row) {
   const family = institutionDetailFamily(row);
   if (family === "ORDINARY_DEPOSIT") return "普通預金";
@@ -80,7 +102,10 @@ function institutionDetailGroupedPoints(rows) {
 
 function institutionDetailRatePoints(campaigns, baseRows, seriesKey) {
   if (seriesKey === "campaign") {
-    return institutionDetailGroupedPoints(campaigns.filter((row) => row.campaign_start_date && row._comparableRate != null && row._comparableRate >= 0 && row._comparableRate <= 10).map((row) => ({
+    return institutionDetailGroupedPoints(campaigns.filter((row) => {
+      const termMatches = institutionDetailState.termKey === "all" || institutionDetailTermInfo(row.term).key === institutionDetailState.termKey;
+      return termMatches && row.campaign_start_date && row._comparableRate != null && row._comparableRate >= 0 && row._comparableRate <= 10;
+    }).map((row) => ({
       date: row.campaign_start_date,
       rate: row._comparableRate,
       label: `${row.campaign_name} / ${row.term || "年限記載なし"}`,
@@ -274,8 +299,10 @@ function institutionDetailRenderSpreadDetails(points) {
   }
   const compared = points.filter((point) => point.tibor && Number.isFinite(point.rate)).slice().reverse();
   target.classList.remove("hidden");
+  const termSelect = document.querySelector("#institutionTermSelect");
+  const selectedTerm = termSelect?.selectedOptions?.[0]?.textContent || "全年限";
   target.innerHTML = `<h4>キャンペーン開始日ごとのTIBOR差</h4>
-    <p>同じ開始日に複数年限がある場合は、その日の最高キャンペーン金利を表示します。</p>
+    <p>${institutionDetailState.termKey === "all" ? "同じ開始日に複数年限がある場合は、その日の最高キャンペーン金利を表示します。" : `${esc(selectedTerm)}に絞り込み、同じ開始日の最高キャンペーン金利を表示します。`}</p>
     <div class="institution-spread-table-wrap"><table class="institution-spread-table"><thead><tr><th>キャンペーン開始日</th><th>キャンペーン金利</th><th>採用TIBOR日</th><th>TIBOR</th><th>金利差</th><th>商品・年限</th></tr></thead><tbody>
       ${compared.map((point) => {
         const spread = point.rate - point.tibor.value;
@@ -291,6 +318,12 @@ function institutionDetailRenderChart(campaigns, baseRows) {
   if (!options.some((option) => option.key === institutionDetailState.seriesKey)) institutionDetailState.seriesKey = options[0]?.key || "";
   select.innerHTML = options.length ? options.map((option) => `<option value="${esc(option.key)}"${option.key === institutionDetailState.seriesKey ? " selected" : ""}>${esc(option.label)}</option>`).join("") : `<option value="">比較可能な履歴なし</option>`;
   select.disabled = !options.length;
+  const termControl = document.querySelector("#institutionTermControl");
+  const termSelect = document.querySelector("#institutionTermSelect");
+  const termOptions = institutionDetailCampaignTerms(campaigns);
+  if (institutionDetailState.termKey !== "all" && !termOptions.some((term) => term.key === institutionDetailState.termKey)) institutionDetailState.termKey = "all";
+  termSelect.innerHTML = `<option value="all">全年限（各時点の最高金利）</option>${termOptions.map((term) => `<option value="${esc(term.key)}"${term.key === institutionDetailState.termKey ? " selected" : ""}>${esc(term.label)}</option>`).join("")}`;
+  termControl.hidden = institutionDetailState.seriesKey !== "campaign";
   const points = institutionDetailSeriesWithTibor(institutionDetailRatePoints(campaigns, baseRows, institutionDetailState.seriesKey));
   institutionDetailChart(points);
   institutionDetailRenderSpread(points);
@@ -364,6 +397,7 @@ function institutionDetailSetQuery(name) {
 
 function openInstitutionDetail(name, options = {}) {
   if (!name) return;
+  if (institutionDetailState.institution !== name) institutionDetailState.termKey = "all";
   institutionDetailState.institution = name;
   if (typeof setActiveView === "function") setActiveView("timeline", { updateHash: false, render: false });
   document.body.classList.add("institution-detail-mode");
@@ -407,6 +441,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#institutionDetailClose")?.addEventListener("click", () => closeInstitutionDetail());
   document.querySelector("#institutionSeriesSelect")?.addEventListener("change", (event) => {
     institutionDetailState.seriesKey = event.target.value;
+    renderInstitutionDetail();
+  });
+  document.querySelector("#institutionTermSelect")?.addEventListener("change", (event) => {
+    institutionDetailState.termKey = event.target.value;
     renderInstitutionDetail();
   });
   document.querySelector("#institutionTiborTenor")?.addEventListener("change", (event) => {
