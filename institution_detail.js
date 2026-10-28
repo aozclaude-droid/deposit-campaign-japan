@@ -21,6 +21,36 @@ const institutionDetailRate = (row) => {
 };
 const institutionDetailMonth = (value) => /^\d{4}-\d{2}/.test(institutionDetailText(value)) ? institutionDetailText(value).slice(0, 7) : "";
 const institutionDetailPercent = (value, digits = 3) => Number.isFinite(value) ? `${Number(value.toFixed(digits))}%` : "—";
+const institutionDetailPrefecture = (value) => {
+  const raw = institutionDetailText(value).trim();
+  if (!raw || raw === "全国") return raw;
+  if (/[都道府県]$/.test(raw)) return raw;
+  if (raw === "東京") return "東京都";
+  if (raw === "大阪" || raw === "京都") return `${raw}府`;
+  if (raw === "北海道") return raw;
+  return `${raw}県`;
+};
+
+const INSTITUTION_NEIGHBOR_PREFECTURES = {
+  "北海道": ["青森県"], "青森県": ["北海道", "岩手県", "秋田県"], "岩手県": ["青森県", "秋田県", "宮城県"],
+  "宮城県": ["岩手県", "秋田県", "山形県", "福島県"], "秋田県": ["青森県", "岩手県", "宮城県", "山形県"], "山形県": ["秋田県", "宮城県", "福島県", "新潟県"],
+  "福島県": ["宮城県", "山形県", "新潟県", "群馬県", "栃木県", "茨城県"], "茨城県": ["福島県", "栃木県", "埼玉県", "千葉県"],
+  "栃木県": ["福島県", "茨城県", "群馬県", "埼玉県"], "群馬県": ["福島県", "栃木県", "埼玉県", "新潟県", "長野県"],
+  "埼玉県": ["茨城県", "栃木県", "群馬県", "千葉県", "東京都", "山梨県", "長野県"], "千葉県": ["茨城県", "埼玉県", "東京都"],
+  "東京都": ["埼玉県", "千葉県", "神奈川県", "山梨県"], "神奈川県": ["東京都", "山梨県", "静岡県"], "新潟県": ["山形県", "福島県", "群馬県", "長野県", "富山県"],
+  "富山県": ["新潟県", "長野県", "岐阜県", "石川県"], "石川県": ["富山県", "岐阜県", "福井県"], "福井県": ["石川県", "岐阜県", "滋賀県", "京都府"],
+  "山梨県": ["埼玉県", "東京都", "神奈川県", "長野県", "静岡県"], "長野県": ["群馬県", "埼玉県", "新潟県", "富山県", "山梨県", "岐阜県", "静岡県", "愛知県"],
+  "岐阜県": ["富山県", "石川県", "福井県", "長野県", "愛知県", "三重県", "滋賀県"], "静岡県": ["神奈川県", "山梨県", "長野県", "愛知県"],
+  "愛知県": ["長野県", "岐阜県", "静岡県", "三重県"], "三重県": ["岐阜県", "愛知県", "滋賀県", "京都府", "奈良県", "和歌山県"],
+  "滋賀県": ["福井県", "岐阜県", "三重県", "京都府"], "京都府": ["福井県", "三重県", "滋賀県", "大阪府", "兵庫県", "奈良県"],
+  "大阪府": ["京都府", "兵庫県", "奈良県", "和歌山県"], "兵庫県": ["京都府", "大阪府", "鳥取県", "岡山県", "徳島県"], "奈良県": ["三重県", "京都府", "大阪府", "和歌山県"],
+  "和歌山県": ["三重県", "大阪府", "奈良県", "徳島県"], "鳥取県": ["兵庫県", "島根県", "岡山県", "広島県"], "島根県": ["鳥取県", "広島県", "山口県"],
+  "岡山県": ["兵庫県", "鳥取県", "広島県", "香川県"], "広島県": ["鳥取県", "島根県", "岡山県", "山口県", "愛媛県"], "山口県": ["島根県", "広島県", "福岡県", "大分県"],
+  "徳島県": ["兵庫県", "和歌山県", "香川県", "愛媛県", "高知県"], "香川県": ["岡山県", "徳島県", "愛媛県"], "愛媛県": ["広島県", "徳島県", "香川県", "高知県", "大分県"],
+  "高知県": ["徳島県", "愛媛県"], "福岡県": ["山口県", "佐賀県", "熊本県", "大分県"], "佐賀県": ["福岡県", "長崎県", "熊本県"],
+  "長崎県": ["佐賀県", "熊本県"], "熊本県": ["福岡県", "佐賀県", "長崎県", "大分県", "宮崎県", "鹿児島県"], "大分県": ["山口県", "福岡県", "熊本県", "宮崎県", "愛媛県"],
+  "宮崎県": ["大分県", "熊本県", "鹿児島県"], "鹿児島県": ["熊本県", "宮崎県", "沖縄県"], "沖縄県": ["鹿児島県"]
+};
 
 function institutionDetailUrl(url) {
   return url ? `<a class="url-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">開く ↗</a>` : "—";
@@ -374,6 +404,58 @@ function institutionDetailRenderBaseTable(baseRows) {
   }).join("") : `<tr><td colspan="8" class="table-empty">普通預金・店頭金利の履歴はありません。</td></tr>`;
 }
 
+function institutionDetailNearbyCampaignGroups(name, prefecture) {
+  const canonicalPrefecture = institutionDetailPrefecture(prefecture);
+  const neighbors = new Set(INSTITUTION_NEIGHBOR_PREFECTURES[canonicalPrefecture] || []);
+  const grouped = new Map();
+  state.records.forEach((row) => {
+    if (row.institution_name === name || !["開催中", "開催予定"].includes(row.status)) return;
+    const rowPrefecture = institutionDetailPrefecture(row.prefecture);
+    const scope = rowPrefecture === canonicalPrefecture ? "same" : neighbors.has(rowPrefecture) ? "nearby" : "";
+    if (!scope) return;
+    const key = [scope, row.institution_name, row.campaign_name, row.product_type].join("\u0000");
+    if (!grouped.has(key)) grouped.set(key, { scope, institution: row.institution_name, prefecture: rowPrefecture, productType: row.product_type, campaignName: row.campaign_name, status: row.status, rows: [] });
+    grouped.get(key).rows.push(row);
+  });
+  return [...grouped.values()].map((group) => {
+    const comparable = group.rows.filter((row) => Number.isFinite(Number(row._comparableRate))).sort((a, b) => Number(b._comparableRate) - Number(a._comparableRate));
+    const highest = comparable[0] || group.rows[0];
+    const terms = [...new Set(group.rows.map((row) => row.term).filter(Boolean))];
+    const endDates = group.rows.map((row) => row.campaign_end_date).filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(institutionDetailText(date))).sort();
+    return { ...group, rate: highest?._comparableRate, interestRate: highest?.interest_rate, terms, endDate: endDates[0] || "", productUrl: highest?.product_url || group.rows.find((row) => row.product_url)?.product_url || "" };
+  }).sort((a, b) => (a.status === "開催中" ? 0 : 1) - (b.status === "開催中" ? 0 : 1) || Number(b.rate ?? -Infinity) - Number(a.rate ?? -Infinity) || a.institution.localeCompare(b.institution, "ja"));
+}
+
+function institutionDetailNearbyCard(group) {
+  const rate = Number.isFinite(Number(group.rate)) ? institutionDetailPercent(Number(group.rate)) : esc(group.interestRate || "—");
+  const terms = group.terms.length ? group.terms.slice(0, 4).join("・") + (group.terms.length > 4 ? `ほか${group.terms.length - 4}件` : "") : "年限記載なし";
+  const period = group.endDate ? `${group.endDate}まで` : "終了日未設定";
+  return `<article class="institution-nearby-card">
+    <div class="institution-nearby-card-head"><button type="button" class="institution-table-link institution-detail-trigger" data-institution="${esc(group.institution)}">${esc(group.institution)}</button><span class="institution-nearby-badge">${esc(group.prefecture)}</span><span class="institution-nearby-badge">${esc(group.status)}</span></div>
+    <strong class="institution-nearby-rate">${rate}</strong>
+    <div class="institution-nearby-campaign">${esc(group.campaignName)}</div>
+    <div class="institution-nearby-meta">${esc(group.productType || "商品区分不明")} / ${esc(terms)} / ${esc(period)}${group.productUrl ? ` / ${institutionDetailUrl(group.productUrl)}` : ""}</div>
+  </article>`;
+}
+
+function institutionDetailRenderNearby(name, prefecture) {
+  const target = document.querySelector("#institutionNearbyCampaigns");
+  const description = document.querySelector("#institutionNearbyDescription");
+  if (!target) return;
+  const canonicalPrefecture = institutionDetailPrefecture(prefecture);
+  const groups = institutionDetailNearbyCampaignGroups(name, canonicalPrefecture);
+  const neighbors = INSTITUTION_NEIGHBOR_PREFECTURES[canonicalPrefecture] || [];
+  const sections = [
+    { key: "same", title: `同じ都道府県（${canonicalPrefecture || "都道府県不明"}）`, detail: "同県", rows: groups.filter((group) => group.scope === "same") },
+    { key: "nearby", title: "近隣県", detail: neighbors.join("・") || "隣接県未設定", rows: groups.filter((group) => group.scope === "nearby") }
+  ];
+  description.textContent = canonicalPrefecture ? `${canonicalPrefecture}と近隣県で、現在開催中・開催予定のキャンペーンを表示します。金利の高い順です。` : "所在地を特定できないため、近隣キャンペーンを表示できません。";
+  target.innerHTML = sections.map((section) => `<section class="institution-nearby-group">
+    <div class="institution-nearby-group-heading"><h4>${esc(section.title)}</h4><span>${fmt(section.rows.length)}キャンペーン</span></div>
+    <div class="institution-nearby-list">${section.rows.length ? section.rows.map(institutionDetailNearbyCard).join("") : `<div class="institution-nearby-empty">${esc(section.detail)}の現在のキャンペーンはありません。</div>`}</div>
+  </section>`).join("");
+}
+
 function renderInstitutionDetail() {
   const name = institutionDetailState.institution;
   if (!name) return;
@@ -383,6 +465,7 @@ function renderInstitutionDetail() {
   document.querySelector("#institutionDetailTitle").textContent = name;
   document.querySelector("#institutionDetailMeta").textContent = [sample.prefecture, sample.region, sample.institution_type || sample.institution_type_normalized || sample.institution_type_raw].filter(Boolean).join(" / ");
   institutionDetailRenderSummary(name, campaigns, baseRows);
+  institutionDetailRenderNearby(name, sample.prefecture || "");
   institutionDetailRenderChart(campaigns, baseRows);
   institutionDetailRenderCampaignTable(campaigns);
   institutionDetailRenderBaseTable(baseRows);

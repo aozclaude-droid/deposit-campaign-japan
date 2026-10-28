@@ -45,6 +45,21 @@ body.institution-detail-mode #timelineTabPanel > :not(#institutionDetailPanel) {
 .institution-summary-grid strong { display: block; margin: 8px 0 5px; color: #123f83; font-size: 25px; line-height: 1.08; }
 .institution-summary-grid small { font-size: 11px; overflow-wrap: anywhere; }
 .institution-subpanel { min-width: 0; padding: 18px; border: 1px solid #d6e2ef; border-radius: 14px; background: #fff; }
+.institution-nearby-columns { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.institution-nearby-group { min-width: 0; overflow: hidden; border: 1px solid #dbe5f0; border-radius: 12px; background: #f8fbff; }
+.institution-nearby-group-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 13px; border-bottom: 1px solid #dbe5f0; background: #eef5fd; }
+.institution-nearby-group-heading h4 { margin: 0; color: #173f77; font-size: 14px; }
+.institution-nearby-group-heading span { color: #60758e; font-size: 11px; font-weight: 800; }
+.institution-nearby-list { display: grid; gap: 8px; max-height: 520px; padding: 10px; overflow: auto; }
+.institution-nearby-card { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 6px 12px; padding: 11px 12px; border: 1px solid #dfe7f1; border-radius: 10px; background: #fff; }
+.institution-nearby-card:hover { border-color: #aac7e9; box-shadow: 0 6px 16px rgba(31,75,128,.08); }
+.institution-nearby-card-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
+.institution-nearby-card .institution-table-link { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.institution-nearby-badge { padding: 2px 6px; border-radius: 999px; background: #e8f1fb; color: #426383; font-size: 10px; font-weight: 800; }
+.institution-nearby-campaign { grid-column: 1 / -1; color: #26384f; font-size: 12px; font-weight: 800; line-height: 1.45; overflow-wrap: anywhere; }
+.institution-nearby-meta { grid-column: 1 / -1; color: #687a92; font-size: 10px; line-height: 1.45; }
+.institution-nearby-rate { grid-row: 1; grid-column: 2; color: #b0362f; font-size: 16px; font-weight: 900; white-space: nowrap; }
+.institution-nearby-empty { padding: 22px 14px; color: #71839a; text-align: center; font-size: 12px; }
 .institution-subpanel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 14px; }
 .institution-subpanel-heading h3 { margin: 0 0 4px; color: #12365f; font-size: 18px; }
 .institution-chart-controls { display: flex; flex-wrap: wrap; min-width: 0; max-width: 100%; gap: 10px; }
@@ -106,6 +121,7 @@ body.institution-detail-mode #timelineTabPanel > :not(#institutionDetailPanel) {
   .institution-detail-close { width: 100%; }
   .institution-detail-body { padding: 12px; }
   .institution-summary-grid, .institution-spread-summary { grid-template-columns: 1fr; }
+  .institution-nearby-columns { grid-template-columns: 1fr; }
   .institution-subpanel { padding: 13px; }
   .institution-chart-controls { display: grid; grid-template-columns: 1fr; width: 100%; }
   .institution-chart-controls label { min-width: 0; }
