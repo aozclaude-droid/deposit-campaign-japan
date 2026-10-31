@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.31.29";
+const APP_VERSION = "2026.10.31.30";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -1144,6 +1144,7 @@ function renderLatestUpdate() {
     if (!institutions.has(record.institution_name)) institutions.set(record.institution_name, []);
     institutions.get(record.institution_name).push(record);
   });
+  const latestInstitutionItems = [...institutions.entries()].sort((a, b) => a[0].localeCompare(b[0], "ja"));
 
   const campaignCount = new Set(records.map((record) => `${record.institution_name}\u0000${record.campaign_name}`)).size;
   const regionCounts = new Map();
@@ -1169,18 +1170,23 @@ function renderLatestUpdate() {
   </div>`;
 
   const detailsToggle = $("#latestUpdateDetailsToggle");
-  if (detailsToggle) detailsToggle.textContent = `金融機関別の内訳（${fmt(LATEST_UPDATE.ordinaryAddedInstitutions.length)}機関）を表示`;
+  if (detailsToggle) detailsToggle.textContent = `新しく追加した金融機関（${fmt(latestInstitutionItems.length)}機関）を表示`;
 
-  $("#latestUpdateList").innerHTML = LATEST_UPDATE.ordinaryAddedInstitutions.map(([institution, rate]) => {
+  $("#latestUpdateList").innerHTML = latestInstitutionItems.map(([institution, institutionRecords]) => {
+    const campaigns = [...new Set(institutionRecords.map((record) => record.campaign_name).filter(Boolean))];
+    const campaignSummary = campaigns.slice(0, 4).join("、") + (campaigns.length > 4 ? `、ほか${fmt(campaigns.length - 4)}商品` : "");
     return `<article class="latest-update-item">
       <div class="latest-update-item-head"><h3>${esc(institution)}</h3><div><span class="update-badge added">今回反映</span></div></div>
-      <p>${esc(rate)}</p>
-      <small>公式資料を照査済み</small>
+      <p>${esc(campaignSummary || "商品名未設定")}</p>
+      <small>${fmt(institutionRecords.length)}明細・公式資料を照査済み</small>
     </article>`;
   }).join("");
 
   const showLatestOnly = $("#showLatestOnly");
-  if (showLatestOnly) showLatestOnly.hidden = true;
+  if (showLatestOnly) {
+    showLatestOnly.hidden = records.length === 0;
+    showLatestOnly.classList.remove("hidden");
+  }
 
   const countsMatch = state.records.length === LATEST_UPDATE.expectedTotalRecords
     && added.length === LATEST_UPDATE.addedCount
