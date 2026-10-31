@@ -391,8 +391,93 @@ function institutionDetailRenderCampaignTable(campaigns) {
   document.querySelector("#institutionCampaignBody").innerHTML = sorted.length ? sorted.map((row) => {
     const period = `${row.campaign_start_date || "開始日不明"} ～ ${row.campaign_end_date || "終了日未設定"}`;
     const conditions = [row.rate_condition, row.eligibility_conditions, row.deposit_amount, row.review_notes].filter(Boolean).join(" / ");
-    return `<tr><td data-label="状況"><span class="tag ${statusClass(row.status)}">${esc(row.status || "要確認")}</span></td><td data-label="商品区分">${esc(row.product_type)}</td><td data-label="商品・キャンペーン名">${esc(row.campaign_name)}</td><td data-label="募集・適用期間">${esc(period)}</td><td data-label="年限">${esc(row.term || "—")}</td><td data-label="金利" class="rate">${esc(row.interest_rate || "—")}</td><td data-label="条件" class="review-text">${esc(conditions || "—")}</td><td data-label="公式資料">${institutionDetailUrl(row.product_url)}</td></tr>`;
+    return `<tr data-campaign-key="${esc(institutionDetailCampaignKey(row))}"><td data-label="状況"><span class="tag ${statusClass(row.status)}">${esc(row.status || "要確認")}</span></td><td data-label="商品区分">${esc(row.product_type)}</td><td data-label="商品・キャンペーン名">${esc(row.campaign_name)}</td><td data-label="募集・適用期間">${esc(period)}</td><td data-label="年限">${esc(row.term || "—")}</td><td data-label="金利" class="rate">${esc(row.interest_rate || "—")}</td><td data-label="条件" class="review-text">${esc(conditions || "—")}</td><td data-label="公式資料">${institutionDetailUrl(row.product_url)}</td></tr>`;
   }).join("") : `<tr><td colspan="8" class="table-empty">キャンペーン明細はありません。</td></tr>`;
+}
+
+function institutionDetailCampaignKey(row) {
+  return encodeURIComponent([row.campaign_name, row.campaign_start_date, row.campaign_end_date, row.product_type].map(institutionDetailText).join("\u0000"));
+}
+
+function institutionDetailTimelineGroups(campaigns) {
+  const groups = new Map();
+  campaigns.forEach((row) => {
+    const key = institutionDetailCampaignKey(row);
+    if (!groups.has(key)) groups.set(key, { key, campaign: row.campaign_name, productType: row.product_type, start: row.campaign_start_date, end: row.campaign_end_date, status: row.status || "要確認", rows: [] });
+    groups.get(key).rows.push(row);
+  });
+  return [...groups.values()].sort((a, b) => institutionDetailText(b.start).localeCompare(institutionDetailText(a.start)) || a.campaign.localeCompare(b.campaign, "ja"));
+}
+
+function institutionDetailRenderTimeline(campaigns) {
+  const target = document.querySelector("#institutionCampaignTimeline");
+  const description = document.querySelector("#institutionTimelineDescription");
+  if (!target) return;
+  const groups = institutionDetailTimelineGroups(campaigns);
+  const dated = groups.filter((group) => parseIso(group.start));
+  if (description) description.textContent = `${fmt(groups.length)}キャンペーン期間を表示しています。横棒を選ぶと対応する明細へ移動します。`;
+  if (!dated.length) {
+    target.innerHTML = `<div class="gantt-empty">開始日を確認できるキャンペーンがありません。</div>`;
+    return;
+  }
+  const starts = dated.map((group) => parseIso(group.start));
+  const ends = dated.map((group) => parseIso(group.end)).filter(Boolean);
+  let minDate = new Date(Math.min(...starts.map(Number)));
+  let maxDate = ends.length ? new Date(Math.max(...ends.map(Number))) : parseIso(TODAY_ISO);
+  if (dated.some((group) => !parseIso(group.end))) {
+    const extension = new Date(parseIso(TODAY_ISO).getTime() + 90 * dayMs);
+    if (extension > maxDate) maxDate = extension;
+  }
+  if (maxDate <= minDate) maxDate = new Date(minDate.getTime() + 30 * dayMs);
+  minDate = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+  maxDate = new Date(maxDate.getFullYear(), maxDate.getMonth() + 1, 1);
+  const spanDays = Math.max(1, (maxDate - minDate) / dayMs);
+  const months = Math.max(1, Math.round(spanDays / 30.44));
+  const tickStep = months <= 24 ? 1 : months <= 72 ? 3 : months <= 180 ? 12 : 24;
+  const minChartWidth = isCompactViewport() ? 760 : 1100;
+  const monthScale = isCompactViewport() ? (months <= 36 ? 38 : months <= 120 ? 18 : 10) : (months <= 36 ? 54 : months <= 120 ? 24 : 12);
+  const chartWidth = Math.min(4200, Math.max(minChartWidth, months * monthScale));
+  const ticks = [];
+  for (let cursor = new Date(minDate); cursor <= maxDate; cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1)) {
+    const offset = (cursor.getFullYear() - minDate.getFullYear()) * 12 + cursor.getMonth() - minDate.getMonth();
+    if (offset % tickStep !== 0) continue;
+    const left = ((cursor - minDate) / dayMs) / spanDays * 100;
+    const label = tickStep < 12 ? `${cursor.getFullYear()}/${String(cursor.getMonth() + 1).padStart(2, "0")}` : `${cursor.getFullYear()}年`;
+    ticks.push(`<span class="gantt-tick" style="left:${left.toFixed(4)}%">${label}</span>`);
+  }
+  const html = [`<div class="gantt-axis"><div class="gantt-axis-label">キャンペーン / 商品区分</div><div class="gantt-axis-time" style="width:${chartWidth}px">${ticks.join("")}</div></div>`];
+  groups.forEach((group) => {
+    const start = parseIso(group.start);
+    const end = parseIso(group.end);
+    let bar = "";
+    if (start) {
+      const anomaly = end && end < start;
+      const effectiveEnd = !end ? maxDate : anomaly ? start : end;
+      let left = (start - minDate) / dayMs / spanDays * 100;
+      let width = (effectiveEnd - start) / dayMs / spanDays * 100;
+      left = Math.max(0, Math.min(100, left));
+      width = anomaly ? 0.45 : Math.max(.35, Math.min(100 - left, width));
+      const classes = ["gantt-bar", statusClass(group.status)];
+      if (!end) classes.push("open-ended");
+      if (anomaly) classes.push("date-anomaly");
+      const rates = [...new Set(group.rows.map((row) => row.interest_rate).filter(Boolean))];
+      const title = `${group.campaign} / ${group.start || "開始日不明"}～${group.end || "終了日未設定"}${rates.length ? ` / ${rates.slice(0, 4).join("・")}` : ""}`;
+      bar = `<button type="button" class="${classes.join(" ")}" style="left:${left.toFixed(4)}%;width:${width.toFixed(4)}%" data-campaign-key="${esc(group.key)}" title="${esc(title)}" aria-label="${esc(title)}">${anomaly ? "" : esc(group.campaign)}</button>`;
+    }
+    html.push(`<div class="gantt-row" data-campaign-key="${esc(group.key)}"><div class="gantt-label" title="${esc(group.campaign)}">${esc(group.campaign)} <span class="muted">${esc(group.productType)}</span></div><div class="timeline" style="width:${chartWidth}px">${bar}</div></div>`);
+  });
+  target.innerHTML = html.join("");
+  target.querySelectorAll(".gantt-bar").forEach((bar) => bar.addEventListener("click", () => {
+    target.querySelectorAll(".gantt-row.is-selected").forEach((row) => row.classList.remove("is-selected"));
+    bar.closest(".gantt-row")?.classList.add("is-selected");
+    const key = bar.dataset.campaignKey;
+    const row = [...document.querySelectorAll("#institutionCampaignBody tr")].find((candidate) => candidate.dataset.campaignKey === key);
+    if (!row) return;
+    row.classList.remove("institution-campaign-row-highlight");
+    void row.offsetWidth;
+    row.classList.add("institution-campaign-row-highlight");
+    row.scrollIntoView({ behavior: "smooth", block: "center" });
+  }));
 }
 
 function institutionDetailRenderBaseTable(baseRows) {
@@ -466,6 +551,7 @@ function renderInstitutionDetail() {
   document.querySelector("#institutionDetailMeta").textContent = [sample.prefecture, sample.region, sample.institution_type || sample.institution_type_normalized || sample.institution_type_raw].filter(Boolean).join(" / ");
   institutionDetailRenderSummary(name, campaigns, baseRows);
   institutionDetailRenderNearby(name, sample.prefecture || "");
+  institutionDetailRenderTimeline(campaigns);
   institutionDetailRenderChart(campaigns, baseRows);
   institutionDetailRenderCampaignTable(campaigns);
   institutionDetailRenderBaseTable(baseRows);

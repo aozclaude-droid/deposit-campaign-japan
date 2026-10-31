@@ -60,6 +60,14 @@ body.institution-detail-mode #timelineTabPanel > :not(#institutionDetailPanel) {
 .institution-nearby-meta { grid-column: 1 / -1; color: #687a92; font-size: 10px; line-height: 1.45; }
 .institution-nearby-rate { grid-row: 1; grid-column: 2; color: #b0362f; font-size: 16px; font-weight: 900; white-space: nowrap; }
 .institution-nearby-empty { padding: 22px 14px; color: #71839a; text-align: center; font-size: 12px; }
+.institution-timeline-legend { display: flex; flex-wrap: wrap; gap: 12px; }
+.institution-detail-gantt-wrap { max-height: 560px; }
+.institution-detail-gantt-wrap .gantt-axis-label { padding-left: 14px; }
+.institution-detail-gantt-wrap .gantt-label { padding-left: 14px; }
+.institution-detail-gantt-wrap .gantt-row.is-selected { background: #fff7e8; }
+.institution-detail-gantt-wrap .gantt-row.is-selected .gantt-label { background: #fff7e8; color: #9a4f00; font-weight: 900; }
+.institution-campaign-row-highlight { animation: institution-row-highlight 2.4s ease-out; }
+@keyframes institution-row-highlight { 0%,30% { background: #fff1c9; box-shadow: inset 4px 0 #e39a22; } 100% { background: transparent; box-shadow: none; } }
 .institution-subpanel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 14px; }
 .institution-subpanel-heading h3 { margin: 0 0 4px; color: #12365f; font-size: 18px; }
 .institution-chart-controls { display: flex; flex-wrap: wrap; min-width: 0; max-width: 100%; gap: 10px; }
