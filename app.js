@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.31.17";
+const APP_VERSION = "2026.10.31.18";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -35,14 +35,14 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261027-2";
+const DATA_URL = "campaign_all.json?v=20261031-3";
 const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261027-2";
 const LATEST_UPDATE = {
-  publishedOn: "2026-10-27",
-  label: "2026年10月27日 SBJ銀行の単独再検証を反映",
-  expectedTotalRecords: 16768,
-  addedStartIndex: 16762,
-  addedCount: 6,
+  publishedOn: "2026-10-31",
+  label: "2026年10月31日 全国巡回Codex照査の高確度39明細を反映",
+  expectedTotalRecords: 16807,
+  addedStartIndex: 16768,
+  addedCount: 39,
   movedToBaseHistoryCount: 0,
   movedInstitutionCount: 0,
   reclassifiedCount: 0,
@@ -50,16 +50,14 @@ const LATEST_UPDATE = {
   ordinaryBaseAddedCount: 0,
   baseHistoryTotalCount: 5265,
   ordinaryInstitutionTotalCount: 14,
-  reviewedInstitutionCount: 1,
+  reviewedInstitutionCount: 17,
   withheldInstitutionCount: 0,
-  segmentLabel: "SBJ銀行",
-  segmentMetricLabel: "単独再検証の反映",
+  segmentLabel: "全国17金融機関",
+  segmentMetricLabel: "全国巡回の高確度反映",
   primaryMetricLabel: "新しく追加",
-  leadText: "SBJ銀行を単独再検証し、2026年10月1日改定の「はじめての定期預金〈はじめくん〉」6明細を追加しました。普通預金の現行金利も更新済みです。",
-  compactText: "SBJ銀行の定期預金6明細と普通預金の現行金利を反映",
-  ordinaryAddedInstitutions: [
-    ["SBJ銀行", "はじめての定期預金〈はじめくん〉 6明細／普通預金金利を更新"]
-  ],
+  leadText: "全国巡回1,460資料をCodexで照査し、高確度39明細を17金融機関へ反映しました。既収録440明細・対象外347資料を分離し、追加照査924資料は本番候補から保留しています。",
+  compactText: "全国17金融機関・39明細を高確度反映",
+  ordinaryAddedInstitutions: [],
   updatedRecordKeys: []
 };
 const TODAY_ISO = localIso(new Date());
