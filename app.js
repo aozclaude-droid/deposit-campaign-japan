@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.31.18";
+const APP_VERSION = "2026.10.31.29";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -35,14 +35,14 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261031-3";
+const DATA_URL = "campaign_all.json?v=20261031-12";
 const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261027-2";
 const LATEST_UPDATE = {
   publishedOn: "2026-10-31",
-  label: "2026年10月31日 全国巡回Codex照査の高確度39明細を反映",
-  expectedTotalRecords: 16807,
-  addedStartIndex: 16768,
-  addedCount: 39,
+  label: "2026年10月31日 保留924資料の追加照査を反映",
+  expectedTotalRecords: 16977,
+  addedStartIndex: 16807,
+  addedCount: 170,
   movedToBaseHistoryCount: 0,
   movedInstitutionCount: 0,
   reclassifiedCount: 0,
@@ -50,13 +50,13 @@ const LATEST_UPDATE = {
   ordinaryBaseAddedCount: 0,
   baseHistoryTotalCount: 5265,
   ordinaryInstitutionTotalCount: 14,
-  reviewedInstitutionCount: 17,
+  reviewedInstitutionCount: 70,
   withheldInstitutionCount: 0,
-  segmentLabel: "全国17金融機関",
-  segmentMetricLabel: "全国巡回の高確度反映",
+  segmentLabel: "追加照査70金融機関",
+  segmentMetricLabel: "優先再照査の反映先",
   primaryMetricLabel: "新しく追加",
-  leadText: "全国巡回1,460資料をCodexで照査し、高確度39明細を17金融機関へ反映しました。既収録440明細・対象外347資料を分離し、追加照査924資料は本番候補から保留しています。",
-  compactText: "全国17金融機関・39明細を高確度反映",
+  leadText: "保留924資料のAI追加照査を完了し、公式HTML・PDF・画像から高確度170明細を追加しました。不確定な289資料は人確認画面へ集約しています。",
+  compactText: "追加照査70金融機関・170明細を反映",
   ordinaryAddedInstitutions: [],
   updatedRecordKeys: []
 };
