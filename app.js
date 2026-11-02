@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "2026.10.31.30";
+const APP_VERSION = "2026.11.02.3";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -35,32 +35,32 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261031-12";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261027-2";
+const DATA_URL = "campaign_all.json?v=20261102-3";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261102-1";
 const LATEST_UPDATE = {
-  publishedOn: "2026-10-31",
-  label: "2026年10月31日 保留924資料の追加照査を反映",
-  expectedTotalRecords: 16977,
-  addedStartIndex: 16807,
-  addedCount: 170,
-  movedToBaseHistoryCount: 0,
-  movedInstitutionCount: 0,
+  publishedOn: "2026-11-02",
+  label: "2026年11月2日 全国巡回・Codex照査結果を反映",
+  expectedTotalRecords: 16983,
+  addedStartIndex: 16946,
+  addedCount: 37,
+  movedToBaseHistoryCount: 31,
+  movedInstitutionCount: 11,
   reclassifiedCount: 0,
   ordinaryCampaignRetainedCount: 0,
   ordinaryBaseAddedCount: 0,
-  baseHistoryTotalCount: 5265,
-  ordinaryInstitutionTotalCount: 14,
-  reviewedInstitutionCount: 70,
-  withheldInstitutionCount: 0,
-  segmentLabel: "追加照査70金融機関",
-  segmentMetricLabel: "優先再照査の反映先",
+  baseHistoryTotalCount: 5296,
+  ordinaryInstitutionTotalCount: 11,
+  reviewedInstitutionCount: 8,
+  withheldInstitutionCount: 255,
+  segmentLabel: "8金融機関・9キャンペーン",
+  segmentMetricLabel: "追加金融機関",
   primaryMetricLabel: "新しく追加",
-  leadText: "保留924資料のAI追加照査を完了し、公式HTML・PDF・画像から高確度170明細を追加しました。不確定な289資料は人確認画面へ集約しています。",
-  compactText: "追加照査70金融機関・170明細を反映",
+  leadText: "全国巡回資料をChatGPT/Codexで照査し、公式資料で条件を確定できた8金融機関・9キャンペーン・37明細を追加しました。Gemini APIは使用していません。",
+  compactText: "8金融機関・9キャンペーン・37明細を本番反映",
   ordinaryAddedInstitutions: [],
   updatedRecordKeys: []
 };
-const TODAY_ISO = localIso(new Date());
+let TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
 const ANALYTICS_TERMS = [
   { key: "6m", label: "6か月", months: 6 },
@@ -377,6 +377,16 @@ function formatRate(value) {
   if (!Number.isFinite(value)) return "—";
   return `${value.toFixed(3).replace(/0+$/, "").replace(/\.$/, "")}％`;
 }
+function selectedRateValue(record, basis) {
+  const preferred = basis === "standard" ? record._standardComparableRate : record._maximumComparableRate;
+  return Number.isFinite(preferred) ? preferred : record._comparableRate;
+}
+function analyticsRateValue(record) {
+  return selectedRateValue(record, $("#analyticsRateBasis")?.value || "maximum");
+}
+function heatmapRateValue(record) {
+  return selectedRateValue(record, $("#heatmapRateBasis")?.value || "maximum");
+}
 function analyticsDefaultDates() {
   const year = Number(TODAY_ISO.slice(0, 4));
   return { from: `${year}-01-01`, to: `${year}-12-31` };
@@ -390,6 +400,7 @@ function resetAnalyticsControls(render = true) {
   const products = uniqueSorted("product_type");
   setSelectedValues("#analyticsProductFilter", products.includes("定期預金") ? ["定期預金"] : products.slice(0, 1));
   $("#analyticsDisplayMode").value = "all";
+  $("#analyticsRateBasis").value = "maximum";
   if (render && state.activeView === "analytics") renderRateAnalytics();
   else state.analyticsRendered = false;
 }
@@ -416,11 +427,12 @@ function scheduleAnalytics() {
 function buildProductAnalytics(productType, records) {
   const byTerm = new Map(ANALYTICS_TERMS.map((term) => [term.key, new Map()]));
   records.forEach((record) => {
-    if (record.product_type !== productType || !record._analyticsTermKey || !Number.isFinite(record._comparableRate)) return;
+    const selectedRate = analyticsRateValue(record);
+    if (record.product_type !== productType || !record._analyticsTermKey || !Number.isFinite(selectedRate)) return;
     const institutionMap = byTerm.get(record._analyticsTermKey);
     const existing = institutionMap.get(record.institution_name);
     const candidate = {
-      rate: record._comparableRate,
+      rate: selectedRate,
       record,
       sourceCount: existing ? existing.sourceCount + 1 : 1
     };
@@ -545,16 +557,17 @@ function renderRateAnalytics() {
     if (!productTypes.includes(record.product_type)) return false;
     return recordOverlapsPeriod(record, from, to);
   });
-  const comparable = periodRecords.filter((record) => record._analyticsTermKey && Number.isFinite(record._comparableRate));
+  const comparable = periodRecords.filter((record) => record._analyticsTermKey && Number.isFinite(analyticsRateValue(record)));
   const noTerm = periodRecords.filter((record) => !record._analyticsTermKey).length;
-  const noRate = periodRecords.filter((record) => record._analyticsTermKey && !Number.isFinite(record._comparableRate)).length;
+  const noRate = periodRecords.filter((record) => record._analyticsTermKey && !Number.isFinite(analyticsRateValue(record))).length;
   const institutionCount = new Set(comparable.map((record) => record.institution_name).filter(Boolean)).size;
   const regionLabel = selectedRegions.size ? [...selectedRegions].join("・") : "全国";
   const prefectureLabel = selectedPrefectures.size ? [...selectedPrefectures].join("・") : "全都道府県";
   const periodLabel = `${from || "期間指定なし"} ～ ${to || "期間指定なし"}`;
   const displayMode = $("#analyticsDisplayMode").value === "all" ? "all" : "top5";
   const displayLabel = displayMode === "all" ? "全金融機関" : "上位5";
-  $("#analyticsSummary").textContent = `${regionLabel} / ${prefectureLabel} / ${periodLabel} / ${displayLabel} / 比較可能 ${fmt(comparable.length)}明細`;
+  const rateBasisLabel = $("#analyticsRateBasis").value === "standard" ? "標準金利" : "達成可能な最高金利";
+  $("#analyticsSummary").textContent = `${regionLabel} / ${prefectureLabel} / ${periodLabel} / ${displayLabel} / ${rateBasisLabel} / 比較可能 ${fmt(comparable.length)}明細`;
   const ordinarySelected = productTypes.some((productType) => ORDINARY_PRODUCT_TYPES.has(productType));
   const sections = productTypes
     .map((productType) => buildProductAnalytics(productType, periodRecords))
@@ -603,6 +616,7 @@ function resetHeatmapControls(render = true) {
   });
   const products = uniqueSorted("product_type");
   $("#heatmapProductFilter").value = products.includes("定期預金") ? "定期預金" : (products[0] || "");
+  $("#heatmapRateBasis").value = "maximum";
   syncHeatmapTermControls();
   setSelectedValues("#heatmapInstitutionTypeFilter", uniqueSorted("institution_type").filter((value) => value !== "ネット銀行"));
   setSelectedValues("#heatmapStatusFilter", state.records.some((record) => record.status === "開催中") ? ["開催中"] : []);
@@ -726,11 +740,11 @@ function uniqueHeatmapRecords(records) {
     return true;
   });
 }
-function buildInstitutionRateGroups(records) {
+function buildInstitutionRateGroups(records, rateSelector = heatmapRateValue) {
   const grouped = new Map();
   uniqueHeatmapRecords(records).forEach((record) => {
     const current = grouped.get(record.institution_name) || { institution: record.institution_name, rates: [], records: [] };
-    current.rates.push(record._comparableRate);
+    current.rates.push(rateSelector(record));
     current.records.push(record);
     grouped.set(record.institution_name, current);
   });
@@ -793,6 +807,8 @@ function ordinaryHeatmapRecords() {
         status:"開催中",
         _analyticsTermKey:null,
         _comparableRate:Number(row.rate_percent),
+        _standardComparableRate:Number(row.rate_percent),
+        _maximumComparableRate:Number(row.rate_percent),
         _ordinaryNationwideOnly:nationwideOnly,
         _ordinarySourceRow:row
       };
@@ -815,7 +831,7 @@ function buildHeatmapData() {
     const matchesTerm = term.key === "ordinary"
       ? ORDINARY_PRODUCT_TYPES.has(record.product_type)
       : record._analyticsTermKey === term.key;
-    if (!matchesTerm || !Number.isFinite(record._comparableRate)) return false;
+    if (!matchesTerm || !Number.isFinite(heatmapRateValue(record))) return false;
     if (productFilterActive && !products.has(record.product_type)) return false;
     if (statusFilterActive && !statuses.has(record.status)) return false;
     if (selectedProduct === "campaign" && !recordOverlapsPeriod(record, campaignFrom, campaignTo)) return false;
@@ -832,7 +848,7 @@ function buildHeatmapData() {
   byPrefectureRecords.forEach((records, prefecture) => {
     const institutions = buildInstitutionRateGroups(records);
     const institutionRates = institutions.map((item) => item.averageRate).filter(Number.isFinite);
-    const rawRates = uniqueHeatmapRecords(records).map((record) => record._comparableRate).filter(Number.isFinite);
+    const rawRates = uniqueHeatmapRecords(records).map(heatmapRateValue).filter(Number.isFinite);
     prefectures.set(prefecture, {
       prefecture,
       averageRate: average(institutionRates),
@@ -1082,7 +1098,7 @@ function institutionTypeOptions({ includeOnline = true } = {}) {
   return [...ordered, ...unexpected];
 }
 function normalizeRecord(record, index) {
-  const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","term","interest_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes"];
+  const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","term","interest_rate","applied_rate","standard_rate","maximum_rate","bonus_margin","tax_basis","achievement_state","currency","tiered_rate","amount_band","ranking_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes"];
   const normalized = { _index: index };
   fields.forEach((f) => { normalized[f] = text(record[f]); });
   normalized.region = canonicalRegion(normalized.region, normalized.prefecture);
@@ -1096,10 +1112,18 @@ function normalizeRecord(record, index) {
   normalized._searchTerm = normalized.term.toLocaleLowerCase("ja");
   normalized._searchRate = `${normalized.interest_rate} ${normalized.rate_condition}`.toLocaleLowerCase("ja");
   normalized._analyticsTermKey = classifyAnalyticsTerm(normalized.term);
+  const rateDetails = record.rate_details || record.rate_components || {};
+  ["applied_rate","standard_rate","maximum_rate","bonus_margin","tax_basis","achievement_state","currency","tiered_rate","amount_band","ranking_rate"].forEach((field) => {
+    if (!normalized[field]) normalized[field] = text(rateDetails[field]);
+  });
   const comparableRate = parseComparableInterestRate(normalized.interest_rate);
   normalized._comparableRate = comparableRate.value;
   normalized._rateExclusionReason = comparableRate.reason;
   normalized._rateSource = comparableRate.source;
+  const standardComparable = parseComparableInterestRate(normalized.standard_rate || normalized.applied_rate || normalized.interest_rate);
+  const maximumComparable = parseComparableInterestRate(normalized.maximum_rate || normalized.ranking_rate || normalized.interest_rate);
+  normalized._standardComparableRate = standardComparable.value;
+  normalized._maximumComparableRate = maximumComparable.value;
   const maturity = estimateMaturity(normalized);
   normalized.estimated_maturity_start_date = maturity.start;
   normalized.estimated_maturity_end_date = maturity.end;
@@ -1158,15 +1182,15 @@ function renderLatestUpdate() {
   $("#latestUpdateMetrics").innerHTML = [
     [LATEST_UPDATE.primaryMetricLabel || "新しく追加", LATEST_UPDATE.addedCount, "件"],
     [LATEST_UPDATE.segmentMetricLabel, LATEST_UPDATE.reviewedInstitutionCount, "先"],
-    ["保留", LATEST_UPDATE.withheldInstitutionCount, "先"],
+    ["追加照査継続", LATEST_UPDATE.withheldInstitutionCount, "資料"],
     ["現在の総明細", LATEST_UPDATE.expectedTotalRecords, "件"]
   ].map(([label, value, unit]) => `<div class="latest-update-metric"><span>${esc(label)}</span><strong>${fmt(value)}</strong><small>${unit}</small></div>`).join("");
 
   $("#latestUpdateCompact").innerHTML = `<div class="latest-update-summary-text">
     <strong>${LATEST_UPDATE.compactText || `${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先・${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}明細を普通預金金利履歴へ追加`}</strong>
   </div><div class="latest-update-region-list" aria-label="今回の整理内容">
-    <span>照査対象 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}先</span>
-    <span>現行値未確定・非公開 ${fmt(LATEST_UPDATE.withheldInstitutionCount)}先</span>
+    <span>今回追加 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}金融機関・9キャンペーン</span>
+    <span>新規・更新の追加照査継続 ${fmt(LATEST_UPDATE.withheldInstitutionCount)}資料</span>
   </div>`;
 
   const detailsToggle = $("#latestUpdateDetailsToggle");
@@ -1262,6 +1286,7 @@ function initializeUi() {
   fillSelect("#heatmapInstitutionTypeFilter", institutionTypeOptions({ includeOnline: false }));
   fillSelect("#heatmapStatusFilter", ["開催中", "開催予定", "終了済み", "要確認"].filter((status) => state.records.some((record) => record.status === status)));
   resetHeatmapControls(false);
+  $("#heatmapRateBasis").value = "maximum";
   renderJapanTileMap();
 
   renderLatestUpdate();
@@ -1280,6 +1305,7 @@ function initializeUi() {
   if (state.activeView === "analytics") renderRateAnalytics();
   if (state.activeView === "heatmap") renderPrefectureHeatmap();
   document.dispatchEvent(new CustomEvent("deposit-data-ready"));
+  scheduleDailyStatusRefresh();
 }
 
 function bindEvents() {
@@ -1341,7 +1367,7 @@ function bindEvents() {
   $("#dateIssuePrev").addEventListener("click", () => { state.dateIssuePage--; renderDateIssues(); });
   $("#dateIssueNext").addEventListener("click", () => { state.dateIssuePage++; renderDateIssues(); });
   $("#clearFocus").addEventListener("click", clearFocus);
-  ["#analyticsDateFrom","#analyticsDateTo","#analyticsPrefectureFilter","#analyticsProductFilter","#analyticsDisplayMode"].forEach((id) => $(id).addEventListener("change", scheduleAnalytics));
+  ["#analyticsDateFrom","#analyticsDateTo","#analyticsPrefectureFilter","#analyticsProductFilter","#analyticsDisplayMode","#analyticsRateBasis"].forEach((id) => $(id).addEventListener("change", scheduleAnalytics));
   $("#analyticsRegionFilter").addEventListener("change", () => {
     updateAnalyticsPrefectureOptions();
     scheduleAnalytics();
@@ -1364,7 +1390,7 @@ function bindEvents() {
     state.heatmapRendered = false;
     if (state.activeView === "heatmap") renderPrefectureHeatmap();
   });
-  ["#heatmapInstitutionTypeFilter", "#heatmapStatusFilter", "#heatmapCampaignDateFrom", "#heatmapCampaignDateTo"].forEach((id) => $(id).addEventListener("change", () => {
+  ["#heatmapInstitutionTypeFilter", "#heatmapStatusFilter", "#heatmapCampaignDateFrom", "#heatmapCampaignDateTo", "#heatmapRateBasis"].forEach((id) => $(id).addEventListener("change", () => {
     state.heatmapSelectedPrefecture = "";
     scheduleHeatmap();
   }));
@@ -1725,6 +1751,24 @@ function clearFocus() {
   state.tablePage = 1;
   $("#focusBanner").classList.add("hidden");
   renderTable();
+}
+
+function scheduleDailyStatusRefresh() {
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2);
+  window.setTimeout(() => {
+    TODAY_ISO = localIso(new Date());
+    state.records.forEach((record) => {
+      record.status = effectiveStatus({...record, status: record._sourceStatus});
+      record._statusDerived = record.status !== record._sourceStatus;
+    });
+    applyFilters();
+    state.analyticsRendered = false;
+    state.heatmapRendered = false;
+    if (state.activeView === "analytics") renderRateAnalytics();
+    if (state.activeView === "heatmap") renderPrefectureHeatmap();
+    scheduleDailyStatusRefresh();
+  }, Math.max(1000, next - now));
 }
 
 function isDateIssue(r) { return Boolean(dateIssueReason(r)); }

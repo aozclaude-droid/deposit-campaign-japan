@@ -23,7 +23,8 @@
 <div class="hero-meta">
 <span id="updatedAt">更新日時を読み込み中…</span>
 <span class="status-dot" id="loadStatus">データ読込中</span>
-<span class="app-version" id="appVersion">画面版 2026.10.31.30</span>
+<span class="app-version" id="appVersion">画面版 2026.11.02.3</span>
+<a class="app-version" href="QUALITY_COVERAGE_DASHBOARD.html" target="_blank" rel="noopener">巡回母集団・取得率 ↗</a>
 </div>
 </div>
 </header>
@@ -35,7 +36,7 @@
 <div>
 <p class="section-kicker">LATEST UPDATE</p>
 <h2 id="latestUpdateTitle">今回追加・更新した情報</h2>
-<p class="latest-update-lead" id="latestUpdateLead">2026年10月27日版の全国データを読み込み中です。</p>
+<p class="latest-update-lead" id="latestUpdateLead">2026年11月2日版の全国データを読み込み中です。</p>
 </div>
 <div class="latest-update-date" id="latestUpdateDate">—</div>
 </div>
@@ -392,6 +393,13 @@
 <label>商品区分
             <select aria-label="ランキング対象商品区分（複数選択可）" id="analyticsProductFilter" multiple="" size="5"></select>
 </label>
+<label>ランキング金利
+<select aria-label="ランキングに使用する金利" id="analyticsRateBasis">
+<option selected="" value="maximum">達成可能な最高金利</option>
+<option value="standard">標準金利</option>
+</select>
+<span class="field-help">内訳未収録の明細は従来の預金金利を使用します。</span>
+</label>
 <label>マトリクスのY軸
             <select aria-label="金利マトリクスに表示する金融機関の範囲" id="analyticsDisplayMode">
 <option selected="" value="all">すべての金融機関（全順位）</option>
@@ -430,6 +438,12 @@
 </fieldset>
 <label>商品区分
 <select aria-label="ヒートマップ対象商品区分" id="heatmapProductFilter"></select>
+</label>
+<label>集計金利
+<select aria-label="ヒートマップに使用する金利" id="heatmapRateBasis">
+<option selected="" value="maximum">達成可能な最高金利</option>
+<option value="standard">標準金利</option>
+</select>
 </label>
 <fieldset class="analytics-period heatmap-campaign-period" id="heatmapCampaignPeriod" hidden>
 <legend>集計対象期間（期間が重なるキャンペーン）</legend>
@@ -711,9 +725,9 @@
 </main>
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
-<script defer="" src="app.js?v=20261031-26"></script>
+<script defer="" src="app.js?v=20261102-3"></script>
   <script defer src="institution_detail.js?v=20261031-14"></script>
   <script defer src="web_r1_bridge.js?v=20261025-20" data-r1-web-bridge="1"></script>
-  <script defer src="./web_heatmap_unified_patch.js?v=20261028-2"></script>
+  <script defer src="./web_heatmap_unified_patch.js?v=20261102-2"></script>
 </body>
 </html>
