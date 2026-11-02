@@ -13,7 +13,7 @@
  */
 
 (() => {
-  const PATCH_VERSION = "20261028.2";
+  const PATCH_VERSION = "20261102.1";
   const R1_CURRENT_URL = "./r1_data/current_default_ranking.json";
   const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261025-3";
 
@@ -42,7 +42,11 @@
   // Prevent a one-frame flash of the old standalone R1 section.
   const style = document.createElement("style");
   style.id = "unifiedHeatmapV4Style";
-  style.textContent = `#r1BridgeShell{display:none!important}`;
+  style.textContent = `
+    #r1BridgeShell{display:none!important}
+    .heatmap-national-scope-toggle{display:flex;align-items:center;gap:.45rem;margin-top:.45rem;color:#52627a;font-size:.78rem}
+    .heatmap-national-scope-toggle input{accent-color:#245fd1}
+  `;
   document.head?.appendChild(style);
 
   const num = (v) => {
@@ -175,6 +179,9 @@
   }
 
   function rate(row) {
+    if (typeof heatmapRateValue === "function" && row && ("_maximumComparableRate" in row || "_standardComparableRate" in row)) {
+      return heatmapRateValue(row);
+    }
     if (typeof row?._comparableRate === "number" && Number.isFinite(row._comparableRate)) {
       return row._comparableRate;
     }
@@ -274,6 +281,16 @@
     return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
   }
 
+  function includeNationwideInNationalAverage() {
+    return !!q("#heatmapIncludeNationwideInNationalAverage")?.checked;
+  }
+
+  function combinedNationalAverage(regionalInstitutions, onlineInstitutions) {
+    const regional = regionalInstitutions.map((item) => item.averageRate);
+    if (!includeNationwideInNationalAverage()) return avg(regional);
+    return avg(regional.concat(onlineInstitutions.map((item) => item.averageRate)));
+  }
+
   function scaleRate(value) {
     return Number.isFinite(value) ? Number(value.toFixed(6)) : null;
   }
@@ -328,7 +345,7 @@
       return (state.records || []).filter((record) =>
         ["普通預金", "普通貯金"].includes(String(record.product_type || "").trim())
         && record.status === "開催中"
-        && Number.isFinite(record._comparableRate)
+        && Number.isFinite(rate(record))
       );
     } catch (_) {
       return [];
@@ -395,7 +412,7 @@
     }
 
     const regionalRows = rows.filter((row) => !isNetwork(row) && PREF_SET.has(pref(row)) && (!typeActive || selectedTypes.has(instType(row))));
-    const onlineRows = rows.filter(isNetwork);
+    const onlineRows = rows.filter((row) => isNetwork(row) && (!typeActive || selectedTypes.has(instType(row))));
     const byPref = new Map(PREFECTURES.map((p) => [p, []]));
     regionalRows.forEach((row) => byPref.get(pref(row))?.push(row));
 
@@ -435,7 +452,7 @@
       rankedPrefectures,
       regionalInstitutions,
       onlineInstitutions,
-      nationalAverage: avg(regionalInstitutions.map((x) => x.averageRate)),
+      nationalAverage: combinedNationalAverage(regionalInstitutions, onlineInstitutions),
       onlineAverage: avg(onlineInstitutions.map((x) => x.averageRate)),
       ordinarySource,
       pending: mode === "base_ordinary" ? (!R1.historyReady && !R1.historyError) : !R1.loaded,
@@ -454,7 +471,7 @@
     const statusActive = statuses.size > 0;
 
     const records = (state.records || []).filter((record) => {
-      if (record._analyticsTermKey !== term.key || !Number.isFinite(record._comparableRate)) return false;
+      if (record._analyticsTermKey !== term.key || !Number.isFinite(rate(record))) return false;
       if (!/預金|貯金/.test(record.product_type || "") || /積金/.test(record.product_type || "")) return false;
       if (statusActive && !statuses.has(record.status)) return false;
       if (invalidPeriod || (typeof recordOverlapsPeriod === "function" && !recordOverlapsPeriod(record, periodFrom, periodTo))) return false;
@@ -462,14 +479,14 @@
     });
 
     const regionalRecords = records.filter((record) => record.institution_type !== "ネット銀行" && PREF_SET.has(record.prefecture) && (!typeActive || types.has(record.institution_type)));
-    const onlineRecords = records.filter((record) => record.institution_type === "ネット銀行");
+    const onlineRecords = records.filter((record) => record.institution_type === "ネット銀行" && (!typeActive || types.has(record.institution_type)));
     const byPref = new Map(PREFECTURES.map((p) => [p, []]));
     regionalRecords.forEach((record) => byPref.get(record.prefecture)?.push(record));
     const prefectures = new Map();
     for (const [p, pRows] of byPref.entries()) {
       const institutions = typeof buildInstitutionRateGroups === "function" ? buildInstitutionRateGroups(pRows) : [];
       const instRates = institutions.map((x) => x.averageRate).filter(Number.isFinite);
-      const rawRates = pRows.map((r) => r._comparableRate).filter(Number.isFinite);
+      const rawRates = pRows.map(rate).filter(Number.isFinite);
       prefectures.set(p, {
         prefecture: p,
         averageRate: avg(instRates),
@@ -502,7 +519,7 @@
       rankedPrefectures,
       regionalInstitutions,
       onlineInstitutions,
-      nationalAverage: avg(regionalInstitutions.map((x) => x.averageRate)),
+      nationalAverage: combinedNationalAverage(regionalInstitutions, onlineInstitutions),
       onlineAverage: avg(onlineInstitutions.map((x) => x.averageRate))
     };
   }
@@ -570,6 +587,15 @@
           ? "R1の比較可能な普通預金金利を優先し、利用可能なR1データがない場合は全国JSONの開催中普通預金・普通貯金を表示します。普通預金には預入年限がないため期間切替は使用しません。"
           : "R1通常金利データの定期預金・定期貯金の店頭表示金利を表示します。キャンペーン金利は含みません。";
     }
+
+    if (!q("#heatmapIncludeNationwideInNationalAverage")) {
+      const host = help?.parentElement || product.parentElement;
+      const label = document.createElement("label");
+      label.className = "heatmap-national-scope-toggle";
+      label.innerHTML = `<input id="heatmapIncludeNationwideInNationalAverage" type="checkbox"> 全国平均に「全国向け・ネット銀行」を含める（都道府県平均には含めない）`;
+      host?.appendChild(label);
+      q("#heatmapIncludeNationwideInNationalAverage")?.addEventListener("change", renderUnifiedSafe);
+    }
   }
 
   function hideSeparateR1Heatmap() {
@@ -624,7 +650,14 @@
     const cards = q("#heatmapSummaryCards");
     if (cards && typeof summaryCardHtml === "function") {
       cards.innerHTML = [
-        summaryCardHtml("地域金融機関・全国平均", formatRate(data.nationalAverage), `${data.regionalInstitutions.length}金融機関を均等平均`, "national"),
+        summaryCardHtml(
+          includeNationwideInNationalAverage() ? "全金融機関・全国平均" : "地域金融機関・全国平均",
+          formatRate(data.nationalAverage),
+          includeNationwideInNationalAverage()
+            ? `${data.regionalInstitutions.length + data.onlineInstitutions.length}金融機関を均等平均（全国向けを含む）`
+            : `${data.regionalInstitutions.length}金融機関を均等平均（全国向けを除く）`,
+          "national"
+        ),
         summaryCardHtml("最高の都道府県", highest ? formatRate(highest.averageRate) : "—", allPrefecturesTied ? `${data.rankedPrefectures.length}都道府県が同率` : highest ? `${highest.prefecture}・${highest.institutionCount}金融機関` : "比較可能データなし", "highest"),
         summaryCardHtml("最低の都道府県", lowest ? formatRate(lowest.averageRate) : "—", allPrefecturesTied ? `${data.rankedPrefectures.length}都道府県が同率` : lowest ? `${lowest.prefecture}・${lowest.institutionCount}金融機関` : "比較可能データなし", "lowest"),
         summaryCardHtml("算出対象", `${data.rankedPrefectures.length} / 47`, `${data.rateLabel} ${data.regionalRecords.length}レコード`, "coverage")
@@ -715,10 +748,21 @@
     const headline = q("#onlineBankHeadline");
     const results = q("#onlineBankResults");
     if (!headline || !results) return;
+    const card = results.closest(".online-bank-card");
+    const title = card?.querySelector("h3");
+    const description = card?.querySelector(".heatmap-card-heading .muted");
+    const selectedTypes = data.institutionTypes || [];
+    const typeLabel = selectedTypes.length === 1 ? selectedTypes[0] : "選択した金融機関種別";
+    if (title) title.textContent = selectedTypes.length === 1 && selectedTypes[0] === "ネット銀行"
+      ? "全国対応・ネット銀行"
+      : `${typeLabel}・全国向けランキング`;
+    if (description) description.textContent = selectedTypes.length
+      ? "上で選択した金融機関種別に一致する全国向け金融機関だけを表示します。"
+      : "金融機関種別が未選択のため、全国向け金融機関をすべて表示します。";
     const institutions = data.onlineInstitutions || [];
     headline.textContent = institutions.length ? `平均 ${formatRate(data.onlineAverage)} / ${institutions.length}金融機関` : "比較可能データなし";
     if (!institutions.length) {
-      results.innerHTML = '<div class="heatmap-empty">選択条件に一致する全国向け・ネット銀行データがありません。</div>';
+      results.innerHTML = `<div class="heatmap-empty">${typeLabel}に一致する全国向けデータがありません。</div>`;
       return;
     }
     const rows = data.mode === "campaign"

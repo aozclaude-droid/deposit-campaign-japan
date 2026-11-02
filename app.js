@@ -863,7 +863,8 @@ function buildHeatmapData() {
     && !record._ordinaryNationwideOnly
     && PREFECTURE_RANK.has(record.prefecture)
     && (!typeFilterActive || institutionTypes.has(record.institution_type)));
-  const onlineRecords = termRecords.filter((record) => /ネット銀行/.test(record.institution_type) || record._ordinaryNationwideOnly);
+  const onlineRecords = termRecords.filter((record) => (/ネット銀行/.test(record.institution_type) || record._ordinaryNationwideOnly)
+    && (!typeFilterActive || institutionTypes.has(record.institution_type)));
   const byPrefectureRecords = new Map(PREFECTURE_ORDER.map((prefecture) => [prefecture, []]));
   regionalRecords.forEach((record) => byPrefectureRecords.get(record.prefecture)?.push(record));
   const prefectures = new Map();
