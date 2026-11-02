@@ -767,7 +767,7 @@ function ordinaryHistorySmallBalanceScore(row) {
   return 3;
 }
 function ordinaryHeatmapRecords() {
-  const latest = new Map();
+  const grouped = new Map();
   state.baseRateHistory.forEach((row) => {
     const family = text(row.product_family).toUpperCase();
     const label = text(row.product_label || row.product_type);
@@ -783,36 +783,58 @@ function ordinaryHeatmapRecords() {
     const institutionType = text(row.institution_type_normalized || row.institution_type_raw || row.institution_type).trim();
     const prefecture = text(row.prefecture).trim();
     const key = [institution,prefecture,institutionType].join("\u241f");
-    const date = from || ordinaryHistoryDate(row.source_as_of_date);
-    const current = latest.get(key);
-    if (!current || date > current.date) latest.set(key,{date,rows:[row]});
-    else if (date === current.date) current.rows.push(row);
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(row);
   });
-  return [...latest.values()].map((item) => item.rows.slice().sort((a,b) => ordinaryHistorySmallBalanceScore(a)-ordinaryHistorySmallBalanceScore(b)
-    || Number(b.rate_percent)-Number(a.rate_percent))[0]).filter(Boolean).map((row) => {
-      const institutionType = text(row.institution_type_normalized || row.institution_type_raw || row.institution_type).trim();
-      const nationwideOnly = text(row.ranking_scope) === "NATIONWIDE_ONLY" || text(row.prefecture_aggregation_eligible) === "0";
+  return [...grouped.values()].map((rows) => {
+      // Keep only the newest observation for each product/condition variant.
+      const variants = new Map();
+      rows.forEach((row) => {
+        const variantKey = [
+          text(row.base_rate_role), text(row.product_label), text(row.amount_band),
+          text(row.rate_condition), text(row.eligibility_conditions)
+        ].join("\u241f");
+        const date = ordinaryHistoryDate(row.effective_from || row.source_as_of_date);
+        const current = variants.get(variantKey);
+        if (!current || date >= current.date) variants.set(variantKey, { date, row });
+      });
+      const currentRows = [...variants.values()].map((item) => item.row);
+      const standardRows = currentRows.filter((row) => text(row.base_rate_role) === "STANDARD_BASE_RATE");
+      if (!standardRows.length) return null;
+      const newestStandardDate = standardRows.reduce((latest, row) => {
+        const date = ordinaryHistoryDate(row.effective_from || row.source_as_of_date);
+        return date > latest ? date : latest;
+      }, "");
+      const standardRow = standardRows.filter((row) => ordinaryHistoryDate(row.effective_from || row.source_as_of_date) === newestStandardDate)
+        .sort((a,b) => ordinaryHistorySmallBalanceScore(a)-ordinaryHistorySmallBalanceScore(b)
+          || Number(b.rate_percent)-Number(a.rate_percent))[0];
+      const maximumRow = currentRows.slice().sort((a,b) => Number(b.rate_percent)-Number(a.rate_percent))[0] || standardRow;
+      const standardRate = Number(standardRow.rate_percent);
+      const maximumRate = Math.max(standardRate, Number(maximumRow.rate_percent));
+      const institutionType = text(standardRow.institution_type_normalized || standardRow.institution_type_raw || standardRow.institution_type).trim();
+      const nationwideOnly = text(standardRow.ranking_scope) === "NATIONWIDE_ONLY" || text(standardRow.prefecture_aggregation_eligible) === "0";
       return {
-        institution_name:text(row.institution_name).trim(),
+        institution_name:text(standardRow.institution_name).trim(),
         institution_type:institutionType,
-        prefecture:text(row.prefecture).trim(),
-        region:canonicalRegion(row.region,row.prefecture),
+        prefecture:text(standardRow.prefecture).trim(),
+        region:canonicalRegion(standardRow.region,standardRow.prefecture),
         product_type:"普通預金",
-        campaign_name:text(row.product_label || "普通預金"),
-        campaign_start_date:ordinaryHistoryDate(row.effective_from || row.source_as_of_date),
-        campaign_end_date:ordinaryHistoryDate(row.effective_to),
+        campaign_name:text(maximumRow.product_label || standardRow.product_label || "普通預金"),
+        campaign_start_date:ordinaryHistoryDate(maximumRow.effective_from || maximumRow.source_as_of_date),
+        campaign_end_date:ordinaryHistoryDate(maximumRow.effective_to),
         term:"",
-        interest_rate:`${row.rate_percent}％`,
-        rate_condition:text(row.amount_band),
+        interest_rate:`${maximumRate}％`,
+        rate_condition:text(maximumRow.rate_condition || maximumRow.amount_band),
         status:"開催中",
         _analyticsTermKey:null,
-        _comparableRate:Number(row.rate_percent),
-        _standardComparableRate:Number(row.rate_percent),
-        _maximumComparableRate:Number(row.rate_percent),
+        _comparableRate:maximumRate,
+        _standardComparableRate:standardRate,
+        _maximumComparableRate:maximumRate,
         _ordinaryNationwideOnly:nationwideOnly,
-        _ordinarySourceRow:row
+        _ordinarySourceRow:maximumRow,
+        _ordinaryStandardSourceRow:standardRow
       };
-    });
+    }).filter(Boolean);
 }
 
 function buildHeatmapData() {
