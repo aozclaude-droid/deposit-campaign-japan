@@ -23,8 +23,8 @@
     ["campaign", "キャンペーン預金・貯金"]
   ];
   const INSTITUTION_TYPE_ORDER = [
-    "都市銀行", "地方銀行", "信託銀行", "その他銀行",
-    "信用金庫", "信用組合", "JA等", "労働金庫", "ゆうちょ銀行"
+    "都市銀行", "地方銀行", "ネット銀行", "その他銀行",
+    "信用金庫", "信用組合", "JA等", "労働金庫"
   ];
 
   const PREFECTURES = [
@@ -103,11 +103,15 @@
   }
 
   function normalizeType(value, name = "") {
+    if (typeof window.canonicalDepositInstitutionType === "function") {
+      return window.canonicalDepositInstitutionType(value, name);
+    }
     let t = String(value || "").replace(/\s+/g, "");
     if (["JA", "JA等", "JAバンク", "JAマリンバンク", "JFマリンバンク", "農業協同組合", "農協"].includes(t)) t = "JA等";
     if (["地銀", "地方銀行", "第二地銀", "第二地方銀行"].includes(t)) t = "地方銀行";
     if (["ネット銀行", "ネット銀行等", "新たな形態の銀行", "インターネット銀行"].includes(t)) t = "ネット銀行";
-    if (["その他銀行", "その他の銀行", "銀行", "政府系金融機関", "外国銀行", "外国銀行（在日拠点）"].includes(t)) t = "その他銀行";
+    if (["信託銀行", "その他銀行", "その他の銀行", "銀行", "政府系金融機関", "外国銀行", "外国銀行（在日拠点）"].includes(t)) t = "その他銀行";
+    if (t === "ゆうちょ銀行") t = "都市銀行";
     if (/商工中金|商工組合中央金庫/.test(name)) t = "その他銀行";
     if (/イオン銀行/.test(name)) t = "ネット銀行";
     if (!t && (/^JA/.test(name) || /農業協同組合|農協/.test(name))) t = "JA等";
@@ -132,7 +136,7 @@
     const rows = [];
     try { if (Array.isArray(state.records)) rows.push(...state.records); } catch (_) {}
     rows.push(...R1.rows, ...R1.historyRows);
-    const available = new Set(rows.map(instType).filter((type) => type && type !== "ネット銀行"));
+    const available = new Set(rows.map(instType).filter(Boolean));
     if (!available.size) return;
 
     const known = new Set(INSTITUTION_TYPE_ORDER);

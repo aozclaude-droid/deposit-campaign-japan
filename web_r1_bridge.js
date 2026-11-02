@@ -49,15 +49,18 @@
   ));
 
   const inst = (row) => String(pick(row, "institution_name", "金融機関名")).trim();
-  const INSTITUTION_TYPE_ORDER = ["都市銀行","地方銀行","信託銀行","ネット銀行","その他銀行","信用金庫","信用組合","JA等","労働金庫","ゆうちょ銀行"];
+  const INSTITUTION_TYPE_ORDER = window.DEPOSIT_INSTITUTION_TYPE_ORDER || ["都市銀行","地方銀行","ネット銀行","その他銀行","信用金庫","信用組合","JA等","労働金庫"];
   function canonicalInstitutionType(value, institutionName = "") {
+    if (typeof window.canonicalDepositInstitutionType === "function") {
+      return window.canonicalDepositInstitutionType(value, institutionName);
+    }
     let type = String(value || "").trim();
     const name = String(institutionName || "").trim();
     if (["新たな形態の銀行","ネット銀行等","インターネット銀行"].includes(type)) type = "ネット銀行";
     else if (["地銀","第二地銀","第二地方銀行"].includes(type)) type = "地方銀行";
-    else if (type === "その他の銀行") type = "その他銀行";
+    else if (["信託銀行","その他の銀行"].includes(type)) type = "その他銀行";
     else if (["JA","農業協同組合","信用農業協同組合連合会"].includes(type)) type = "JA等";
-    if (name === "ゆうちょ銀行") type = "ゆうちょ銀行";
+    if (name === "ゆうちょ銀行" || type === "ゆうちょ銀行") type = "都市銀行";
     return type;
   }
   const instType = (row) => canonicalInstitutionType(pick(row, "institution_type_normalized", "institution_type", "金融機関種別", "institution_type_raw"), inst(row));

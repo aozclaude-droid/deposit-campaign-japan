@@ -618,7 +618,7 @@ function resetHeatmapControls(render = true) {
   $("#heatmapProductFilter").value = products.includes("定期預金") ? "定期預金" : (products[0] || "");
   $("#heatmapRateBasis").value = "maximum";
   syncHeatmapTermControls();
-  setSelectedValues("#heatmapInstitutionTypeFilter", uniqueSorted("institution_type").filter((value) => value !== "ネット銀行"));
+  setSelectedValues("#heatmapInstitutionTypeFilter", institutionTypeOptions());
   setSelectedValues("#heatmapStatusFilter", state.records.some((record) => record.status === "開催中") ? ["開催中"] : []);
   $("#heatmapCampaignDateFrom").value = "";
   $("#heatmapCampaignDateTo").value = "";
@@ -1097,26 +1097,33 @@ function fillSelect(id, values) {
   $(id).innerHTML = values.map((v) => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
 }
 const INSTITUTION_TYPE_ORDER = [
-  "都市銀行", "地方銀行", "信託銀行", "ネット銀行", "その他銀行",
-  "信用金庫", "信用組合", "JA等", "労働金庫", "ゆうちょ銀行"
+  "都市銀行", "地方銀行", "ネット銀行", "その他銀行",
+  "信用金庫", "信用組合", "JA等", "労働金庫"
 ];
 function canonicalInstitutionType(value, institutionName = "") {
   let type = text(value).replace(/\s+/g, "");
-  const name = text(institutionName);
+  const name = text(institutionName).replace(/\s+/g, "");
   if (["JA", "JA等", "JAバンク", "JAマリンバンク", "JFマリンバンク", "農業協同組合", "農協"].includes(type)) {
     type = "JA等";
   } else if (["地銀", "地方銀行", "第二地銀", "第二地方銀行"].includes(type)) {
     type = "地方銀行";
   } else if (["ネット銀行", "ネット銀行等", "新たな形態の銀行", "インターネット銀行"].includes(type)) {
     type = "ネット銀行";
-  } else if (["その他銀行", "その他の銀行", "銀行", "政府系金融機関", "外国銀行", "外国銀行（在日拠点）"].includes(type)) {
+  } else if (["信託銀行", "その他銀行", "その他の銀行", "銀行", "政府系金融機関", "外国銀行", "外国銀行（在日拠点）"].includes(type)) {
     type = "その他銀行";
+  } else if (type === "ゆうちょ銀行") {
+    type = "都市銀行";
   }
+  if (/^(三菱UFJ銀行|三井住友銀行|みずほ銀行|りそな銀行|埼玉りそな銀行|ゆうちょ銀行)/.test(name)) type = "都市銀行";
+  if (/^(SMBC信託銀行|みずほ信託銀行|三井住友信託銀行|三菱UFJ信託銀行|野村信託銀行|オリックス銀行)/.test(name)) type = "その他銀行";
+  if (/^(PayPay銀行|UI銀行|auじぶん銀行|みんなの銀行|イオン銀行|セブン銀行|ソニー銀行|ローソン銀行|楽天銀行|住信SBIネット銀行|GMOあおぞらネット銀行|大和ネクスト銀行|０１銀行|01銀行|ドコモSMTBネット銀行)/.test(name)) type = "ネット銀行";
+  if (/^(愛媛銀行|群馬銀行|四国銀行|千葉興業銀行)/.test(name)) type = "地方銀行";
   if (name.includes("商工中金") || name.includes("商工組合中央金庫")) type = "その他銀行";
-  if (name.startsWith("イオン銀行")) type = "ネット銀行";
   if (!type && (/^JA/.test(name) || /農業協同組合|農協/.test(name))) type = "JA等";
   return type;
 }
+window.DEPOSIT_INSTITUTION_TYPE_ORDER = [...INSTITUTION_TYPE_ORDER];
+window.canonicalDepositInstitutionType = canonicalInstitutionType;
 function institutionTypeOptions({ includeOnline = true } = {}) {
   const available = new Set(state.records.map((record) => record.institution_type).filter(Boolean));
   const ordered = INSTITUTION_TYPE_ORDER.filter((type) => available.has(type) && (includeOnline || type !== "ネット銀行"));
@@ -1312,7 +1319,7 @@ function initializeUi() {
   fillSelect("#analyticsProductFilter", uniqueSorted("product_type"));
   resetAnalyticsControls(false);
   fillSelect("#heatmapProductFilter", uniqueSorted("product_type"));
-  fillSelect("#heatmapInstitutionTypeFilter", institutionTypeOptions({ includeOnline: false }));
+  fillSelect("#heatmapInstitutionTypeFilter", institutionTypeOptions());
   fillSelect("#heatmapStatusFilter", ["開催中", "開催予定", "終了済み", "要確認"].filter((status) => state.records.some((record) => record.status === status)));
   resetHeatmapControls(false);
   $("#heatmapRateBasis").value = "maximum";
