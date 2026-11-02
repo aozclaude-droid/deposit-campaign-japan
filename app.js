@@ -865,6 +865,7 @@ function buildHeatmapData() {
     && (!typeFilterActive || institutionTypes.has(record.institution_type)));
   const onlineRecords = termRecords.filter((record) => (/ネット銀行/.test(record.institution_type) || record._ordinaryNationwideOnly)
     && (!typeFilterActive || institutionTypes.has(record.institution_type)));
+  const selectedTypeRankingRecords = termRecords.filter((record) => !typeFilterActive || institutionTypes.has(record.institution_type));
   const byPrefectureRecords = new Map(PREFECTURE_ORDER.map((prefecture) => [prefecture, []]));
   regionalRecords.forEach((record) => byPrefectureRecords.get(record.prefecture)?.push(record));
   const prefectures = new Map();
@@ -888,6 +889,7 @@ function buildHeatmapData() {
     .sort((a, b) => heatmapScaleRate(b.averageRate) - heatmapScaleRate(a.averageRate) || comparePrefectures(a.prefecture, b.prefecture));
   const allRegionalInstitutions = buildInstitutionRateGroups(regionalRecords);
   const onlineInstitutions = buildInstitutionRateGroups(onlineRecords);
+  const selectedTypeRankingInstitutions = buildInstitutionRateGroups(selectedTypeRankingRecords);
   return {
     term,
     products: [...products],
@@ -899,6 +901,9 @@ function buildHeatmapData() {
     rankedPrefectures,
     regionalInstitutions: allRegionalInstitutions,
     onlineInstitutions,
+    selectedTypeRankingRecords,
+    selectedTypeRankingInstitutions,
+    selectedTypeRankingAverage: average(selectedTypeRankingInstitutions.map((item) => item.averageRate)),
     nationalAverage: average(allRegionalInstitutions.map((item) => item.averageRate)),
     onlineAverage: average(onlineInstitutions.map((item) => item.averageRate))
   };
@@ -1033,14 +1038,15 @@ function renderHeatmapSelection() {
 }
 function renderOnlineBankSection() {
   const data = state.heatmapData;
-  const institutions = data?.onlineInstitutions || [];
-  $("#onlineBankHeadline").textContent = institutions.length ? `平均 ${formatRate(data.onlineAverage)} / ${fmt(institutions.length)}行` : "比較可能データなし";
+  const institutions = data?.selectedTypeRankingInstitutions || [];
+  const rankingRecords = data?.selectedTypeRankingRecords || [];
+  $("#onlineBankHeadline").textContent = institutions.length ? `平均 ${formatRate(data.selectedTypeRankingAverage)} / ${fmt(institutions.length)}行` : "比較可能データなし";
   if (!institutions.length) {
-    $("#onlineBankResults").innerHTML = '<div class="heatmap-empty">選択条件に一致するネット銀行データがありません。</div>';
+    $("#onlineBankResults").innerHTML = '<div class="heatmap-empty">選択した金融機関種別に一致するランキングデータがありません。</div>';
     return;
   }
   const highestInstitution = [...institutions].sort((a, b) => b.maximumRate - a.maximumRate || a.institution.localeCompare(b.institution, "ja"))[0];
-  $("#onlineBankResults").innerHTML = `<div class="online-bank-summary">${summaryCardHtml("ネット銀行平均", formatRate(data.onlineAverage), `${fmt(institutions.length)}行を均等平均`, "online")}${summaryCardHtml("最高金利", formatRate(highestInstitution.maximumRate), highestInstitution.institution, "highest")}${summaryCardHtml("比較可能明細", `${fmt(data.onlineRecords.length)}件`, `${data.term.label}・選択商品区分`, "coverage")}</div>
+  $("#onlineBankResults").innerHTML = `<div class="online-bank-summary">${summaryCardHtml("選択業種平均", formatRate(data.selectedTypeRankingAverage), `${fmt(institutions.length)}行を均等平均`, "online")}${summaryCardHtml("最高金利", formatRate(highestInstitution.maximumRate), highestInstitution.institution, "highest")}${summaryCardHtml("比較可能明細", `${fmt(rankingRecords.length)}件`, `${data.term.label}・選択商品区分`, "coverage")}</div>
     <div class="table-scroll"><table class="heatmap-detail-table online-bank-table"><thead><tr><th>順位</th><th>ネット銀行</th><th>機関内平均</th><th>最高金利</th><th>明細数</th><th>検索</th></tr></thead><tbody>${institutions.map((item, index) => `<tr><td>${index + 1}</td><th scope="row">${esc(item.institution)}</th><td class="rate">${esc(formatRate(item.averageRate))}</td><td>${esc(formatRate(item.maximumRate))}</td><td>${fmt(item.records.length)}件</td><td><button class="btn small heatmap-search-institution" data-institution="${esc(item.institution)}" data-online="true" type="button">検索</button></td></tr>`).join("")}</tbody></table></div>`;
 }
 function transferHeatmapToTimeline({ prefecture = "", institution = "", online = false } = {}) {

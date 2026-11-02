@@ -413,6 +413,7 @@
 
     const regionalRows = rows.filter((row) => !isNetwork(row) && PREF_SET.has(pref(row)) && (!typeActive || selectedTypes.has(instType(row))));
     const onlineRows = rows.filter((row) => isNetwork(row) && (!typeActive || selectedTypes.has(instType(row))));
+    const selectedTypeRankingRows = rows.filter((row) => !typeActive || selectedTypes.has(instType(row)));
     const byPref = new Map(PREFECTURES.map((p) => [p, []]));
     regionalRows.forEach((row) => byPref.get(pref(row))?.push(row));
 
@@ -438,6 +439,7 @@
       .sort((a, b) => scaleRate(b.averageRate) - scaleRate(a.averageRate) || PREFECTURES.indexOf(a.prefecture) - PREFECTURES.indexOf(b.prefecture));
     const regionalInstitutions = representativeInstitutions(regionalRows);
     const onlineInstitutions = representativeInstitutions(onlineRows);
+    const selectedTypeRankingInstitutions = representativeInstitutions(selectedTypeRankingRows);
 
     return {
       mode,
@@ -452,6 +454,9 @@
       rankedPrefectures,
       regionalInstitutions,
       onlineInstitutions,
+      selectedTypeRankingRecords: selectedTypeRankingRows,
+      selectedTypeRankingInstitutions,
+      selectedTypeRankingAverage: avg(selectedTypeRankingInstitutions.map((x) => x.averageRate)),
       nationalAverage: combinedNationalAverage(regionalInstitutions, onlineInstitutions),
       onlineAverage: avg(onlineInstitutions.map((x) => x.averageRate)),
       ordinarySource,
@@ -480,6 +485,7 @@
 
     const regionalRecords = records.filter((record) => record.institution_type !== "ネット銀行" && PREF_SET.has(record.prefecture) && (!typeActive || types.has(record.institution_type)));
     const onlineRecords = records.filter((record) => record.institution_type === "ネット銀行" && (!typeActive || types.has(record.institution_type)));
+    const selectedTypeRankingRecords = records.filter((record) => !typeActive || types.has(record.institution_type));
     const byPref = new Map(PREFECTURES.map((p) => [p, []]));
     regionalRecords.forEach((record) => byPref.get(record.prefecture)?.push(record));
     const prefectures = new Map();
@@ -503,6 +509,7 @@
       .sort((a, b) => scaleRate(b.averageRate) - scaleRate(a.averageRate) || PREFECTURES.indexOf(a.prefecture) - PREFECTURES.indexOf(b.prefecture));
     const regionalInstitutions = typeof buildInstitutionRateGroups === "function" ? buildInstitutionRateGroups(regionalRecords) : [];
     const onlineInstitutions = typeof buildInstitutionRateGroups === "function" ? buildInstitutionRateGroups(onlineRecords) : [];
+    const selectedTypeRankingInstitutions = typeof buildInstitutionRateGroups === "function" ? buildInstitutionRateGroups(selectedTypeRankingRecords) : [];
     return {
       mode: "campaign",
       label: "キャンペーン預金・貯金",
@@ -519,6 +526,9 @@
       rankedPrefectures,
       regionalInstitutions,
       onlineInstitutions,
+      selectedTypeRankingRecords,
+      selectedTypeRankingInstitutions,
+      selectedTypeRankingAverage: avg(selectedTypeRankingInstitutions.map((x) => x.averageRate)),
       nationalAverage: combinedNationalAverage(regionalInstitutions, onlineInstitutions),
       onlineAverage: avg(onlineInstitutions.map((x) => x.averageRate))
     };
@@ -753,22 +763,22 @@
     const description = card?.querySelector(".heatmap-card-heading .muted");
     const selectedTypes = data.institutionTypes || [];
     const typeLabel = selectedTypes.length === 1 ? selectedTypes[0] : "選択した金融機関種別";
-    if (title) title.textContent = selectedTypes.length === 1 && selectedTypes[0] === "ネット銀行"
-      ? "全国対応・ネット銀行"
-      : `${typeLabel}・全国向けランキング`;
+    if (title) title.textContent = `${typeLabel}・金融機関ランキング`;
     if (description) description.textContent = selectedTypes.length
-      ? "上で選択した金融機関種別に一致する全国向け金融機関だけを表示します。"
-      : "金融機関種別が未選択のため、全国向け金融機関をすべて表示します。";
-    const institutions = data.onlineInstitutions || [];
-    headline.textContent = institutions.length ? `平均 ${formatRate(data.onlineAverage)} / ${institutions.length}金融機関` : "比較可能データなし";
+      ? "上で選択した金融機関種別に属する全金融機関を金利順に表示します。"
+      : "金融機関種別が未選択のため、全金融機関を金利順に表示します。";
+    const institutions = data.selectedTypeRankingInstitutions || [];
+    const rankingRecords = data.selectedTypeRankingRecords || [];
+    headline.textContent = institutions.length ? `平均 ${formatRate(data.selectedTypeRankingAverage)} / ${institutions.length}金融機関` : "比較可能データなし";
     if (!institutions.length) {
-      results.innerHTML = `<div class="heatmap-empty">${typeLabel}に一致する全国向けデータがありません。</div>`;
+      results.innerHTML = `<div class="heatmap-empty">${typeLabel}に一致するランキングデータがありません。</div>`;
       return;
     }
     const rows = data.mode === "campaign"
       ? institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${x.institution}</th><td class="rate">${formatRate(x.averageRate)}</td><td>${formatRate(x.maximumRate)}</td><td>${x.records.length}件</td></tr>`).join("")
       : institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${x.institution}</th><td>${x.institution_type}</td><td class="rate">${formatRate(x.averageRate)}</td><td>${x.source_date || "—"}</td></tr>`).join("");
-    results.innerHTML = `<div class="table-scroll"><table class="heatmap-detail-table online-bank-table"><thead><tr><th>順位</th><th>金融機関</th>${data.mode === "campaign" ? "<th>機関内平均</th><th>最高金利</th><th>明細数</th>" : `<th>種別</th><th>${data.rateLabel}</th><th>基準日</th>`}</tr></thead><tbody>${rows}</tbody></table></div>`;
+    const highestInstitution = institutions.slice().sort((a, b) => b.maximumRate - a.maximumRate || a.institution.localeCompare(b.institution, "ja"))[0];
+    results.innerHTML = `<div class="online-bank-summary">${summaryCardHtml("選択業種平均", formatRate(data.selectedTypeRankingAverage), `${institutions.length}金融機関を均等平均`, "online")}${summaryCardHtml("最高金利", formatRate(highestInstitution.maximumRate), highestInstitution.institution, "highest")}${summaryCardHtml("比較可能明細", `${rankingRecords.length}件`, data.label, "coverage")}</div><div class="table-scroll"><table class="heatmap-detail-table online-bank-table"><thead><tr><th>順位</th><th>金融機関</th>${data.mode === "campaign" ? "<th>機関内平均</th><th>最高金利</th><th>明細数</th>" : `<th>種別</th><th>${data.rateLabel}</th><th>基準日</th>`}</tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
   function tooltip(event, prefecture) {
