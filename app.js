@@ -35,28 +35,29 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261102-3";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261102-1";
+const DATA_URL = "campaign_all.json?v=20261108-1";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261108-1";
 const LATEST_UPDATE = {
-  publishedOn: "2026-11-02",
-  label: "2026年11月2日 全国巡回・Codex照査結果を反映",
-  expectedTotalRecords: 16983,
-  addedStartIndex: 16946,
-  addedCount: 37,
+  publishedOn: "2026-11-08",
+  label: "2026年11月8日 全国巡回・Codex照査結果を反映",
+  expectedTotalRecords: 17078,
+  addedStartIndex: 16983,
+  addedCount: 95,
+  updatedCount: 4,
   movedToBaseHistoryCount: 31,
   movedInstitutionCount: 11,
   reclassifiedCount: 0,
   ordinaryCampaignRetainedCount: 0,
   ordinaryBaseAddedCount: 0,
-  baseHistoryTotalCount: 5296,
+  baseHistoryTotalCount: 5497,
   ordinaryInstitutionTotalCount: 11,
-  reviewedInstitutionCount: 8,
-  withheldInstitutionCount: 255,
-  segmentLabel: "8金融機関・9キャンペーン",
-  segmentMetricLabel: "追加金融機関",
+  reviewedInstitutionCount: 39,
+  withheldInstitutionCount: 0,
+  segmentLabel: "39金融機関・51キャンペーン",
+  segmentMetricLabel: "対象金融機関",
   primaryMetricLabel: "新しく追加",
-  leadText: "全国巡回資料をChatGPT/Codexで照査し、公式資料で条件を確定できた8金融機関・9キャンペーン・37明細を追加しました。Gemini APIは使用していません。",
-  compactText: "8金融機関・9キャンペーン・37明細を本番反映",
+  leadText: "全国巡回資料をChatGPT/Codexで照査し、公式資料で条件を確定できた39金融機関・51キャンペーン・95明細を追加し、募集上限到達による早期終了4明細を更新しました。Gemini APIは使用していません。",
+  compactText: "39金融機関・51キャンペーン・95明細を追加、早期終了4明細を更新",
   ordinaryAddedInstitutions: [],
   updatedRecordKeys: []
 };
@@ -1217,16 +1218,16 @@ function renderLatestUpdate() {
   $("#latestUpdateLead").textContent = LATEST_UPDATE.leadText || `${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.reviewedInstitutionCount)}先を再照査し、現行金利を確認できた${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先を普通預金金利履歴へ追加しました。`;
   $("#latestUpdateMetrics").innerHTML = [
     [LATEST_UPDATE.primaryMetricLabel || "新しく追加", LATEST_UPDATE.addedCount, "件"],
+    ["内容を更新", LATEST_UPDATE.updatedCount || updated.length, "件"],
     [LATEST_UPDATE.segmentMetricLabel, LATEST_UPDATE.reviewedInstitutionCount, "先"],
-    ["追加照査継続", LATEST_UPDATE.withheldInstitutionCount, "資料"],
     ["現在の総明細", LATEST_UPDATE.expectedTotalRecords, "件"]
   ].map(([label, value, unit]) => `<div class="latest-update-metric"><span>${esc(label)}</span><strong>${fmt(value)}</strong><small>${unit}</small></div>`).join("");
 
   $("#latestUpdateCompact").innerHTML = `<div class="latest-update-summary-text">
     <strong>${LATEST_UPDATE.compactText || `${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先・${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}明細を普通預金金利履歴へ追加`}</strong>
   </div><div class="latest-update-region-list" aria-label="今回の整理内容">
-    <span>今回追加 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}金融機関・9キャンペーン</span>
-    <span>新規・更新の追加照査継続 ${fmt(LATEST_UPDATE.withheldInstitutionCount)}資料</span>
+    <span>今回追加 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}金融機関・51キャンペーン</span>
+    <span>募集上限到達による早期終了 ${fmt(LATEST_UPDATE.updatedCount || 0)}明細を更新</span>
   </div>`;
 
   const detailsToggle = $("#latestUpdateDetailsToggle");
