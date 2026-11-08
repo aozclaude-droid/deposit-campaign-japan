@@ -46,6 +46,8 @@ body.institution-detail-mode #timelineTabPanel > :not(#institutionDetailPanel) {
 .institution-summary-grid small { font-size: 11px; overflow-wrap: anywhere; }
 .institution-subpanel { min-width: 0; padding: 18px; border: 1px solid #d6e2ef; border-radius: 14px; background: #fff; }
 .institution-nearby-columns { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.institution-nearby-filter { display: grid; gap: 5px; min-width: 220px; color: #526780; font-size: 11px; font-weight: 800; }
+.institution-nearby-filter select { width: 100%; min-height: 40px; padding: 8px 34px 8px 11px; border: 1px solid #b9cbe0; border-radius: 9px; background: #fff; color: #173f77; font: inherit; font-size: 13px; }
 .institution-nearby-group { min-width: 0; overflow: hidden; border: 1px solid #dbe5f0; border-radius: 12px; background: #f8fbff; }
 .institution-nearby-group-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 13px; border-bottom: 1px solid #dbe5f0; background: #eef5fd; }
 .institution-nearby-group-heading h4 { margin: 0; color: #173f77; font-size: 14px; }

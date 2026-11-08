@@ -10,7 +10,8 @@ const institutionDetailState = {
   tiborDailyRecords: [],
   seriesKey: "",
   termKey: "all",
-  tiborTenor: "one_month"
+  tiborTenor: "one_month",
+  nearbyInstitutionType: ""
 };
 
 const institutionDetailText = (value) => value == null ? "" : String(value);
@@ -489,6 +490,13 @@ function institutionDetailRenderBaseTable(baseRows) {
   }).join("") : `<tr><td colspan="8" class="table-empty">普通預金・店頭金利の履歴はありません。</td></tr>`;
 }
 
+function institutionDetailInstitutionType(row) {
+  const raw = institutionDetailText(row.institution_type || row.institution_type_normalized || row.institution_type_raw).trim();
+  return typeof window.canonicalDepositInstitutionType === "function"
+    ? window.canonicalDepositInstitutionType(raw, row.institution_name)
+    : raw;
+}
+
 function institutionDetailNearbyCampaignGroups(name, prefecture) {
   const canonicalPrefecture = institutionDetailPrefecture(prefecture);
   const neighbors = new Set(INSTITUTION_NEIGHBOR_PREFECTURES[canonicalPrefecture] || []);
@@ -498,8 +506,9 @@ function institutionDetailNearbyCampaignGroups(name, prefecture) {
     const rowPrefecture = institutionDetailPrefecture(row.prefecture);
     const scope = rowPrefecture === canonicalPrefecture ? "same" : neighbors.has(rowPrefecture) ? "nearby" : "";
     if (!scope) return;
-    const key = [scope, row.institution_name, row.campaign_name, row.product_type].join("\u0000");
-    if (!grouped.has(key)) grouped.set(key, { scope, institution: row.institution_name, prefecture: rowPrefecture, productType: row.product_type, campaignName: row.campaign_name, status: row.status, rows: [] });
+    const institutionType = institutionDetailInstitutionType(row) || "業態不明";
+    const key = [scope, row.institution_name, institutionType, row.campaign_name, row.product_type].join("\u0000");
+    if (!grouped.has(key)) grouped.set(key, { scope, institution: row.institution_name, institutionType, prefecture: rowPrefecture, productType: row.product_type, campaignName: row.campaign_name, status: row.status, rows: [] });
     grouped.get(key).rows.push(row);
   });
   return [...grouped.values()].map((group) => {
@@ -516,7 +525,7 @@ function institutionDetailNearbyCard(group) {
   const terms = group.terms.length ? group.terms.slice(0, 4).join("・") + (group.terms.length > 4 ? `ほか${group.terms.length - 4}件` : "") : "年限記載なし";
   const period = group.endDate ? `${group.endDate}まで` : "終了日未設定";
   return `<article class="institution-nearby-card">
-    <div class="institution-nearby-card-head"><button type="button" class="institution-table-link institution-detail-trigger" data-institution="${esc(group.institution)}">${esc(group.institution)}</button><span class="institution-nearby-badge">${esc(group.prefecture)}</span><span class="institution-nearby-badge">${esc(group.status)}</span></div>
+    <div class="institution-nearby-card-head"><button type="button" class="institution-table-link institution-detail-trigger" data-institution="${esc(group.institution)}">${esc(group.institution)}</button><span class="institution-nearby-badge">${esc(group.institutionType)}</span><span class="institution-nearby-badge">${esc(group.prefecture)}</span><span class="institution-nearby-badge">${esc(group.status)}</span></div>
     <strong class="institution-nearby-rate">${rate}</strong>
     <div class="institution-nearby-campaign">${esc(group.campaignName)}</div>
     <div class="institution-nearby-meta">${esc(group.productType || "商品区分不明")} / ${esc(terms)} / ${esc(period)}${group.productUrl ? ` / ${institutionDetailUrl(group.productUrl)}` : ""}</div>
@@ -528,13 +537,33 @@ function institutionDetailRenderNearby(name, prefecture) {
   const description = document.querySelector("#institutionNearbyDescription");
   if (!target) return;
   const canonicalPrefecture = institutionDetailPrefecture(prefecture);
-  const groups = institutionDetailNearbyCampaignGroups(name, canonicalPrefecture);
+  const allGroups = institutionDetailNearbyCampaignGroups(name, canonicalPrefecture);
+  const typeSelect = document.querySelector("#institutionNearbyTypeFilter");
+  const preferredOrder = Array.isArray(window.DEPOSIT_INSTITUTION_TYPE_ORDER) ? window.DEPOSIT_INSTITUTION_TYPE_ORDER : [];
+  const availableTypes = [...new Set(allGroups.map((group) => group.institutionType).filter(Boolean))]
+    .sort((a, b) => {
+      const ai = preferredOrder.indexOf(a);
+      const bi = preferredOrder.indexOf(b);
+      if (ai >= 0 || bi >= 0) return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi);
+      return a.localeCompare(b, "ja");
+    });
+  if (typeSelect) {
+    typeSelect.innerHTML = `<option value="">すべての業態</option>${availableTypes.map((type) => `<option value="${esc(type)}">${esc(type)}</option>`).join("")}`;
+    if (institutionDetailState.nearbyInstitutionType && availableTypes.includes(institutionDetailState.nearbyInstitutionType)) {
+      typeSelect.value = institutionDetailState.nearbyInstitutionType;
+    } else {
+      institutionDetailState.nearbyInstitutionType = "";
+      typeSelect.value = "";
+    }
+  }
+  const groups = allGroups.filter((group) => !institutionDetailState.nearbyInstitutionType || group.institutionType === institutionDetailState.nearbyInstitutionType);
   const neighbors = INSTITUTION_NEIGHBOR_PREFECTURES[canonicalPrefecture] || [];
   const sections = [
     { key: "same", title: `同じ都道府県（${canonicalPrefecture || "都道府県不明"}）`, detail: "同県", rows: groups.filter((group) => group.scope === "same") },
     { key: "nearby", title: "近隣県", detail: neighbors.join("・") || "隣接県未設定", rows: groups.filter((group) => group.scope === "nearby") }
   ];
-  description.textContent = canonicalPrefecture ? `${canonicalPrefecture}と近隣県で、現在開催中・開催予定のキャンペーンを表示します。金利の高い順です。` : "所在地を特定できないため、近隣キャンペーンを表示できません。";
+  const typeLabel = institutionDetailState.nearbyInstitutionType || "すべての業態";
+  description.textContent = canonicalPrefecture ? `${canonicalPrefecture}と近隣県の${typeLabel}について、現在開催中・開催予定のキャンペーンを表示します。金利の高い順です。` : "所在地を特定できないため、近隣キャンペーンを表示できません。";
   target.innerHTML = sections.map((section) => `<section class="institution-nearby-group">
     <div class="institution-nearby-group-heading"><h4>${esc(section.title)}</h4><span>${fmt(section.rows.length)}キャンペーン</span></div>
     <div class="institution-nearby-list">${section.rows.length ? section.rows.map(institutionDetailNearbyCard).join("") : `<div class="institution-nearby-empty">${esc(section.detail)}の現在のキャンペーンはありません。</div>`}</div>
@@ -566,7 +595,10 @@ function institutionDetailSetQuery(name) {
 
 function openInstitutionDetail(name, options = {}) {
   if (!name) return;
-  if (institutionDetailState.institution !== name) institutionDetailState.termKey = "all";
+  if (institutionDetailState.institution !== name) {
+    institutionDetailState.termKey = "all";
+    institutionDetailState.nearbyInstitutionType = "";
+  }
   institutionDetailState.institution = name;
   if (typeof setActiveView === "function") setActiveView("timeline", { updateHash: false, render: false });
   document.body.classList.add("institution-detail-mode");
@@ -619,6 +651,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelector("#institutionTiborTenor")?.addEventListener("change", (event) => {
     institutionDetailState.tiborTenor = event.target.value;
     renderInstitutionDetail();
+  });
+  document.querySelector("#institutionNearbyTypeFilter")?.addEventListener("change", (event) => {
+    institutionDetailState.nearbyInstitutionType = event.target.value;
+    const name = institutionDetailState.institution;
+    const sample = institutionDetailCampaignRows(name)[0] || institutionDetailBaseRows(name)[0] || {};
+    institutionDetailRenderNearby(name, sample.prefecture || "");
   });
   document.addEventListener("click", (event) => {
     const trigger = event.target.closest(".institution-detail-trigger");

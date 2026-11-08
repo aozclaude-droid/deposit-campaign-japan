@@ -211,6 +211,11 @@
 <section class="institution-subpanel institution-nearby-panel">
 <div class="institution-subpanel-heading">
 <div><h3>同県・近隣の現在のキャンペーン</h3><p class="muted" id="institutionNearbyDescription">同じ都道府県と隣接県で、現在開催中・開催予定の商品を比較します。</p></div>
+<label class="institution-nearby-filter">金融機関の業態
+<select id="institutionNearbyTypeFilter" aria-label="同県・近隣キャンペーンの金融機関業態">
+<option value="">すべての業態</option>
+</select>
+</label>
 </div>
 <div class="institution-nearby-columns" id="institutionNearbyCampaigns"></div>
 </section>
@@ -726,7 +731,7 @@
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
 <script defer="" src="app.js?v=20261108-1"></script>
-  <script defer src="institution_detail.js?v=20261031-14"></script>
+  <script defer src="institution_detail.js?v=20261108-1"></script>
   <script defer src="web_r1_bridge.js?v=20261103-1" data-r1-web-bridge="1"></script>
   <script defer src="./web_heatmap_unified_patch.js?v=20261103-1"></script>
 </body>
