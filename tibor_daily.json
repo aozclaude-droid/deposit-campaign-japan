@@ -4,9 +4,9 @@
     "series": "JBA Japanese Yen TIBOR daily observations",
     "unit": "percent_per_annum",
     "period_start": "2015-01-05",
-    "period_end": "2026-10-27",
-    "record_count": 2886,
-    "created_at": "2026-10-28T00:24:10+09:00",
+    "period_end": "2026-11-13",
+    "record_count": 2895,
+    "created_at": "2026-11-14T16:51:29+09:00",
     "source_page": "https://www.jbatibor.or.jp/rate/log.html",
     "current_month_page": "https://www.jbatibor.or.jp/rate/",
     "methodology": "Official daily Japanese Yen TIBOR observations. Campaign comparisons use the observation on the campaign start date; when the date is not a publication day, the immediately preceding published business-day observation is used.",
@@ -94,6 +94,11 @@
         "source_type": "current_month",
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYENTIBOR261027.pdf",
         "daily_rows_used": 18
+      },
+      {
+        "source_type": "current_month",
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYENTIBOR261113.pdf",
+        "daily_rows_used": 9
       }
     ]
   },
@@ -20299,6 +20304,69 @@
       "three_month": 1.71891,
       "six_month": 1.88091,
       "twelve_month": 1.62391
+    },
+    {
+      "date": "2026-11-02",
+      "one_month": 1.40618,
+      "three_month": 1.75645,
+      "six_month": 1.90591,
+      "twelve_month": 1.63391
+    },
+    {
+      "date": "2026-11-04",
+      "one_month": 1.40618,
+      "three_month": 1.75964,
+      "six_month": 1.90591,
+      "twelve_month": 1.63391
+    },
+    {
+      "date": "2026-11-05",
+      "one_month": 1.40618,
+      "three_month": 1.75964,
+      "six_month": 1.90591,
+      "twelve_month": 1.63391
+    },
+    {
+      "date": "2026-11-06",
+      "one_month": 1.40618,
+      "three_month": 1.78673,
+      "six_month": 1.92591,
+      "twelve_month": 1.63391
+    },
+    {
+      "date": "2026-11-09",
+      "one_month": 1.41982,
+      "three_month": 1.78673,
+      "six_month": 1.92591,
+      "twelve_month": 1.63391
+    },
+    {
+      "date": "2026-11-10",
+      "one_month": 1.41982,
+      "three_month": 1.78673,
+      "six_month": 1.92591,
+      "twelve_month": 1.63391
+    },
+    {
+      "date": "2026-11-11",
+      "one_month": 1.41982,
+      "three_month": 1.78673,
+      "six_month": 1.92591,
+      "twelve_month": 1.63391
+    },
+    {
+      "date": "2026-11-12",
+      "one_month": 1.41982,
+      "three_month": 1.78673,
+      "six_month": 1.92591,
+      "twelve_month": 1.63391
+    },
+    {
+      "date": "2026-11-13",
+      "one_month": 1.41982,
+      "three_month": 1.78673,
+      "six_month": 1.92591,
+      "twelve_month": 1.63391
     }
   ]
 }

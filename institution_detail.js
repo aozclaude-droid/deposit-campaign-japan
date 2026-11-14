@@ -1,7 +1,7 @@
 "use strict";
 
-const INSTITUTION_TIBOR_URL = "tibor_monthly.json?v=20261028-3";
-const INSTITUTION_TIBOR_DAILY_URL = "tibor_daily.json?v=20261028-2";
+const INSTITUTION_TIBOR_URL = "tibor_monthly.json?v=20261114-1";
+const INSTITUTION_TIBOR_DAILY_URL = "tibor_daily.json?v=20261114-1";
 const institutionDetailState = {
   institution: "",
   tiborMetadata: {},

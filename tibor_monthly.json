@@ -4,10 +4,10 @@
     "series": "JBA Japanese Yen TIBOR monthly arithmetic mean",
     "unit": "percent_per_annum",
     "period_start": "2015-01",
-    "period_end": "2026-10",
-    "month_count": 142,
-    "daily_observations_used": 2886,
-    "created_at": "2026-10-28T00:24:10+09:00",
+    "period_end": "2026-11",
+    "month_count": 143,
+    "daily_observations_used": 2895,
+    "created_at": "2026-11-14T16:51:29+09:00",
     "source_page": "https://www.jbatibor.or.jp/rate/log.html",
     "methodology": "Official daily Japanese Yen TIBOR observations from 2015 onward are aggregated into calendar-month arithmetic means. Only 1M, 3M, 6M, and 12M series are retained.",
     "notice": "Reference comparison only. JBA TIBOR Administration states that parties wishing to redistribute the source information should contact the administrator.",
@@ -94,6 +94,11 @@
         "source_type": "current_month",
         "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYENTIBOR261027.pdf",
         "daily_rows_used": 18
+      },
+      {
+        "source_type": "current_month",
+        "url": "https://www.jbatibor.or.jp/rate/pdf/JAPANESEYENTIBOR261113.pdf",
+        "daily_rows_used": 9
       }
     ]
   },
@@ -260,7 +265,7 @@
     },
     {
       "month": "2016-09",
-      "one_month": 0.03136,
+      "one_month": 0.03137,
       "three_month": 0.04841,
       "six_month": 0.05932,
       "twelve_month": 0.10854,
@@ -863,7 +868,7 @@
       "one_month": 0.06818,
       "three_month": 0.05682,
       "six_month": 0.13703,
-      "twelve_month": 0.18918,
+      "twelve_month": 0.18917,
       "daily_observations": 22
     },
     {
@@ -1141,7 +1146,7 @@
     {
       "month": "2025-11",
       "one_month": 0.60192,
-      "three_month": 0.80566,
+      "three_month": 0.80565,
       "six_month": 0.88091,
       "twelve_month": 0.85783,
       "daily_observations": 18
@@ -1233,6 +1238,14 @@
       "six_month": 1.86369,
       "twelve_month": 1.61947,
       "daily_observations": 18
+    },
+    {
+      "month": "2026-11",
+      "one_month": 1.41376,
+      "three_month": 1.77735,
+      "six_month": 1.91924,
+      "twelve_month": 1.63391,
+      "daily_observations": 9
     }
   ]
 }
