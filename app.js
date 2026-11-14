@@ -58,6 +58,7 @@ const LATEST_UPDATE = {
   primaryMetricLabel: "新しく追加",
   leadText: "全国巡回資料をChatGPT/Codexで照査し、公式資料で条件を確定できた9金融機関・9キャンペーン・40明細を追加しました。SBI新生銀行の新キャンペーンを含みます。Gemini APIは使用していません。",
   compactText: "9金融機関・9キャンペーン・40明細を追加",
+  featuredInstitutions: ["SBI新生銀行", "大光銀行", "JAレーク滋賀", "千葉興業銀行", "JAひがしうわ", "福井銀行", "JA菊池", "高知銀行", "南日本銀行"],
   ordinaryAddedInstitutions: [],
   updatedRecordKeys: []
 };
@@ -1228,6 +1229,7 @@ function renderLatestUpdate() {
   </div><div class="latest-update-region-list" aria-label="今回の整理内容">
     <span>今回追加 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}金融機関・9キャンペーン</span>
     <span>募集上限到達による早期終了 ${fmt(LATEST_UPDATE.updatedCount || 0)}明細を更新</span>
+    <span>対象金融機関：${(LATEST_UPDATE.featuredInstitutions || latestInstitutionItems.map(([institution]) => institution)).map(esc).join("、")}</span>
   </div>`;
 
   const detailsToggle = $("#latestUpdateDetailsToggle");
