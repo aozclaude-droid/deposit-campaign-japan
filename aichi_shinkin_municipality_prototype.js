@@ -113,10 +113,14 @@
     return item.institution_type || item.records?.[0]?.institution_type || "";
   }
 
-  function buildMunicipalities(item, branchData, geoJson) {
-    const institutions = (item?.institutions || [])
+  function buildMunicipalities(item, branchData, geoJson, data) {
+    const headquartersInstitutions = (item?.institutions || [])
       .filter((institution) => institutionType(institution) === "信用金庫")
       .filter((institution) => Number.isFinite(institution.averageRate));
+    const branchInstitutions = (data?.selectedTypeRankingInstitutions || data?.regionalInstitutions || [])
+      .filter((institution) => institutionType(institution) === "信用金庫")
+      .filter((institution) => Number.isFinite(institution.averageRate));
+    const institutions = selectedLocationMode === "branches" ? branchInstitutions : headquartersInstitutions;
     const institutionMap = new Map(institutions.map((institution) => [institution.institution, institution]));
     const nameByCode = new Map((geoJson?.features || []).map((feature) => [feature.properties.code, String(feature.properties.name || "").replace(/^愛知県/, "")]));
     const grouped = new Map();
@@ -252,7 +256,7 @@
 
   function draw(root, geoJson, branchData, item, data) {
     if (!root.isConnected) return;
-    const municipalities = buildMunicipalities(item, branchData, geoJson);
+    const municipalities = buildMunicipalities(item, branchData, geoJson, data);
     const byCode = new Map(municipalities.map((group) => [group.code, group]));
     const rates = municipalities.map((group) => group.averageRate).filter(Number.isFinite);
     const min = rates.length ? Math.min(...rates) : null;
@@ -269,10 +273,7 @@
       const fill = colorFor(group?.averageRate, min, max);
       return `<path class="municipality-shape${group ? " has-data" : ""}${selected ? " is-selected" : ""}" data-code="${feature.properties.code}" d="${geometryPath(feature.geometry, project)}" style="fill:${fill}" fill-rule="evenodd" role="${group ? "button" : "img"}" tabindex="${group ? "0" : "-1"}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title></path>`;
     }).join("");
-    const labels = geoJson.features.filter((feature) => {
-      const group = byCode.get(feature.properties.code);
-      return group && (selectedLocationMode === "headquarters" || group.institutionCount >= 2 || feature.properties.code === selectedMunicipality);
-    }).map((feature) => {
+    const labels = geoJson.features.filter((feature) => byCode.has(feature.properties.code)).map((feature) => {
       const [x, y] = labelPoint(feature.geometry, project);
       const group = byCode.get(feature.properties.code);
       const fill = colorFor(group.averageRate, min, max);
@@ -289,7 +290,7 @@
     const summary = isBranchMode
       ? `${municipalities.length}市区 / 延べ${coverageLinks}金融機関 / 確認済み${confirmedBranches}店${pendingCounts ? `・件数確認中${pendingCounts}組` : ""}`
       : `${municipalities.length}市区 / 比較可能 ${coverageLinks}先（母集団15先）`;
-    root.innerHTML = `<div class="municipality-prototype-head"><div><p class="section-kicker">MUNICIPALITY PROTOTYPE</p><h4>愛知県・信用金庫 市区町村金利ヒートマップ</h4><p class="muted">${isBranchMode ? "店舗が所在する市区町村を、支店数では加重せず金融機関均等平均で着色します。" : "信用金庫の本店が所在する市区町村を、現在の選択条件の金融機関均等平均で着色します。"}</p></div><span class="municipality-prototype-badge">試作版・${isBranchMode ? "支店所在地" : "本店所在地"}ベース</span></div><div class="municipality-mode-row"><span>地図の基準</span><div class="municipality-mode-switch" role="group" aria-label="市区町村ヒートマップの所在地基準"><button type="button" class="municipality-mode-button${!isBranchMode ? " is-active" : ""}" data-mode="headquarters">本店所在地</button><button type="button" class="municipality-mode-button${isBranchMode ? " is-active" : ""}" data-mode="branches">支店所在地</button></div></div><div class="municipality-prototype-layout"><div class="municipality-map-card"><div class="municipality-map-toolbar"><span>${summary}</span><span class="municipality-map-legend"><span>低 ${formatRate(min)}</span><span class="municipality-map-gradient"></span><span>高 ${formatRate(max)}</span>${tied ? "<strong>（同率）</strong>" : ""}</span></div><svg class="municipality-map" viewBox="0 0 ${width} ${height}" role="img" aria-label="愛知県信用金庫の市区町村別金利ヒートマップ">${paths}${labels}</svg></div><div class="municipality-ranking-card"><div class="municipality-ranking-title"><strong>${isBranchMode ? "店舗所在" : "本店所在"}市区ランキング</strong><span>市区内は金融機関均等平均</span></div><div class="municipality-ranking-list">${ranking || '<div class="heatmap-empty">比較可能な信用金庫データがありません。</div>'}</div></div></div><div class="municipality-selected-card">${selectedTable(byCode.get(selectedMunicipality), data)}</div><p class="municipality-source-note">${isBranchMode ? `店舗所在地は各信用金庫の公式店舗一覧・店舗検索・ディスクロージャー誌を使用。${escapeHtml(branchData?.metadata?.methodology || "")} 店舗の存在は営業区域や当該金利商品の申込可否を保証しません。` : `本店所在地は<a href="${FSA_SOURCE}" target="_blank" rel="noopener">金融庁「免許・登録業者一覧」</a>を使用。本店所在地による比較であり、営業区域・申込可能地域を示すものではありません。`} 境界形状は<a href="${MAP_SOURCE}" target="_blank" rel="noopener">Geolonia japanese-admins</a>（国土数値情報を加工）を使用しています。</p>`;
+    root.innerHTML = `<div class="municipality-prototype-head"><div><p class="section-kicker">MUNICIPALITY PROTOTYPE</p><h4>愛知県・信用金庫 市区町村金利ヒートマップ</h4><p class="muted">${isBranchMode ? "店舗が所在する市区町村を、支店数では加重せず金融機関均等平均で着色します。" : "信用金庫の本店が所在する市区町村を、現在の選択条件の金融機関均等平均で着色します。"}</p></div><span class="municipality-prototype-badge">試作版・${isBranchMode ? "支店所在地" : "本店所在地"}ベース</span></div><div class="municipality-mode-row"><span>地図の基準</span><div class="municipality-mode-switch" role="group" aria-label="市区町村ヒートマップの所在地基準"><button type="button" class="municipality-mode-button${!isBranchMode ? " is-active" : ""}" data-mode="headquarters">本店所在地</button><button type="button" class="municipality-mode-button${isBranchMode ? " is-active" : ""}" data-mode="branches">支店所在地</button></div></div><div class="municipality-prototype-layout"><div class="municipality-map-card"><div class="municipality-map-toolbar"><span>${summary}</span><span class="municipality-map-legend"><span>低（水色） ${formatRate(min)}</span><span class="municipality-map-gradient"></span><span>高（赤） ${formatRate(max)}</span>${tied ? "<strong>（同率）</strong>" : ""}</span></div><svg class="municipality-map" viewBox="0 0 ${width} ${height}" role="img" aria-label="愛知県信用金庫の市区町村別金利ヒートマップ">${paths}${labels}</svg></div><div class="municipality-ranking-card"><div class="municipality-ranking-title"><strong>${isBranchMode ? "店舗所在" : "本店所在"}市区ランキング</strong><span>市区内は金融機関均等平均</span></div><div class="municipality-ranking-list">${ranking || '<div class="heatmap-empty">比較可能な信用金庫データがありません。</div>'}</div></div></div><div class="municipality-selected-card">${selectedTable(byCode.get(selectedMunicipality), data)}</div><p class="municipality-source-note">${isBranchMode ? `店舗所在地は各信用金庫の公式店舗一覧・店舗検索・ディスクロージャー誌を使用。${escapeHtml(branchData?.metadata?.methodology || "")} 店舗の存在は営業区域や当該金利商品の申込可否を保証しません。` : `本店所在地は<a href="${FSA_SOURCE}" target="_blank" rel="noopener">金融庁「免許・登録業者一覧」</a>を使用。本店所在地による比較であり、営業区域・申込可能地域を示すものではありません。`} 境界形状は<a href="${MAP_SOURCE}" target="_blank" rel="noopener">Geolonia japanese-admins</a>（国土数値情報を加工）を使用しています。</p>`;
 
     const select = (code) => {
       if (!byCode.has(code)) return;

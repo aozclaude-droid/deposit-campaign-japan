@@ -3,11 +3,12 @@
     "schema_version": "1.0",
     "created_at": "2026-11-14",
     "status": "prototype",
-    "institution_count": 15,
-    "methodology": "公式店舗一覧・店舗検索・ディスクロージャー誌で、市区町村内に預金取扱店舗があることを確認。branch_countがnullの場合は店舗の存在のみ確認済み。店舗内店舗は金融機関の正式な店舗数として数える。店舗外ATM、ローンプラザ、インターネット支店は除外。",
+    "institution_count": 19,
+    "methodology": "公式店舗一覧・店舗検索・ディスクロージャー誌で、市区町村内に預金取扱店舗があることを確認。愛知県外に本店があっても愛知県内に実店舗を持つ信用金庫を含む。branch_countがnullの場合は店舗の存在のみ確認済み。店舗内店舗は金融機関の正式な店舗数として数える。店舗外ATM、ローンプラザ、インターネット支店は除外。",
     "notes": [
       "市区町村別平均は支店数加重ではなく、当該市区町村に店舗を持つ金融機関の均等平均。",
       "名古屋市は住所から区まで確定できた店舗のみ収録。",
+      "県外本店の追加対象は岐阜信用金庫、東濃信用金庫、大垣西濃信用金庫、桑名三重信用金庫。",
       "蒲郡信用金庫の一部店舗数は公式2021年ディスクロージャー誌を使用し、所在地の存在確認を優先した試作データ。"
     ]
   },
@@ -86,6 +87,26 @@
       "institution": "碧海信用金庫",
       "source_url": "https://www.hekishin.jp/useful/tenpo/search.php",
       "coverage": {"23202":null,"23205":null,"23209":null,"23210":null,"23211":null,"23212":null,"23213":null,"23216":null,"23222":null,"23223":null,"23224":null,"23225":null,"23227":null,"23229":null,"23236":null,"23302":null,"23441":null,"23442":null,"23501":null}
+    },
+    {
+      "institution": "岐阜信用金庫",
+      "source_url": "https://www.gifushin.co.jp/branch/",
+      "coverage": {"23101":1,"23103":2,"23104":2,"23105":2,"23110":1,"23113":1,"23116":1,"23203":5,"23206":2,"23215":2,"23217":4,"23219":1,"23220":2,"23233":1,"23237":1,"23362":1}
+    },
+    {
+      "institution": "東濃信用金庫",
+      "source_url": "https://www.shinkin.co.jp/tono/tenpo/aichi/index.html",
+      "coverage": {"23102":1,"23113":2,"23206":8,"23215":1,"23217":1,"23219":2,"23226":2,"23342":1}
+    },
+    {
+      "institution": "大垣西濃信用金庫",
+      "source_url": "https://www.ogakiseino-shinkin.co.jp/shop/",
+      "coverage": {"23203":1,"23220":1}
+    },
+    {
+      "institution": "桑名三重信用金庫",
+      "source_url": "https://www.shinkin.co.jp/kuwanamie/atm/atm-area/",
+      "coverage": {"23110":1,"23235":2,"23425":1}
     }
   ]
 }
