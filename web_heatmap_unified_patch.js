@@ -754,6 +754,11 @@
       const rows = item.institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${x.institution}</th><td>${x.institution_type}</td><td class="rate">${formatRate(x.averageRate)}</td><td>${x.source_date || "—"}</td></tr>`).join("");
       detail.innerHTML = `<div class="heatmap-detail-heading"><div><p class="section-kicker">PREFECTURE DETAIL</p><h3>${item.prefecture}・${termLabel}</h3><p class="muted">${data.rateLabel}平均 ${formatRate(item.averageRate)} / ${item.institutionCount}金融機関</p></div></div><div class="table-scroll"><table class="heatmap-detail-table"><thead><tr><th>順位</th><th>金融機関</th><th>金融機関種別</th><th>${data.rateLabel}</th><th>基準日</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
+    try {
+      window.renderAichiShinkinMunicipalityPrototype?.({ data, item, termLabel, detail });
+    } catch (error) {
+      console.error("[AichiMunicipalityPrototype] render failed", error);
+    }
   }
 
   function renderOnline() {
