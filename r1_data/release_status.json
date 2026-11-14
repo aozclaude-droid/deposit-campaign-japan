@@ -5,11 +5,12 @@
   "resolved_campaign_count": 468,
   "unresolved_campaign_count": 1316,
   "history_linked_campaign_count": 44,
-  "base_rate_history_record_count": 5060,
-  "base_rate_institution_count": 413,
+  "base_rate_history_record_count": 5217,
+  "base_rate_institution_count": 656,
   "bank_ordinary_institution_count": 115,
-  "source_final_freeze_status": "PASS_CREDIT_UNION_USER_FOLLOWUP_APPLY_V0881",
+  "source_final_freeze_status": "PASS_JA_ORDINARY_FINAL_LINK_RESEARCH",
   "shinkin_ordinary_institution_count": 244,
-  "updated_at": "2026-10-25T10:00:30.702062+09:00",
-  "credit_union_ordinary_institution_count": 108
+  "updated_at": "2026-10-25T15:31:09+09:00",
+  "credit_union_ordinary_institution_count": 108,
+  "ja_ordinary_institution_count": 165
 }
