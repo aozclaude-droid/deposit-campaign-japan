@@ -225,7 +225,8 @@
       const group = byCode.get(feature.properties.code);
       const fill = colorFor(group.averageRate, min, max);
       const textColor = labelColor(fill);
-      return `<text class="municipality-label" x="${x.toFixed(1)}" y="${y.toFixed(1)}" style="fill:${textColor}">${escapeHtml(group.municipality.replace(/^名古屋市/, "名古屋・"))}</text>`;
+      const textStroke = textColor === "#ffffff" ? "#6f1d2a" : "#ffffff";
+      return `<text class="municipality-label" x="${x.toFixed(1)}" y="${y.toFixed(1)}" style="fill:${textColor};stroke:${textStroke}">${escapeHtml(group.municipality.replace(/^名古屋市/, "名古屋・"))}</text>`;
     }).join("");
     const ranking = municipalities.map((group, index) => `<button type="button" class="municipality-ranking-row${group.code === selectedMunicipality ? " is-selected" : ""}" data-code="${group.code}"><span class="rank">${index + 1}</span><span><span class="name">${escapeHtml(group.municipality)}</span><span class="meta">${group.institutionCount}金融機関</span></span><span class="rate">${formatRate(group.averageRate)}</span></button>`).join("");
     const tied = Number.isFinite(min) && min === max;
