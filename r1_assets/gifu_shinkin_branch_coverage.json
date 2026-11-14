@@ -1,0 +1,122 @@
+{
+  "metadata": {
+    "schema_version": "1.0",
+    "created_at": "2026-11-14",
+    "status": "prototype",
+    "institution_count": 8,
+    "methodology": "公式店舗一覧・店舗検索・ディスクロージャー誌で、岐阜県内の市町村に預金取扱店舗があることを確認。岐阜県外に本店があっても県内に実店舗を持つ信用金庫を含む。店舗内店舗と正式な出張所は店舗数に含め、店舗外ATM、ローンプラザ、インターネット支店は除外。",
+    "notes": [
+      "市町村別平均は支店数加重ではなく、当該市町村に店舗を持つ金融機関の均等平均。",
+      "県外本店の追加対象は尾西信用金庫、桑名三重信用金庫。",
+      "同一建物内の店舗内店舗は、金融機関が公表する正式な店舗単位で数える。"
+    ]
+  },
+  "institutions": [
+    {
+      "institution": "岐阜信用金庫",
+      "source_url": "https://www.gifushin.co.jp/branch/",
+      "coverage": {
+        "21201": 30,
+        "21202": 2,
+        "21204": 2,
+        "21205": 3,
+        "21207": 1,
+        "21209": 3,
+        "21210": 2,
+        "21211": 1,
+        "21213": 5,
+        "21214": 1,
+        "21215": 2,
+        "21216": 1,
+        "21218": 1,
+        "21206": 3,
+        "21302": 1,
+        "21303": 1,
+        "21421": 1
+      }
+    },
+    {
+      "institution": "大垣西濃信用金庫",
+      "source_url": "https://www.ogakiseino-shinkin.co.jp/shop/",
+      "coverage": {
+        "21202": 12,
+        "21201": 3,
+        "21218": 1,
+        "21421": 1,
+        "21216": 2,
+        "21209": 1,
+        "21213": 1,
+        "21221": 1,
+        "21401": 1,
+        "21403": 1,
+        "21404": 1,
+        "21381": 1,
+        "21382": 1,
+        "21341": 2,
+        "21361": 1
+      }
+    },
+    {
+      "institution": "高山信用金庫",
+      "source_url": "https://www.shinkin.co.jp/takayama/shop/branch/index.html",
+      "coverage": {
+        "21203": 14,
+        "21217": 3,
+        "21220": 2
+      }
+    },
+    {
+      "institution": "東濃信用金庫",
+      "source_url": "https://www.shinkin.co.jp/tono/tenpo/shop.html",
+      "coverage": {
+        "21204": 9,
+        "21212": 6,
+        "21208": 4,
+        "21210": 1,
+        "21206": 1,
+        "21214": 5,
+        "21521": 1,
+        "21211": 3,
+        "21505": 1,
+        "21503": 1,
+        "21506": 1,
+        "21213": 3
+      }
+    },
+    {
+      "institution": "関信用金庫",
+      "source_url": "https://www.shinkin.co.jp/seki1534/atm/index.html",
+      "coverage": {
+        "21205": 6,
+        "21207": 1,
+        "21220": 1,
+        "21211": 2,
+        "21213": 1,
+        "21201": 2
+      }
+    },
+    {
+      "institution": "八幡信用金庫",
+      "source_url": "https://www.shinkin.co.jp/hachiman/about/tenpo.html",
+      "coverage": {
+        "21219": 7,
+        "21604": 1,
+        "21220": 1
+      }
+    },
+    {
+      "institution": "尾西信用金庫",
+      "source_url": "https://www.bi-shin.co.jp/tenpo.html",
+      "coverage": {
+        "21209": 1
+      }
+    },
+    {
+      "institution": "桑名三重信用金庫",
+      "source_url": "https://www.shinkin.co.jp/kuwanamie/atm/atm-area/",
+      "coverage": {
+        "21221": 2
+      }
+    }
+  ]
+}

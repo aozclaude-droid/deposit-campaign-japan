@@ -759,6 +759,11 @@
     } catch (error) {
       console.error("[AichiMunicipalityPrototype] render failed", error);
     }
+    try {
+      window.renderGifuShinkinMunicipalityPrototype?.({ data, item, termLabel, detail });
+    } catch (error) {
+      console.error("[GifuMunicipalityPrototype] render failed", error);
+    }
   }
 
   function renderOnline() {
