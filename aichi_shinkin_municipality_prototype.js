@@ -205,7 +205,8 @@
       const selected = feature.properties.code === selectedMunicipality;
       const name = String(feature.properties.name || "").replace(/^愛知県/, "");
       const label = group ? `${group.municipality} ${formatRate(group.averageRate)} ${group.institutionCount}金融機関` : `${name} 対象データなし`;
-      return `<path class="municipality-shape${group ? " has-data" : ""}${selected ? " is-selected" : ""}" data-code="${feature.properties.code}" d="${geometryPath(feature.geometry, project)}" fill="${colorFor(group?.averageRate, min, max)}" fill-rule="evenodd" role="${group ? "button" : "img"}" tabindex="${group ? "0" : "-1"}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title></path>`;
+      const fill = colorFor(group?.averageRate, min, max);
+      return `<path class="municipality-shape${group ? " has-data" : ""}${selected ? " is-selected" : ""}" data-code="${feature.properties.code}" d="${geometryPath(feature.geometry, project)}" style="fill:${fill}" fill-rule="evenodd" role="${group ? "button" : "img"}" tabindex="${group ? "0" : "-1"}" aria-label="${escapeHtml(label)}"><title>${escapeHtml(label)}</title></path>`;
     }).join("");
     const labels = geoJson.features.filter((feature) => byCode.has(feature.properties.code)).map((feature) => {
       const [x, y] = labelPoint(feature.geometry, project);
