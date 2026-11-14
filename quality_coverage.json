@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T14:58:57+09:00",
+  "generated_at": "2026-11-14T14:15:13+09:00",
   "population": 1018,
   "latest_complete_session": "collect_20261031_113741",
   "summary": [
@@ -7,21 +7,21 @@
       "industry": "JA",
       "population": 484,
       "url_configured": 465,
-      "normal_fetch": 458,
-      "structured_success": 364,
-      "production_recorded": 340,
-      "unacquired": 120,
-      "inaccessible": 26
+      "normal_fetch": 477,
+      "structured_success": 474,
+      "production_recorded": 342,
+      "unacquired": 10,
+      "inaccessible": 7
     },
     {
       "industry": "その他の銀行",
       "population": 5,
       "url_configured": 5,
-      "normal_fetch": 4,
+      "normal_fetch": 5,
       "structured_success": 5,
       "production_recorded": 5,
       "unacquired": 0,
-      "inaccessible": 1
+      "inaccessible": 0
     },
     {
       "industry": "ゆうちょ銀行",
@@ -37,81 +37,81 @@
       "industry": "信用組合",
       "population": 143,
       "url_configured": 142,
-      "normal_fetch": 64,
-      "structured_success": 129,
+      "normal_fetch": 140,
+      "structured_success": 142,
       "production_recorded": 129,
-      "unacquired": 14,
-      "inaccessible": 79
+      "unacquired": 1,
+      "inaccessible": 3
     },
     {
       "industry": "信用金庫",
       "population": 254,
       "url_configured": 254,
-      "normal_fetch": 164,
-      "structured_success": 253,
+      "normal_fetch": 254,
+      "structured_success": 254,
       "production_recorded": 253,
-      "unacquired": 1,
-      "inaccessible": 90
+      "unacquired": 0,
+      "inaccessible": 0
     },
     {
       "industry": "信託銀行",
       "population": 5,
       "url_configured": 5,
-      "normal_fetch": 2,
+      "normal_fetch": 5,
       "structured_success": 5,
       "production_recorded": 5,
       "unacquired": 0,
-      "inaccessible": 3
+      "inaccessible": 0
     },
     {
       "industry": "労働金庫",
       "population": 13,
       "url_configured": 13,
-      "normal_fetch": 12,
+      "normal_fetch": 13,
       "structured_success": 13,
       "production_recorded": 13,
       "unacquired": 0,
-      "inaccessible": 1
+      "inaccessible": 0
     },
     {
       "industry": "地銀",
       "population": 54,
       "url_configured": 54,
-      "normal_fetch": 48,
+      "normal_fetch": 54,
       "structured_success": 54,
       "production_recorded": 54,
       "unacquired": 0,
-      "inaccessible": 6
+      "inaccessible": 0
     },
     {
       "industry": "新たな形態の銀行",
       "population": 13,
       "url_configured": 13,
-      "normal_fetch": 10,
+      "normal_fetch": 13,
       "structured_success": 13,
       "production_recorded": 13,
       "unacquired": 0,
-      "inaccessible": 3
+      "inaccessible": 0
     },
     {
       "industry": "第二地銀",
       "population": 41,
       "url_configured": 41,
-      "normal_fetch": 38,
+      "normal_fetch": 41,
       "structured_success": 41,
       "production_recorded": 41,
       "unacquired": 0,
-      "inaccessible": 3
+      "inaccessible": 0
     },
     {
       "industry": "都市銀行",
       "population": 5,
       "url_configured": 5,
-      "normal_fetch": 3,
+      "normal_fetch": 5,
       "structured_success": 5,
       "production_recorded": 5,
       "unacquired": 0,
-      "inaccessible": 2
+      "inaccessible": 0
     }
   ],
   "institutions": [
@@ -159,26 +159,26 @@
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "空知信用金庫",
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "苫小牧信用金庫",
@@ -198,26 +198,26 @@
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "伊達信用金庫",
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "北空知信用金庫",
@@ -250,13 +250,13 @@
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "道南うみ街信用金庫",
@@ -289,26 +289,26 @@
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "留萌信用金庫",
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "北星信用金庫",
@@ -341,39 +341,39 @@
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "大地みらい信用金庫",
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "北見信用金庫",
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "網走信用金庫",
@@ -393,39 +393,39 @@
       "industry": "信用金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "北央信用組合",
       "industry": "信用組合",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "札幌中央信用組合",
       "industry": "信用組合",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "ウリ信用組合",
@@ -445,65 +445,65 @@
       "industry": "信用組合",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "空知商工信用組合",
       "industry": "信用組合",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "十勝信用組合",
       "industry": "信用組合",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "釧路信用組合",
       "industry": "信用組合",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "北海道労働金庫",
       "industry": "労働金庫",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "JAあさひかわ",
@@ -524,11 +524,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -549,13 +549,13 @@
       "industry": "JA",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "JAえんゆう",
@@ -615,11 +615,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -641,11 +641,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -654,11 +654,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -679,13 +679,13 @@
       "industry": "JA",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JAさらべつ",
@@ -693,11 +693,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -706,11 +706,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -732,11 +732,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -745,11 +745,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -757,13 +757,13 @@
       "industry": "JA",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JAたきかわ",
@@ -783,13 +783,13 @@
       "industry": "JA",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JAとうや湖",
@@ -810,11 +810,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -836,11 +836,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -862,11 +862,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -875,11 +875,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -888,11 +888,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
-      "production_recorded": false,
+      "structured_success": true,
+      "production_recorded": true,
       "campaign_recorded": false,
-      "ordinary_recorded": false,
-      "unacquired": true,
+      "ordinary_recorded": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -914,11 +914,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -979,11 +979,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1005,11 +1005,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1018,11 +1018,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1031,11 +1031,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1044,11 +1044,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1070,11 +1070,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1109,11 +1109,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1174,11 +1174,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1187,11 +1187,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1200,11 +1200,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1226,11 +1226,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1239,11 +1239,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1252,11 +1252,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1330,11 +1330,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1356,11 +1356,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1382,11 +1382,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1395,11 +1395,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1408,11 +1408,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1420,13 +1420,13 @@
       "industry": "JA",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JA帯広かわにし",
@@ -1447,11 +1447,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1473,11 +1473,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1486,11 +1486,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1512,11 +1512,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1525,11 +1525,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1538,11 +1538,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1551,11 +1551,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1577,11 +1577,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1590,11 +1590,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1616,11 +1616,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1628,13 +1628,13 @@
       "industry": "JA",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JA東神楽",
@@ -1642,11 +1642,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1655,11 +1655,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1668,11 +1668,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1680,13 +1680,13 @@
       "industry": "JA",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JA豊頃町",
@@ -1694,11 +1694,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1707,11 +1707,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1746,11 +1746,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1758,26 +1758,26 @@
       "industry": "JA",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JA阿寒",
       "industry": "JA",
       "prefecture": "北海道",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JA陸別町",
@@ -1785,11 +1785,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1798,11 +1798,11 @@
       "prefecture": "北海道",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -1992,13 +1992,13 @@
       "industry": "信用金庫",
       "prefecture": "青森県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "青い森信用金庫",
@@ -2031,13 +2031,13 @@
       "industry": "信用金庫",
       "prefecture": "岩手県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "一関信用金庫",
@@ -2070,65 +2070,65 @@
       "industry": "信用金庫",
       "prefecture": "岩手県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "水沢信用金庫",
       "industry": "信用金庫",
       "prefecture": "岩手県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "杜の都信用金庫",
       "industry": "信用金庫",
       "prefecture": "宮城県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "宮城第一信用金庫",
       "industry": "信用金庫",
       "prefecture": "宮城県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "石巻信用金庫",
       "industry": "信用金庫",
       "prefecture": "宮城県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "仙南信用金庫",
@@ -2161,26 +2161,26 @@
       "industry": "信用金庫",
       "prefecture": "秋田県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "羽後信用金庫",
       "industry": "信用金庫",
       "prefecture": "秋田県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "山形信用金庫",
@@ -2226,13 +2226,13 @@
       "industry": "信用金庫",
       "prefecture": "山形県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "会津信用金庫",
@@ -2291,26 +2291,26 @@
       "industry": "信用金庫",
       "prefecture": "福島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "あぶくま信用金庫",
       "industry": "信用金庫",
       "prefecture": "福島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "二本松信用金庫",
@@ -2343,26 +2343,26 @@
       "industry": "信用組合",
       "prefecture": "青森県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "杜陵信用組合",
       "industry": "信用組合",
       "prefecture": "岩手県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "岩手県医師信用組合",
@@ -2382,13 +2382,13 @@
       "industry": "信用組合",
       "prefecture": "宮城県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "古川信用組合",
@@ -2408,13 +2408,13 @@
       "industry": "信用組合",
       "prefecture": "宮城県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "秋田県信用組合",
@@ -2434,13 +2434,13 @@
       "industry": "信用組合",
       "prefecture": "山形県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "山形中央信用組合",
@@ -2473,13 +2473,13 @@
       "industry": "信用組合",
       "prefecture": "山形県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "福島県商工信用組合",
@@ -2981,11 +2981,11 @@
       "prefecture": "秋田県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -3020,11 +3020,11 @@
       "prefecture": "秋田県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -3058,13 +3058,13 @@
       "industry": "JA",
       "prefecture": "山形県",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JAさくらんぼひがしね",
@@ -3072,11 +3072,11 @@
       "prefecture": "山形県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -3098,11 +3098,11 @@
       "prefecture": "山形県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -3150,11 +3150,11 @@
       "prefecture": "山形県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -3163,11 +3163,11 @@
       "prefecture": "山形県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -3189,11 +3189,11 @@
       "prefecture": "山形県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -3201,13 +3201,13 @@
       "industry": "JA",
       "prefecture": "山形県",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JA鶴岡",
@@ -3241,11 +3241,11 @@
       "prefecture": "福島県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -3267,11 +3267,11 @@
       "prefecture": "福島県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -3279,26 +3279,26 @@
       "industry": "JA",
       "prefecture": "福島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "常陽銀行",
       "industry": "地銀",
       "prefecture": "茨城県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "筑波銀行",
@@ -3396,13 +3396,13 @@
       "industry": "地銀",
       "prefecture": "神奈川県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "栃木銀行",
@@ -3452,7 +3452,7 @@
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
-      "ordinary_recorded": false,
+      "ordinary_recorded": true,
       "unacquired": false,
       "inaccessible": false
     },
@@ -3461,13 +3461,13 @@
       "industry": "第二地銀",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "神奈川銀行",
@@ -3500,13 +3500,13 @@
       "industry": "信用金庫",
       "prefecture": "茨城県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "足利小山信用金庫",
@@ -3526,13 +3526,13 @@
       "industry": "信用金庫",
       "prefecture": "栃木県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "鹿沼相互信用金庫",
@@ -3591,78 +3591,78 @@
       "industry": "信用金庫",
       "prefecture": "群馬県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "桐生信用金庫",
       "industry": "信用金庫",
       "prefecture": "群馬県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "アイオー信用金庫",
       "industry": "信用金庫",
       "prefecture": "群馬県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "利根郡信用金庫",
       "industry": "信用金庫",
       "prefecture": "群馬県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "館林信用金庫",
       "industry": "信用金庫",
       "prefecture": "群馬県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "北群馬信用金庫",
       "industry": "信用金庫",
       "prefecture": "群馬県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "しののめ信用金庫",
@@ -3695,65 +3695,65 @@
       "industry": "信用金庫",
       "prefecture": "埼玉県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "青木信用金庫",
       "industry": "信用金庫",
       "prefecture": "埼玉県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "飯能信用金庫",
       "industry": "信用金庫",
       "prefecture": "埼玉県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "千葉信用金庫",
       "industry": "信用金庫",
       "prefecture": "千葉県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "銚子信用金庫",
       "industry": "信用金庫",
       "prefecture": "千葉県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "東京ベイ信用金庫",
@@ -3812,26 +3812,26 @@
       "industry": "信用金庫",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "さわやか信用金庫",
       "industry": "信用金庫",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "東京シティ信用金庫",
@@ -3877,13 +3877,13 @@
       "industry": "信用金庫",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "亀有信用金庫",
@@ -3929,13 +3929,13 @@
       "industry": "信用金庫",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "西京信用金庫",
@@ -3994,13 +3994,13 @@
       "industry": "信用金庫",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "世田谷信用金庫",
@@ -4072,13 +4072,13 @@
       "industry": "信用金庫",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "多摩信用金庫",
@@ -4215,26 +4215,26 @@
       "industry": "信用組合",
       "prefecture": "栃木県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "那須信用組合",
       "industry": "信用組合",
       "prefecture": "栃木県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "あかぎ信用組合",
@@ -4280,52 +4280,52 @@
       "industry": "信用組合",
       "prefecture": "群馬県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "埼玉県医師信用組合",
       "industry": "信用組合",
       "prefecture": "埼玉県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "熊谷商工信用組合",
       "industry": "信用組合",
       "prefecture": "埼玉県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "埼玉信用組合",
       "industry": "信用組合",
       "prefecture": "埼玉県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "房総信用組合",
@@ -4345,13 +4345,13 @@
       "industry": "信用組合",
       "prefecture": "千葉県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "君津信用組合",
@@ -4384,39 +4384,39 @@
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "東浴信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "文化産業信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "東京証券信用組合",
@@ -4436,39 +4436,39 @@
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "東信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "江東信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "青和信用組合",
@@ -4476,11 +4476,11 @@
       "prefecture": "東京都",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4488,52 +4488,52 @@
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "共立信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "七島信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "大東京信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "第一勧業信用組合",
@@ -4553,65 +4553,65 @@
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "東京消防信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "東京都職員信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "ハナ信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "朝日新聞信用組合",
       "industry": "信用組合",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "神奈川県医師信用組合",
@@ -4657,39 +4657,39 @@
       "industry": "信用組合",
       "prefecture": "神奈川県",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "小田原第一信用組合",
       "industry": "信用組合",
       "prefecture": "神奈川県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "相愛信用組合",
       "industry": "信用組合",
       "prefecture": "神奈川県",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "中央労働金庫",
@@ -4749,11 +4749,11 @@
       "prefecture": "茨城県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4762,11 +4762,11 @@
       "prefecture": "茨城県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4775,11 +4775,11 @@
       "prefecture": "茨城県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4788,11 +4788,11 @@
       "prefecture": "茨城県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4840,11 +4840,11 @@
       "prefecture": "茨城県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4866,11 +4866,11 @@
       "prefecture": "茨城県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4905,11 +4905,11 @@
       "prefecture": "茨城県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4917,13 +4917,13 @@
       "industry": "JA",
       "prefecture": "茨城県",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JAうつのみや",
@@ -4944,11 +4944,11 @@
       "prefecture": "栃木県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4957,11 +4957,11 @@
       "prefecture": "栃木県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4970,11 +4970,11 @@
       "prefecture": "栃木県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -4996,11 +4996,11 @@
       "prefecture": "栃木県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5061,11 +5061,11 @@
       "prefecture": "群馬県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5139,11 +5139,11 @@
       "prefecture": "群馬県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5165,11 +5165,11 @@
       "prefecture": "群馬県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5230,11 +5230,11 @@
       "prefecture": "群馬県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5308,11 +5308,11 @@
       "prefecture": "埼玉県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5321,11 +5321,11 @@
       "prefecture": "埼玉県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5412,11 +5412,11 @@
       "prefecture": "埼玉県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5425,11 +5425,11 @@
       "prefecture": "埼玉県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5438,11 +5438,11 @@
       "prefecture": "埼玉県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5451,11 +5451,11 @@
       "prefecture": "千葉県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5477,11 +5477,11 @@
       "prefecture": "千葉県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5724,11 +5724,11 @@
       "prefecture": "東京都",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5737,11 +5737,11 @@
       "prefecture": "東京都",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -5906,11 +5906,11 @@
       "prefecture": "神奈川県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -6087,13 +6087,13 @@
       "industry": "信用金庫",
       "prefecture": "新潟県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "三条信用金庫",
@@ -6152,13 +6152,13 @@
       "industry": "信用金庫",
       "prefecture": "新潟県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "村上信用金庫",
@@ -6308,13 +6308,13 @@
       "industry": "信用組合",
       "prefecture": "新潟県",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "はばたき信用組合",
@@ -6374,11 +6374,11 @@
       "prefecture": "新潟県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -6425,13 +6425,13 @@
       "industry": "信用組合",
       "prefecture": "長野県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "新潟県労働金庫",
@@ -6465,11 +6465,11 @@
       "prefecture": "新潟県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -6517,11 +6517,11 @@
       "prefecture": "新潟県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -6569,11 +6569,11 @@
       "prefecture": "山梨県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -6634,11 +6634,11 @@
       "prefecture": "山梨県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -6880,26 +6880,26 @@
       "industry": "信用金庫",
       "prefecture": "富山県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "高岡信用金庫",
       "industry": "信用金庫",
       "prefecture": "富山県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "新湊信用金庫",
@@ -6997,13 +6997,13 @@
       "industry": "信用金庫",
       "prefecture": "石川県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "興能信用金庫",
@@ -7049,39 +7049,39 @@
       "industry": "信用金庫",
       "prefecture": "福井県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "越前信用金庫",
       "industry": "信用金庫",
       "prefecture": "福井県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "富山県医師信用組合",
       "industry": "信用組合",
       "prefecture": "富山県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "富山県信用組合",
@@ -7101,26 +7101,26 @@
       "industry": "信用組合",
       "prefecture": "石川県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "石川県医師信用組合",
       "industry": "信用組合",
       "prefecture": "石川県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "福泉信用組合",
@@ -7179,13 +7179,13 @@
       "industry": "JA",
       "prefecture": "富山県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "JAうおづ",
@@ -7336,11 +7336,11 @@
       "prefecture": "富山県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -7608,13 +7608,13 @@
       "industry": "第二地銀",
       "prefecture": "静岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "大垣共立銀行",
@@ -7673,13 +7673,13 @@
       "industry": "地銀",
       "prefecture": "三重県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "三十三銀行",
@@ -7712,13 +7712,13 @@
       "industry": "信用金庫",
       "prefecture": "静岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "浜松いわた信用金庫",
@@ -7738,13 +7738,13 @@
       "industry": "信用金庫",
       "prefecture": "静岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "三島信用金庫",
@@ -7764,39 +7764,39 @@
       "industry": "信用金庫",
       "prefecture": "静岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "島田掛川信用金庫",
       "industry": "信用金庫",
       "prefecture": "静岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "富士信用金庫",
       "industry": "信用金庫",
       "prefecture": "静岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "遠州信用金庫",
@@ -7816,13 +7816,13 @@
       "industry": "信用金庫",
       "prefecture": "岐阜県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "大垣西濃信用金庫",
@@ -7842,26 +7842,26 @@
       "industry": "信用金庫",
       "prefecture": "岐阜県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "東濃信用金庫",
       "industry": "信用金庫",
       "prefecture": "岐阜県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "関信用金庫",
@@ -7881,26 +7881,26 @@
       "industry": "信用金庫",
       "prefecture": "岐阜県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "愛知信用金庫",
       "industry": "信用金庫",
       "prefecture": "愛知県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "豊橋信用金庫",
@@ -8089,13 +8089,13 @@
       "industry": "信用金庫",
       "prefecture": "三重県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "北伊勢上野信用金庫",
@@ -8128,26 +8128,26 @@
       "industry": "信用金庫",
       "prefecture": "三重県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "静岡県医師信用組合",
       "industry": "信用組合",
       "prefecture": "静岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "岐阜商工信用組合",
@@ -8232,13 +8232,13 @@
       "industry": "信用組合",
       "prefecture": "愛知県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "愛知県警察信用組合",
@@ -8258,13 +8258,13 @@
       "industry": "信用組合",
       "prefecture": "愛知県",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "愛知県医療信用組合",
@@ -8284,13 +8284,13 @@
       "industry": "信用組合",
       "prefecture": "愛知県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "豊橋商工信用組合",
@@ -8323,13 +8323,13 @@
       "industry": "信用組合",
       "prefecture": "三重県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "東海労働金庫",
@@ -8999,13 +8999,13 @@
       "industry": "信用金庫",
       "prefecture": "大阪府",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "永和信用金庫",
@@ -9090,13 +9090,13 @@
       "industry": "信用金庫",
       "prefecture": "和歌山県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "きのくに信用金庫",
@@ -9129,26 +9129,26 @@
       "industry": "信用金庫",
       "prefecture": "兵庫県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "播州信用金庫",
       "industry": "信用金庫",
       "prefecture": "兵庫県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "兵庫信用金庫",
@@ -9168,13 +9168,13 @@
       "industry": "信用金庫",
       "prefecture": "兵庫県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "日新信用金庫",
@@ -9259,26 +9259,26 @@
       "industry": "信用組合",
       "prefecture": "滋賀県",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "滋賀県信用組合",
       "industry": "信用組合",
       "prefecture": "滋賀県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "京滋信用組合",
@@ -9298,13 +9298,13 @@
       "industry": "信用組合",
       "prefecture": "大阪府",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "成協信用組合",
@@ -9337,52 +9337,52 @@
       "industry": "信用組合",
       "prefecture": "大阪府",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "のぞみ信用組合",
       "industry": "信用組合",
       "prefecture": "大阪府",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "中央信用組合",
       "industry": "信用組合",
       "prefecture": "大阪府",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "大阪府医師信用組合",
       "industry": "信用組合",
       "prefecture": "大阪府",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "大阪府警察信用組合",
@@ -9415,13 +9415,13 @@
       "industry": "信用組合",
       "prefecture": "大阪府",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "ミレ信用組合",
@@ -9441,13 +9441,13 @@
       "industry": "信用組合",
       "prefecture": "和歌山県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "兵庫県警察信用組合",
@@ -9455,11 +9455,11 @@
       "prefecture": "兵庫県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -9467,26 +9467,26 @@
       "industry": "信用組合",
       "prefecture": "兵庫県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "兵庫県信用組合",
       "industry": "信用組合",
       "prefecture": "兵庫県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "神戸市職員信用組合",
@@ -9935,13 +9935,13 @@
       "industry": "JA",
       "prefecture": "兵庫県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "JAあかし",
@@ -10247,13 +10247,13 @@
       "industry": "信用金庫",
       "prefecture": "鳥取県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "米子信用金庫",
@@ -10364,39 +10364,39 @@
       "industry": "信用金庫",
       "prefecture": "岡山県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "備北信用金庫",
       "industry": "信用金庫",
       "prefecture": "岡山県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "吉備信用金庫",
       "industry": "信用金庫",
       "prefecture": "岡山県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "備前日生信用金庫",
@@ -10494,26 +10494,26 @@
       "industry": "信用金庫",
       "prefecture": "山口県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "島根益田信用組合",
       "industry": "信用組合",
       "prefecture": "島根県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "朝銀西信用組合",
@@ -10533,52 +10533,52 @@
       "industry": "信用組合",
       "prefecture": "岡山県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "広島市信用組合",
       "industry": "信用組合",
       "prefecture": "広島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "広島県信用組合",
       "industry": "信用組合",
       "prefecture": "広島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "信用組合広島商銀",
       "industry": "信用組合",
       "prefecture": "広島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "呉市職員信用組合",
@@ -10598,39 +10598,39 @@
       "industry": "信用組合",
       "prefecture": "広島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "備後信用組合",
       "industry": "信用組合",
       "prefecture": "広島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "山口県信用組合",
       "industry": "信用組合",
       "prefecture": "山口県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "中国労働金庫",
@@ -10767,13 +10767,13 @@
       "industry": "JA",
       "prefecture": "広島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "JA山口県",
@@ -10793,13 +10793,13 @@
       "industry": "地銀",
       "prefecture": "徳島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "百十四銀行",
@@ -10819,26 +10819,26 @@
       "industry": "地銀",
       "prefecture": "愛媛県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "四国銀行",
       "industry": "地銀",
       "prefecture": "高知県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "徳島大正銀行",
@@ -10884,78 +10884,78 @@
       "industry": "第二地銀",
       "prefecture": "高知県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "徳島信用金庫",
       "industry": "信用金庫",
       "prefecture": "徳島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "阿南信用金庫",
       "industry": "信用金庫",
       "prefecture": "徳島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "高松信用金庫",
       "industry": "信用金庫",
       "prefecture": "香川県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "観音寺信用金庫",
       "industry": "信用金庫",
       "prefecture": "香川県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "愛媛信用金庫",
       "industry": "信用金庫",
       "prefecture": "愛媛県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "宇和島信用金庫",
@@ -10975,13 +10975,13 @@
       "industry": "信用金庫",
       "prefecture": "愛媛県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "川之江信用金庫",
@@ -11001,26 +11001,26 @@
       "industry": "信用金庫",
       "prefecture": "高知県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "高知信用金庫",
       "industry": "信用金庫",
       "prefecture": "高知県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "香川県信用組合",
@@ -11040,26 +11040,26 @@
       "industry": "信用組合",
       "prefecture": "高知県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "宿毛商銀信用組合",
       "industry": "信用組合",
       "prefecture": "高知県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "四国労働金庫",
@@ -11119,11 +11119,11 @@
       "prefecture": "徳島県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -11132,11 +11132,11 @@
       "prefecture": "徳島県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -11313,13 +11313,13 @@
       "industry": "JA",
       "prefecture": "高知県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "JA土佐くろしお",
@@ -11327,11 +11327,11 @@
       "prefecture": "高知県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -11340,11 +11340,11 @@
       "prefecture": "高知県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -11577,7 +11577,7 @@
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
-      "ordinary_recorded": false,
+      "ordinary_recorded": true,
       "unacquired": false,
       "inaccessible": false
     },
@@ -11612,13 +11612,13 @@
       "industry": "信用金庫",
       "prefecture": "福岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "福岡ひびき信用金庫",
@@ -11638,13 +11638,13 @@
       "industry": "信用金庫",
       "prefecture": "福岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "筑後信用金庫",
@@ -11664,13 +11664,13 @@
       "industry": "信用金庫",
       "prefecture": "福岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "田川信用金庫",
@@ -11690,13 +11690,13 @@
       "industry": "信用金庫",
       "prefecture": "福岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "遠賀信用金庫",
@@ -11742,13 +11742,13 @@
       "industry": "信用金庫",
       "prefecture": "佐賀県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "九州ひぜん信用金庫",
@@ -11807,13 +11807,13 @@
       "industry": "信用金庫",
       "prefecture": "熊本県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "天草信用金庫",
@@ -11859,52 +11859,52 @@
       "industry": "信用金庫",
       "prefecture": "大分県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "宮崎第一信用金庫",
       "industry": "信用金庫",
       "prefecture": "宮崎県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "延岡信用金庫",
       "industry": "信用金庫",
       "prefecture": "宮崎県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "高鍋信用金庫",
       "industry": "信用金庫",
       "prefecture": "宮崎県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "鹿児島信用金庫",
@@ -11937,13 +11937,13 @@
       "industry": "信用金庫",
       "prefecture": "鹿児島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "コザ信用金庫",
@@ -11963,13 +11963,13 @@
       "industry": "信用組合",
       "prefecture": "福岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "福岡県医師信用組合",
@@ -12002,13 +12002,13 @@
       "industry": "信用組合",
       "prefecture": "佐賀県",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
+      "normal_fetch": true,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "佐賀東信用組合",
@@ -12028,13 +12028,13 @@
       "industry": "信用組合",
       "prefecture": "佐賀県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "長崎三菱信用組合",
@@ -12093,26 +12093,26 @@
       "industry": "信用組合",
       "prefecture": "熊本県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "熊本県信用組合",
       "industry": "信用組合",
       "prefecture": "熊本県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "大分県信用組合",
@@ -12132,13 +12132,13 @@
       "industry": "信用組合",
       "prefecture": "宮崎県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "鹿児島興業信用組合",
@@ -12158,26 +12158,26 @@
       "industry": "信用組合",
       "prefecture": "鹿児島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "奄美信用組合",
       "industry": "信用組合",
       "prefecture": "鹿児島県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "九州労働金庫",
@@ -12301,13 +12301,13 @@
       "industry": "JA",
       "prefecture": "福岡県",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": false,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "JA福岡大城",
@@ -12457,13 +12457,13 @@
       "industry": "JA",
       "prefecture": "佐賀県",
       "url_configured": true,
-      "normal_fetch": false,
-      "structured_success": false,
-      "production_recorded": false,
+      "normal_fetch": true,
+      "structured_success": true,
+      "production_recorded": true,
       "campaign_recorded": false,
-      "ordinary_recorded": false,
-      "unacquired": true,
-      "inaccessible": true
+      "ordinary_recorded": true,
+      "unacquired": false,
+      "inaccessible": false
     },
     {
       "institution_name": "JA伊万里",
@@ -12487,7 +12487,7 @@
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
-      "ordinary_recorded": false,
+      "ordinary_recorded": true,
       "unacquired": false,
       "inaccessible": false
     },
@@ -12666,11 +12666,11 @@
       "prefecture": "熊本県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -12679,11 +12679,11 @@
       "prefecture": "熊本県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -12692,11 +12692,11 @@
       "prefecture": "熊本県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -12731,11 +12731,11 @@
       "prefecture": "熊本県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -12887,11 +12887,11 @@
       "prefecture": "鹿児島県",
       "url_configured": true,
       "normal_fetch": true,
-      "structured_success": false,
+      "structured_success": true,
       "production_recorded": false,
       "campaign_recorded": false,
       "ordinary_recorded": false,
-      "unacquired": true,
+      "unacquired": false,
       "inaccessible": false
     },
     {
@@ -12951,13 +12951,13 @@
       "industry": "都市銀行",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "三菱UFJ銀行",
@@ -12977,13 +12977,13 @@
       "industry": "都市銀行",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "りそな銀行",
@@ -13016,26 +13016,26 @@
       "industry": "信託銀行",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "みずほ信託銀行",
       "industry": "信託銀行",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "三井住友信託銀行",
@@ -13055,13 +13055,13 @@
       "industry": "信託銀行",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "SMBC信託銀行",
@@ -13107,13 +13107,13 @@
       "industry": "その他の銀行",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "セブン銀行",
@@ -13146,13 +13146,13 @@
       "industry": "新たな形態の銀行",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "楽天銀行",
@@ -13224,13 +13224,13 @@
       "industry": "新たな形態の銀行",
       "prefecture": "東京都",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "みんなの銀行",
@@ -13263,13 +13263,13 @@
       "industry": "新たな形態の銀行",
       "prefecture": "大阪府",
       "url_configured": true,
-      "normal_fetch": false,
+      "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": false,
       "ordinary_recorded": true,
       "unacquired": false,
-      "inaccessible": true
+      "inaccessible": false
     },
     {
       "institution_name": "GMOあおぞらネット銀行",
