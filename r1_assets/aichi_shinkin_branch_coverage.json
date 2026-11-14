@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "schema_version": "1.0",
+    "created_at": "2026-11-14",
+    "status": "prototype",
+    "institution_count": 15,
+    "methodology": "公式店舗一覧・店舗検索・ディスクロージャー誌で、市区町村内に預金取扱店舗があることを確認。branch_countがnullの場合は店舗の存在のみ確認済み。店舗内店舗は金融機関の正式な店舗数として数える。店舗外ATM、ローンプラザ、インターネット支店は除外。",
+    "notes": [
+      "市区町村別平均は支店数加重ではなく、当該市区町村に店舗を持つ金融機関の均等平均。",
+      "名古屋市は住所から区まで確定できた店舗のみ収録。",
+      "蒲郡信用金庫の一部店舗数は公式2021年ディスクロージャー誌を使用し、所在地の存在確認を優先した試作データ。"
+    ]
+  },
+  "institutions": [
+    {
+      "institution": "愛知信用金庫",
+      "source_url": "https://www.aichishinkin.co.jp/branch/",
+      "coverage": {"23101":1,"23103":1,"23104":1,"23105":1,"23106":3,"23108":1,"23109":1,"23110":1,"23111":1,"23114":1,"23115":1,"23116":3,"23229":2,"23230":1,"23237":1}
+    },
+    {
+      "institution": "いちい信用金庫",
+      "source_url": "https://www.shinkin.co.jp/ichii/office.html",
+      "coverage": {"23103":1,"23104":1,"23105":1,"23110":2,"23203":19,"23208":2,"23215":1,"23217":3,"23219":2,"23220":2,"23228":2,"23232":1,"23233":1,"23234":2,"23237":2,"23362":2,"23424":1,"23425":1}
+    },
+    {
+      "institution": "岡崎信用金庫",
+      "source_url": "https://pkg.navitime.co.jp/okashin-tenpo/",
+      "coverage": {"23106":null,"23201":null,"23202":34,"23206":null,"23207":null,"23209":null,"23210":null,"23211":null,"23212":5,"23213":null,"23214":null,"23216":null,"23222":null,"23223":null,"23227":null,"23229":null,"23231":null,"23236":null,"23302":null,"23501":null}
+    },
+    {
+      "institution": "蒲郡信用金庫",
+      "source_url": "https://www.gamashin.co.jp/about/disclosure_202109.pdf",
+      "coverage": {"23107":1,"23108":1,"23112":1,"23201":16,"23202":4,"23207":6,"23213":2,"23214":9,"23221":1,"23231":2,"23501":1}
+    },
+    {
+      "institution": "瀬戸信用金庫",
+      "source_url": "https://www.setoshin.co.jp/setoshinkin/disclosure/book2026/pageindices/index34.html",
+      "coverage": {"23101":1,"23102":1,"23103":4,"23104":2,"23105":2,"23106":1,"23107":2,"23108":1,"23109":2,"23110":1,"23111":1,"23112":1,"23113":5,"23114":4,"23115":4,"23116":1,"23204":14,"23206":7,"23211":3,"23219":1,"23226":5,"23230":1,"23233":1,"23234":1,"23238":4,"23302":1}
+    },
+    {
+      "institution": "知多信用金庫",
+      "source_url": "https://www.chitashin.co.jp/tenpo/index.html",
+      "coverage": {"23112":1,"23114":1,"23205":11,"23210":1,"23216":4,"23222":3,"23223":2,"23224":2,"23441":1,"23442":2,"23445":3,"23446":1,"23447":2}
+    },
+    {
+      "institution": "中日信用金庫",
+      "source_url": "https://www.shinkin.co.jp/chunichi/tenpo/tenpo_index.html",
+      "coverage": {"23102":1,"23103":3,"23104":2,"23105":1,"23113":1,"23219":1,"23226":1,"23233":4,"23234":1,"23237":1,"23342":1}
+    },
+    {
+      "institution": "東春信用金庫",
+      "source_url": "https://www.toshun.co.jp/disclo/2021/disclosure2021.pdf",
+      "coverage": {"23101":1,"23102":1,"23113":2,"23206":7,"23217":1,"23219":6,"23226":1}
+    },
+    {
+      "institution": "豊川信用金庫",
+      "source_url": "https://www.kawa-shin.co.jp/tenpo/",
+      "coverage": {"23201":null,"23202":null,"23207":null,"23213":null,"23214":null,"23221":null,"23231":null}
+    },
+    {
+      "institution": "豊田信用金庫",
+      "source_url": "https://www.toyoshin.co.jp/sp/search/list/",
+      "coverage": {"23115":1,"23116":2,"23202":3,"23210":1,"23211":27,"23212":1,"23230":2,"23236":2,"23238":1,"23302":1}
+    },
+    {
+      "institution": "豊橋信用金庫",
+      "source_url": "https://www.toyo-shin.co.jp/atm/",
+      "coverage": {"23201":null,"23202":null,"23207":null,"23214":null,"23221":null,"23231":null}
+    },
+    {
+      "institution": "西尾信用金庫",
+      "source_url": "https://www.shinkin.co.jp/nishio/newgraduates/about/network.html",
+      "coverage": {"23112":1,"23114":1,"23202":9,"23205":3,"23209":2,"23210":6,"23212":3,"23213":15,"23214":2,"23216":1,"23223":1,"23225":1,"23227":1,"23229":1,"23501":2}
+    },
+    {
+      "institution": "半田信用金庫",
+      "source_url": "https://www.hanshin-ca.co.jp/008/008-01/00801-01.html",
+      "coverage": {"23112":1,"23205":6,"23216":null,"23222":3,"23223":2,"23224":2,"23441":null,"23442":null,"23445":null,"23446":null,"23447":null}
+    },
+    {
+      "institution": "尾西信用金庫",
+      "source_url": "https://www.bi-shin.co.jp/tenpo.html",
+      "coverage": {"23104":2,"23203":16,"23220":4}
+    },
+    {
+      "institution": "碧海信用金庫",
+      "source_url": "https://www.hekishin.jp/useful/tenpo/search.php",
+      "coverage": {"23202":null,"23205":null,"23209":null,"23210":null,"23211":null,"23212":null,"23213":null,"23216":null,"23222":null,"23223":null,"23224":null,"23225":null,"23227":null,"23229":null,"23236":null,"23302":null,"23441":null,"23442":null,"23501":null}
+    }
+  ]
+}
