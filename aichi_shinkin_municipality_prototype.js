@@ -51,7 +51,7 @@
     .municipality-map-card,.municipality-ranking-card,.municipality-selected-card{border:1px solid #d7e2ef;border-radius:12px;background:#fff;overflow:hidden}
     .municipality-map-toolbar{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.65rem .8rem;border-bottom:1px solid #e4ebf4;background:#f8fbff;font-size:.76rem;color:#53657c}
     .municipality-map-legend{display:flex;align-items:center;gap:.4rem;white-space:nowrap}
-    .municipality-map-gradient{width:90px;height:9px;border-radius:999px;background:linear-gradient(90deg,#dbeafe,#1d4ed8)}
+    .municipality-map-gradient{width:112px;height:9px;border-radius:999px;background:linear-gradient(90deg,#eaf6ff 0 12.5%,#d4ebfa 12.5% 25%,#b7dcef 25% 37.5%,#f5e3df 37.5% 50%,#f2b8ae 50% 62.5%,#e98278 62.5% 75%,#d8514f 75% 87.5%,#ad2837 87.5% 100%)}
     .municipality-map{display:block;width:100%;height:auto;min-height:390px;background:#f4f8fc}
     .municipality-shape{fill:#e5ebf2;stroke:#fff;stroke-width:1.1;vector-effect:non-scaling-stroke;transition:filter .15s,stroke .15s,stroke-width .15s;cursor:default}
     .municipality-shape.has-data{cursor:pointer}
@@ -170,13 +170,25 @@
   }
 
   function colorFor(value, min, max) {
-    if (!Number.isFinite(value)) return "#e5ebf2";
-    if (!Number.isFinite(min) || !Number.isFinite(max) || min === max) return "#3b82f6";
-    const t = Math.max(0, Math.min(1, (value - min) / (max - min)));
-    const start = [219, 234, 254];
-    const end = [29, 78, 216];
-    const rgb = start.map((channel, index) => Math.round(channel + (end[index] - channel) * t));
-    return `rgb(${rgb.join(",")})`;
+    const colors = ["#eaf6ff", "#d4ebfa", "#b7dcef", "#f5e3df", "#f2b8ae", "#e98278", "#d8514f", "#ad2837"];
+    if (!Number.isFinite(value)) return "#e5e9ef";
+    value = Number(value.toFixed(6));
+    min = Number.isFinite(min) ? Number(min.toFixed(6)) : null;
+    max = Number.isFinite(max) ? Number(max.toFixed(6)) : null;
+    if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return colors[3];
+    const ratio = Math.max(0, Math.min(1, (value - min) / (max - min)));
+    return colors[Math.min(colors.length - 1, Math.floor(ratio * colors.length))];
+  }
+
+  function labelColor(backgroundColor) {
+    const hex = String(backgroundColor || "").replace("#", "");
+    if (!/^[0-9a-f]{6}$/i.test(hex)) return "#26384f";
+    const channel = (offset) => {
+      const value = parseInt(hex.slice(offset, offset + 2), 16) / 255;
+      return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+    };
+    const luminance = 0.2126 * channel(0) + 0.7152 * channel(2) + 0.0722 * channel(4);
+    return luminance < 0.34 ? "#ffffff" : "#26384f";
   }
 
   function selectedTable(group, data) {
@@ -211,7 +223,9 @@
     const labels = geoJson.features.filter((feature) => byCode.has(feature.properties.code)).map((feature) => {
       const [x, y] = labelPoint(feature.geometry, project);
       const group = byCode.get(feature.properties.code);
-      return `<text class="municipality-label" x="${x.toFixed(1)}" y="${y.toFixed(1)}">${escapeHtml(group.municipality.replace(/^名古屋市/, "名古屋・"))}</text>`;
+      const fill = colorFor(group.averageRate, min, max);
+      const textColor = labelColor(fill);
+      return `<text class="municipality-label" x="${x.toFixed(1)}" y="${y.toFixed(1)}" style="fill:${textColor}">${escapeHtml(group.municipality.replace(/^名古屋市/, "名古屋・"))}</text>`;
     }).join("");
     const ranking = municipalities.map((group, index) => `<button type="button" class="municipality-ranking-row${group.code === selectedMunicipality ? " is-selected" : ""}" data-code="${group.code}"><span class="rank">${index + 1}</span><span><span class="name">${escapeHtml(group.municipality)}</span><span class="meta">${group.institutionCount}金融機関</span></span><span class="rate">${formatRate(group.averageRate)}</span></button>`).join("");
     const tied = Number.isFinite(min) && min === max;
