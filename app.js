@@ -36,7 +36,7 @@ function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
 const DATA_URL = "campaign_all.json?v=20261114-1";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261108-1";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261114-1";
 const LATEST_UPDATE = {
   publishedOn: "2026-11-14",
   label: "2026年11月14日 全国巡回・Codex照査結果を反映",
