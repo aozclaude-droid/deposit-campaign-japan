@@ -228,10 +228,11 @@
 </section>
 <section class="institution-subpanel">
 <div class="institution-subpanel-heading">
-<div><h3>金利履歴とTIBOR比較</h3><p class="muted">通常金利はTIBOR月次平均、キャンペーン預金は開始日の日次TIBORと比較します。</p></div>
+<div><h3>金利履歴とTIBOR比較</h3><p class="muted">預金金利を階段状に保持し、TIBORと金利差を日次・週次・改定時点で比較できます。</p></div>
 <div class="institution-chart-controls">
 <label>表示する金利<select id="institutionSeriesSelect"></select></label>
 <label id="institutionTermControl" hidden>預入期間・年限<select id="institutionTermSelect"><option value="all">全年限（各時点の最高金利）</option></select></label>
+<label>表示粒度<select id="institutionComparisonFrequency"><option value="weekly" selected>週次（週末営業日）</option><option value="daily">日次（公表営業日）</option><option value="event">改定・開始日</option></select></label>
 <label>TIBOR期間<select id="institutionTiborTenor"><option value="one_month">1か月</option><option value="three_month">3か月</option><option value="six_month">6か月</option><option value="twelve_month">12か月</option></select></label>
 </div>
 </div>
@@ -731,7 +732,7 @@
 <div class="tooltip" id="tooltip" role="tooltip"></div>
 <noscript><div class="noscript">この画面の利用にはJavaScriptが必要です。</div></noscript>
 <script defer="" src="app.js?v=20261114-2"></script>
-  <script defer src="institution_detail.js?v=20261114-1"></script>
+  <script defer src="institution_detail.js?v=20261114-2"></script>
   <script defer src="web_r1_bridge.js?v=20261103-1" data-r1-web-bridge="1"></script>
   <script defer src="./web_heatmap_unified_patch.js?v=20261103-1"></script>
 </body>

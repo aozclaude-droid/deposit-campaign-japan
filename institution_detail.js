@@ -11,6 +11,7 @@ const institutionDetailState = {
   seriesKey: "",
   termKey: "all",
   tiborTenor: "one_month",
+  comparisonFrequency: "weekly",
   nearbyInstitutionType: ""
 };
 
@@ -180,8 +181,45 @@ function institutionDetailTiborForDate(date, key, useDaily = false) {
 }
 
 function institutionDetailSeriesWithTibor(points) {
+  if (institutionDetailState.comparisonFrequency !== "event") {
+    return institutionDetailExpandedDailySeries(points, institutionDetailState.comparisonFrequency);
+  }
   const useDaily = institutionDetailState.seriesKey === "campaign";
   return points.map((point) => ({ ...point, tibor: institutionDetailTiborForDate(point.date, institutionDetailState.tiborTenor, useDaily) }));
+}
+
+function institutionDetailWeekKey(date) {
+  const value = new Date(`${date}T00:00:00Z`);
+  if (!Number.isFinite(value.getTime())) return date;
+  const day = (value.getUTCDay() + 6) % 7;
+  value.setUTCDate(value.getUTCDate() - day);
+  return value.toISOString().slice(0, 10);
+}
+
+function institutionDetailExpandedDailySeries(points, frequency) {
+  const events = points.slice().sort((a, b) => a.date.localeCompare(b.date));
+  if (!events.length || !institutionDetailState.tiborDailyRecords.length) return [];
+  const firstDate = events[0].date;
+  const daily = institutionDetailState.tiborDailyRecords
+    .filter((row) => row.date >= firstDate && Number.isFinite(Number(row[institutionDetailState.tiborTenor])))
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const observations = frequency === "weekly"
+    ? [...daily.reduce((weeks, row) => weeks.set(institutionDetailWeekKey(row.date), row), new Map()).values()]
+    : daily;
+  let eventIndex = -1;
+  const expanded = [];
+  observations.forEach((row) => {
+    while (eventIndex + 1 < events.length && events[eventIndex + 1].date <= row.date) eventIndex += 1;
+    if (eventIndex < 0) return;
+    const event = events[eventIndex];
+    expanded.push({
+      ...event,
+      date: row.date,
+      rateEffectiveDate: event.date,
+      tibor: { value: Number(row[institutionDetailState.tiborTenor]), date: row.date, month: row.date.slice(0, 7), exact: true }
+    });
+  });
+  return expanded;
 }
 
 function institutionDetailChart(points) {
@@ -214,8 +252,7 @@ function institutionDetailChart(points) {
   if (maxValue <= minValue) maxValue = minValue + 0.5;
   const x = (time) => margin.left + ((time - minTime) / (maxTime - minTime)) * plotWidth;
   const y = (value) => margin.top + (1 - (value - minValue) / (maxValue - minValue)) * plotHeight;
-  const stepped = institutionDetailState.seriesKey === "campaign";
-  const line = (items, accessor) => {
+  const line = (items, accessor, stepped = false) => {
     const valid = items.filter((item) => Number.isFinite(accessor(item)));
     return valid.map((item, index) => {
       const px = x(item.time).toFixed(1);
@@ -224,7 +261,7 @@ function institutionDetailChart(points) {
       return stepped ? `H${px} V${py}` : `L${px},${py}`;
     }).join(" ");
   };
-  const depositPath = line(parsed, (point) => point.rate);
+  const depositPath = line(parsed, (point) => point.rate, true);
   const tiborPoints = parsed.filter((point) => point.tibor);
   const tiborPath = line(tiborPoints, (point) => point.tibor.value);
   const spreadPath = line(spreadPoints, (point) => point.spread);
@@ -235,7 +272,7 @@ function institutionDetailChart(points) {
     ${yTicks.map((tick) => `<line class="institution-grid-line" x1="${margin.left}" x2="${width - margin.right}" y1="${y(tick)}" y2="${y(tick)}"></line><text class="institution-axis-label" x="${margin.left - 12}" y="${y(tick) + 4}" text-anchor="end">${Number(tick.toFixed(2))}%</text>`).join("")}
     <line class="institution-axis" x1="${margin.left}" x2="${margin.left}" y1="${margin.top}" y2="${height - margin.bottom}"></line>
     <line class="institution-axis" x1="${margin.left}" x2="${width - margin.right}" y1="${height - margin.bottom}" y2="${height - margin.bottom}"></line>
-    ${xTicks.map((tick) => `<text class="institution-axis-label" x="${x(tick.time)}" y="${height - 24}" text-anchor="middle">${esc(tick.date.slice(0, 7))}</text>`).join("")}
+    ${xTicks.map((tick) => `<text class="institution-axis-label" x="${x(tick.time)}" y="${height - 24}" text-anchor="middle">${esc(institutionDetailState.comparisonFrequency === "event" ? tick.date.slice(0, 7) : tick.date.slice(2, 10))}</text>`).join("")}
     ${tiborPath ? `<path class="institution-tibor-path" d="${tiborPath}"></path>` : ""}
     <path class="institution-deposit-path" d="${depositPath}"></path>
     ${spreadPath ? `<path class="institution-spread-path" d="${spreadPath}"></path>` : ""}
@@ -258,7 +295,8 @@ function institutionDetailChart(points) {
       : "対応データなし";
     const spread = point.tibor ? point.rate - point.tibor.value : null;
     return `<strong>${esc(isCampaign ? point.label : point.label)}</strong>
-      <span>${isCampaign ? "キャンペーン開始日" : "基準日"}：${esc(point.date)}</span>
+      <span>${institutionDetailState.comparisonFrequency === "event" ? (isCampaign ? "キャンペーン開始日" : "基準日") : "比較日"}：${esc(point.date)}</span>
+      ${point.rateEffectiveDate && point.rateEffectiveDate !== point.date ? `<span>金利の適用開始日：${esc(point.rateEffectiveDate)}</span>` : ""}
       <span>預金金利：${institutionDetailPercent(point.rate)}</span>
       ${point.condition ? `<span>採用条件：${esc(point.condition)}</span>` : ""}
       <span>比較TIBOR：${point.tibor ? institutionDetailPercent(point.tibor.value) : "—"} <small>${esc(tiborBasis)}</small></span>
@@ -323,22 +361,26 @@ function institutionDetailRenderSpread(points) {
 function institutionDetailRenderSpreadDetails(points) {
   const target = document.querySelector("#institutionSpreadDetails");
   if (!target) return;
-  if (institutionDetailState.seriesKey !== "campaign") {
+  const eventMode = institutionDetailState.comparisonFrequency === "event";
+  if (eventMode && institutionDetailState.seriesKey !== "campaign") {
     target.innerHTML = "";
     target.classList.add("hidden");
     return;
   }
-  const compared = points.filter((point) => point.tibor && Number.isFinite(point.rate)).slice().reverse();
+  const compared = points.filter((point) => point.tibor && Number.isFinite(point.rate)).slice().reverse().slice(0, 60);
   target.classList.remove("hidden");
   const termSelect = document.querySelector("#institutionTermSelect");
   const selectedTerm = termSelect?.selectedOptions?.[0]?.textContent || "全年限";
-  target.innerHTML = `<h4>キャンペーン開始日ごとのTIBOR差</h4>
-    <p>${institutionDetailState.termKey === "all" ? "同じ開始日に複数年限がある場合は、その日の最高キャンペーン金利を表示します。" : `${esc(selectedTerm)}に絞り込み、同じ開始日の最高キャンペーン金利を表示します。`}</p>
-    <div class="institution-spread-table-wrap"><table class="institution-spread-table"><thead><tr><th>キャンペーン開始日</th><th>キャンペーン金利</th><th>採用TIBOR日</th><th>TIBOR</th><th>金利差</th><th>商品・年限</th></tr></thead><tbody>
+  const frequencyLabel = institutionDetailState.comparisonFrequency === "daily" ? "日次" : institutionDetailState.comparisonFrequency === "weekly" ? "週次" : "開始日";
+  const description = eventMode
+    ? (institutionDetailState.termKey === "all" ? "同じ開始日に複数年限がある場合は、その日の最高キャンペーン金利を表示します。" : `${esc(selectedTerm)}に絞り込み、同じ開始日の最高キャンペーン金利を表示します。`)
+    : `預金金利は次の改定・キャンペーン開始日まで据え置き、${frequencyLabel}のTIBORと比較します。直近60時点を表示します。`;
+  target.innerHTML = `<h4>${frequencyLabel}のTIBOR差</h4>
+    <p>${description}</p>
+    <div class="institution-spread-table-wrap"><table class="institution-spread-table"><thead><tr><th>比較日</th><th>金利適用開始日</th><th>預金金利</th><th>TIBOR</th><th>金利差</th><th>商品・年限</th></tr></thead><tbody>
       ${compared.map((point) => {
         const spread = point.rate - point.tibor.value;
-        const basis = point.tibor.exact ? point.tibor.date : `${point.tibor.date}（直前営業日）`;
-        return `<tr><td>${esc(point.date)}</td><td class="rate">${institutionDetailPercent(point.rate)}</td><td>${esc(basis)}</td><td>${institutionDetailPercent(point.tibor.value)}</td><td class="rate ${spread >= 0 ? "positive" : "negative"}">${spread >= 0 ? "+" : ""}${Math.round(spread * 100)}bp</td><td>${esc(point.label)}</td></tr>`;
+        return `<tr><td>${esc(point.date)}</td><td>${esc(point.rateEffectiveDate || point.date)}</td><td class="rate">${institutionDetailPercent(point.rate)}</td><td>${institutionDetailPercent(point.tibor.value)}</td><td class="rate ${spread >= 0 ? "positive" : "negative"}">${spread >= 0 ? "+" : ""}${Math.round(spread * 100)}bp</td><td>${esc(point.label)}</td></tr>`;
       }).join("")}
     </tbody></table></div>`;
 }
@@ -362,8 +404,9 @@ function institutionDetailRenderChart(campaigns, baseRows) {
   const note = document.querySelector("#institutionTiborNote");
   const meta = institutionDetailState.tiborMetadata;
   const dailyMeta = institutionDetailState.tiborDailyMetadata;
+  const frequencyText = institutionDetailState.comparisonFrequency === "daily" ? "各公表営業日" : institutionDetailState.comparisonFrequency === "weekly" ? "各週の最終公表営業日" : "金利の改定日・キャンペーン開始日";
   note.innerHTML = meta.period_start
-    ? `通常金利は、<a href="${esc(meta.source_page)}" target="_blank" rel="noopener noreferrer">全銀協TIBOR運営機関の公式履歴</a>から作成した${esc(meta.period_start)}～${esc(meta.period_end)}の月次算術平均と比較します。キャンペーン預金は開始日の日次TIBORと比較し、開始日が非公表日・休業日の場合のみ直前営業日を採用します（日次データ ${esc(dailyMeta.period_start || "—")}～${esc(dailyMeta.period_end || "—")}）。金利差は「預金金利－TIBOR」で、100bp＝1％ポイントです。比較は参考値です。チャートは年10％超を除外しますが、明細表には表示します。公式資料には再配信時の問い合わせ案内があります。`
+    ? `<a href="${esc(meta.source_page)}" target="_blank" rel="noopener noreferrer">全銀協TIBOR運営機関の公式履歴</a>を使用しています。現在は${frequencyText}で比較し、預金金利は次の改定・開始日まで据え置く階段状系列です（日次データ ${esc(dailyMeta.period_start || "—")}～${esc(dailyMeta.period_end || "—")}）。「改定・開始日」を選んだ場合、通常金利は月次平均、キャンペーンは開始日の日次TIBOR（非公表日は直前営業日）と比較します。金利差は「預金金利－TIBOR」で、100bp＝1％ポイントです。比較は参考値です。`
     : `TIBOR比較データを読み込めませんでした。<a href="https://www.jbatibor.or.jp/rate/log.html" target="_blank" rel="noopener noreferrer">公式履歴</a>をご確認ください。`;
 }
 
@@ -650,6 +693,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.querySelector("#institutionTiborTenor")?.addEventListener("change", (event) => {
     institutionDetailState.tiborTenor = event.target.value;
+    renderInstitutionDetail();
+  });
+  document.querySelector("#institutionComparisonFrequency")?.addEventListener("change", (event) => {
+    institutionDetailState.comparisonFrequency = event.target.value;
     renderInstitutionDetail();
   });
   document.querySelector("#institutionNearbyTypeFilter")?.addEventListener("change", (event) => {
