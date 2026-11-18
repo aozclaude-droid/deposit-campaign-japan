@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "created_at": "2026-11-19",
+    "record_count": 3,
+    "reason": "同一条件の公式掲載金利が不一致。掲載記録は保持し、現在のランキング値を一意に断定しない"
+  },
+  "records": [
+    {
+      "institution_name": "瀧野川信用金庫",
+      "term_months": "1",
+      "snapshot_date": "2026-11-18",
+      "record_ids": [
+        "1425afb345b204b8ede30569",
+        "f52710cc4f3e4f8abfceabf2"
+      ]
+    },
+    {
+      "institution_name": "瀧野川信用金庫",
+      "term_months": "3",
+      "snapshot_date": "2026-11-18",
+      "record_ids": [
+        "4e234e312eaac80b1ab939c2",
+        "a62d5bfef6dd0fc931324e7e"
+      ]
+    },
+    {
+      "institution_name": "瀧野川信用金庫",
+      "term_months": "2",
+      "snapshot_date": "2026-11-18",
+      "record_ids": [
+        "5bc72ea07275d745b7338ea8",
+        "f21713f416a9290db48e4b7c"
+      ]
+    }
+  ]
+}
