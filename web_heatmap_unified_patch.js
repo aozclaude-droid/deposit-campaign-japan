@@ -14,7 +14,7 @@
 
 (() => {
   const PATCH_VERSION = "20261102.1";
-  const R1_CURRENT_URL = "./r1_data/current_default_ranking.json?v=20261114-1";
+  const R1_CURRENT_URL = "./r1_data/current_default_ranking.json?v=20261119-4";
   const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261114-1";
 
   const PRODUCT_MODES = [
