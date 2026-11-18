@@ -1,4 +1,9 @@
 "use strict";
+function filterSupersededBaseRateRowsV20261119(rows) {
+  const superseded = new Set(rows.flatMap(row => [row.supersedes_record_id, ...(Array.isArray(row.supersedes_record_ids) ? row.supersedes_record_ids : [])]).filter(Boolean).map(String));
+  return rows.filter(row => !superseded.has(String(row.base_rate_record_id)));
+}
+
 
 (() => {
   const R1 = {
@@ -71,7 +76,7 @@
   });
   const pref = (row) => String(pick(row, "prefecture", "都道府県")).trim();
   const region = (row) => String(pick(row, "region", "地域")).trim();
-  const sourceDate = (row) => String(pick(row, "source_as_of_date", "effective_from", "base_rate_source_date")).trim();
+  const sourceDate = (row) => String(pick(row, "source_as_of_date", "effective_from", "base_rate_source_date", "observation_date", "observed_at")).trim();
 
   const fmtRate = (v) => v === null || !Number.isFinite(v) ? "—" : `${v.toFixed(3).replace(/0+$/,"").replace(/\.$/,"")}%`;
   const fmt = (v) => Number(v || 0).toLocaleString("ja-JP");
@@ -195,7 +200,7 @@
         prefecture: pref(rs[0]),
         region: region(rs[0]),
         rate: rates.length ? rates.reduce((a,b)=>a+b,0)/rates.length : null,
-        source_date: rs.map(sourceDate).filter(Boolean).sort().at(-1) || "",
+        source_date: rs.length ? baseRateDateLabel(rs.slice().sort((a,b)=>sourceDate(b).localeCompare(sourceDate(a)))[0]) : "",
         source_count: rs.length
       };
     }).filter(x => x.rate !== null);
@@ -642,7 +647,7 @@
     const latest = new Map();
     (R1.data.history || []).forEach(row => {
       if (!isOrdinaryHistoryRow(row) || rateValue(row) === null) return;
-      if (String(pick(row,"record_eligible")).trim() === "0") return;
+      if (String(pick(row,"record_eligible")).trim() === "0" || !baseRateCurrentSnapshotEligible(row)) return;
       const from = ordinaryMatrixDate(pick(row,"effective_from","source_as_of_date"));
       const to = ordinaryMatrixDate(pick(row,"effective_to"));
       if (from && from > today) return;
@@ -692,7 +697,7 @@
         rate: selected ? rateValue(selected) : null,
         institutionType: selected ? instType(selected) : instType(rows[0]),
         prefecture: selected ? pref(selected) : pref(rows[0]),
-        sourceDate: selected ? sourceDate(selected) : "",
+        sourceDate: selected ? baseRateDateLabel(selected) : "",
         amountBand: selected ? String(pick(selected,"amount_band","product_label")).trim() : "",
         sourceCount: rows.length
       };
@@ -842,7 +847,7 @@
     return `<section class="r1-ordinary-matrix">
       <div class="r1-analytics-matrix-summary"><span>全${fmt(model.allCount)}金融機関・全順位</span><span>通常金利履歴の最新スナップショットを使用（読込 ${fmt(model.sourceRowCount)}行・同一金利は同順位）</span></div>
       <div class="r1-matrix-stat-grid"><article class="r1-matrix-stat"><h4>普通預金</h4><div><span>最高</span><strong>${fmtRate(model.maximum)}</strong><small>${esc(names || "—")}</small></div><div><span>平均</span><strong>${fmtRate(model.average)}</strong><small>${fmt(model.allCount)}金融機関</small></div></article></div>
-      <p class="r1-matrix-scroll-hint">普通預金には預入期間がないため、専用の1列で比較します。金融機関ごとの最新金利を表示します。</p>
+      <p class="r1-matrix-scroll-hint">普通預金には預入期間がないため、専用の1列で比較します。金融機関ごとの最新掲載金利を表示します。改定日不明の明細は、確認できた取得日を表示します。</p>
       <div class="r1-matrix-scroll"><table class="r1-analytics-matrix"><thead><tr><th>金融機関</th><th>普通預金</th></tr></thead><tbody>${rows}</tbody></table></div>
       ${rateHistogramHtml(model.entries.map(item=>({rate:item.rate,institution:item.institution,institutionType:item.institutionType,prefecture:item.prefecture})),"普通預金")}
     </section>`;
@@ -903,6 +908,7 @@
       R1_MATRIX_TERMS.forEach(t => {
         const rows = cellRows.get(`${name}|||${t.months}`) || [];
         const cell = mode === "effective" ? effectiveCell(rows) : representativeBaseCell(rows);
+        if (mode === "base" && rows.length) cell.dateLabel = baseRateDateLabel(rows.slice().sort((a,b)=>sourceDate(b).localeCompare(sourceDate(a)))[0]);
         if (mode === "base" && cell.status === "AMBIGUOUS_AMOUNT_BANDS") ambiguousBase++;
         cells.set(`${name}|||${t.months}`,cell);
         if (cell.rate !== null) termStats.get(t.months).push({institution:name,rate:cell.rate,cell});
@@ -950,7 +956,7 @@
     const detail = model.mode === "effective"
       ? `${c.rows}件${c.campaign ? ` / ${c.campaign}` : ""}`
       : `${c.status === "CONSENSUS" ? "代表金利" : "標準小口帯"}${c.rows>1 ? ` / ${c.rows}行` : ""}`;
-    return `<td class="r1-matrix-cell"><strong>${fmtRate(c.rate)}</strong><small title="${esc(detail)}">${esc(detail)}</small>${c.rank ? `<span class="rank-badge">${c.rank}位</span>` : ""}</td>`;
+    return `<td class="r1-matrix-cell"><strong>${fmtRate(c.rate)}</strong><small title="${esc(detail)}">${esc(detail)}</small>${c.dateLabel ? `<small>${esc(c.dateLabel)}</small>` : ""}${c.rank ? `<span class="rank-badge">${c.rank}位</span>` : ""}</td>`;
   }
 
   function r1MatrixHtml(model) {
@@ -1112,7 +1118,7 @@
         loadJson("campaign_effective_rate_resolved.json"),
         loadJson("campaign_effective_rate_history_linked.json")
       ]);
-      R1.data = {status,current,history,resolved,historyLinked};
+      R1.data = {status,current,history:filterSupersededBaseRateRowsV20261119(history),resolved,historyLinked};
       R1.loaded = true;
       populateFilters();
       render();

@@ -71,7 +71,7 @@ function institutionDetailRowDate(row) {
 }
 
 function institutionDetailLatest(rows, predicate = () => true) {
-  return rows.filter(predicate).slice().sort((a, b) => institutionDetailRowDate(b).localeCompare(institutionDetailRowDate(a)) || Number(b.rate_percent) - Number(a.rate_percent))[0] || null;
+  return rows.filter(row => predicate(row) && baseRateCurrentSnapshotEligible(row) && institutionDetailDate(row) <= TODAY_ISO).slice().sort((a, b) => institutionDetailRowDate(b).localeCompare(institutionDetailRowDate(a)) || Number(b.rate_percent) - Number(a.rate_percent))[0] || null;
 }
 
 function institutionDetailFamily(row) {
@@ -147,7 +147,7 @@ function institutionDetailRatePoints(campaigns, baseRows, seriesKey) {
   const base = baseRows.filter((row) => {
     const rate = institutionDetailRate(row);
     const usableHistory = institutionDetailText(row.record_eligible) !== "0" || institutionDetailText(row.history_date_eligible) === "1";
-    return rate != null && rate >= 0 && rate <= 10 && usableHistory;
+    return rate != null && rate >= 0 && rate <= 10 && usableHistory && row.base_rate_role !== "CLOSED_PRODUCT_REFERENCE";
   });
   const selected = seriesKey === "ordinary"
     ? base.filter((row) => institutionDetailFamily(row) === "ORDINARY_DEPOSIT")
@@ -156,6 +156,8 @@ function institutionDetailRatePoints(campaigns, baseRows, seriesKey) {
     const rawCondition = institutionDetailText(row.amount_band || row.evidence_context);
     return {
       date: institutionDetailDate(row),
+      dateKind: row.record_date_kind || "SOURCE_DATE",
+      rateSourceDateLabel: baseRateDateLabel(row),
       rate: institutionDetailRate(row),
       label: `${institutionDetailText(row.product_label || institutionDetailProductCategory(row))} / ${institutionDetailTermLabel(row) || "期間なし"}`,
       condition: rawCondition === "GENERAL_OR_UNSPECIFIED" ? "" : rawCondition,
@@ -198,7 +200,8 @@ function institutionDetailWeekKey(date) {
 
 function institutionDetailExpandedDailySeries(points, frequency) {
   const events = points.slice().sort((a, b) => a.date.localeCompare(b.date));
-  if (!events.length || !institutionDetailState.tiborDailyRecords.length) return [];
+  if (!events.length) return [];
+  if (!institutionDetailState.tiborDailyRecords.length) return events.map(event=>({...event,tibor:null}));
   const firstDate = events[0].date;
   const daily = institutionDetailState.tiborDailyRecords
     .filter((row) => row.date >= firstDate && Number.isFinite(Number(row[institutionDetailState.tiborTenor])))
@@ -215,10 +218,12 @@ function institutionDetailExpandedDailySeries(points, frequency) {
     expanded.push({
       ...event,
       date: row.date,
-      rateEffectiveDate: event.date,
+      rateEffectiveDate: event.dateKind === "OBSERVATION" ? null : event.date,
       tibor: { value: Number(row[institutionDetailState.tiborTenor]), date: row.date, month: row.date.slice(0, 7), exact: true }
     });
   });
+  const lastTiborDate = daily.at(-1)?.date || "";
+  events.filter(event=>event.date>lastTiborDate).forEach(event=>expanded.push({...event,tibor:null,rateEffectiveDate:event.dateKind === "OBSERVATION" ? null : event.date}));
   return expanded;
 }
 
@@ -296,6 +301,7 @@ function institutionDetailChart(points) {
     const spread = point.tibor ? point.rate - point.tibor.value : null;
     return `<strong>${esc(isCampaign ? point.label : point.label)}</strong>
       <span>${institutionDetailState.comparisonFrequency === "event" ? (isCampaign ? "キャンペーン開始日" : "基準日") : "比較日"}：${esc(point.date)}</span>
+      ${point.dateKind === "OBSERVATION" ? `<span>掲載金利の取得日：${esc(point.rateSourceDateLabel)}。金利改定日は未確認</span>` : ""}
       ${point.rateEffectiveDate && point.rateEffectiveDate !== point.date ? `<span>金利の適用開始日：${esc(point.rateEffectiveDate)}</span>` : ""}
       <span>預金金利：${institutionDetailPercent(point.rate)}</span>
       ${point.condition ? `<span>採用条件：${esc(point.condition)}</span>` : ""}
@@ -374,13 +380,13 @@ function institutionDetailRenderSpreadDetails(points) {
   const frequencyLabel = institutionDetailState.comparisonFrequency === "daily" ? "日次" : institutionDetailState.comparisonFrequency === "weekly" ? "週次" : "開始日";
   const description = eventMode
     ? (institutionDetailState.termKey === "all" ? "同じ開始日に複数年限がある場合は、その日の最高キャンペーン金利を表示します。" : `${esc(selectedTerm)}に絞り込み、同じ開始日の最高キャンペーン金利を表示します。`)
-    : `預金金利は次の改定・キャンペーン開始日まで据え置き、${frequencyLabel}のTIBORと比較します。直近60時点を表示します。`;
+    : `預金金利は次の確認時点まで据え置き（改定日不明のデータは取得日の観測点として表示）、${frequencyLabel}のTIBORと比較します。直近60時点を表示します。`;
   target.innerHTML = `<h4>${frequencyLabel}のTIBOR差</h4>
     <p>${description}</p>
-    <div class="institution-spread-table-wrap"><table class="institution-spread-table"><thead><tr><th>比較日</th><th>金利適用開始日</th><th>預金金利</th><th>TIBOR</th><th>金利差</th><th>商品・年限</th></tr></thead><tbody>
+    <div class="institution-spread-table-wrap"><table class="institution-spread-table"><thead><tr><th>比較日</th><th>金利の日付と区分</th><th>預金金利</th><th>TIBOR</th><th>金利差</th><th>商品・年限</th></tr></thead><tbody>
       ${compared.map((point) => {
         const spread = point.rate - point.tibor.value;
-        return `<tr><td>${esc(point.date)}</td><td>${esc(point.rateEffectiveDate || point.date)}</td><td class="rate">${institutionDetailPercent(point.rate)}</td><td>${institutionDetailPercent(point.tibor.value)}</td><td class="rate ${spread >= 0 ? "positive" : "negative"}">${spread >= 0 ? "+" : ""}${Math.round(spread * 100)}bp</td><td>${esc(point.label)}</td></tr>`;
+        return `<tr><td>${esc(point.date)}</td><td>${esc(point.rateSourceDateLabel || point.rateEffectiveDate || point.date)}</td><td class="rate">${institutionDetailPercent(point.rate)}</td><td>${institutionDetailPercent(point.tibor.value)}</td><td class="rate ${spread >= 0 ? "positive" : "negative"}">${spread >= 0 ? "+" : ""}${Math.round(spread * 100)}bp</td><td>${esc(point.label)}</td></tr>`;
       }).join("")}
     </tbody></table></div>`;
 }
@@ -406,7 +412,7 @@ function institutionDetailRenderChart(campaigns, baseRows) {
   const dailyMeta = institutionDetailState.tiborDailyMetadata;
   const frequencyText = institutionDetailState.comparisonFrequency === "daily" ? "各公表営業日" : institutionDetailState.comparisonFrequency === "weekly" ? "各週の最終公表営業日" : "金利の改定日・キャンペーン開始日";
   note.innerHTML = meta.period_start
-    ? `<a href="${esc(meta.source_page)}" target="_blank" rel="noopener noreferrer">全銀協TIBOR運営機関の公式履歴</a>を使用しています。現在は${frequencyText}で比較し、預金金利は次の改定・開始日まで据え置く階段状系列です（日次データ ${esc(dailyMeta.period_start || "—")}～${esc(dailyMeta.period_end || "—")}）。「改定・開始日」を選んだ場合、通常金利は月次平均、キャンペーンは開始日の日次TIBOR（非公表日は直前営業日）と比較します。金利差は「預金金利－TIBOR」で、100bp＝1％ポイントです。比較は参考値です。`
+    ? `<a href="${esc(meta.source_page)}" target="_blank" rel="noopener noreferrer">全銀協TIBOR運営機関の公式履歴</a>を使用しています。現在は${frequencyText}で比較し、預金金利は次の改定・開始日まで据え置く階段状系列です（日次データ ${esc(dailyMeta.period_start || "—")}～${esc(dailyMeta.period_end || "—")}）。「改定・開始日」を選んだ場合、通常金利は月次平均、キャンペーンは開始日の日次TIBOR（非公表日は直前営業日）と比較します。金利差は「預金金利－TIBOR」で、100bp＝1％ポイントです。改定日が不明な掲載金利は取得日の観測点として区別して表示します。比較は参考値です。`
     : `TIBOR比較データを読み込めませんでした。<a href="https://www.jbatibor.or.jp/rate/log.html" target="_blank" rel="noopener noreferrer">公式履歴</a>をご確認ください。`;
 }
 
@@ -423,9 +429,9 @@ function institutionDetailRenderSummary(name, campaigns, baseRows) {
   const dates = [...campaigns.map((row) => row.campaign_start_date), ...baseRows.map(institutionDetailDate)].filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(date)).sort();
   document.querySelector("#institutionSummaryGrid").innerHTML = `
     <article><span>開催中・開催予定</span><strong>${fmt(active.length)}件</strong><small>キャンペーン明細</small></article>
-    <article><span>普通預金・直近標準金利</span><strong>${ordinary ? institutionDetailPercent(institutionDetailRate(ordinary)) : "—"}</strong><small>${ordinary ? esc(institutionDetailDate(ordinary)) : "履歴なし"}</small></article>
+    <article><span>普通預金・直近標準金利</span><strong>${ordinary ? institutionDetailPercent(institutionDetailRate(ordinary)) : "—"}</strong><small>${ordinary ? esc(baseRateDateLabel(ordinary)) : "履歴なし"}</small></article>
     <article><span>開催中商品の最高金利</span><strong>${highestCampaign ? institutionDetailPercent(highestCampaign._comparableRate) : "—"}</strong><small>${highestCampaign ? esc(highestCampaign.campaign_name) : "数値化可能な商品なし"}</small></article>
-    <article><span>定期預金・直近収録金利</span><strong>${standardTerm ? institutionDetailPercent(institutionDetailRate(standardTerm)) : "—"}</strong><small>${standardTerm ? `${esc(institutionDetailTermLabel(standardTerm))} / ${esc(institutionDetailDate(standardTerm))}` : "履歴なし"}</small></article>
+    <article><span>定期預金・直近収録金利</span><strong>${standardTerm ? institutionDetailPercent(institutionDetailRate(standardTerm)) : "—"}</strong><small>${standardTerm ? `${esc(institutionDetailTermLabel(standardTerm))} / ${esc(baseRateDateLabel(standardTerm))}` : "履歴なし"}</small></article>
     <article><span>収録履歴</span><strong>${fmt(campaigns.length + baseRows.length)}件</strong><small>${dates.length ? `${esc(dates[0])}～${esc(dates[dates.length - 1])}` : "日付なし"}</small></article>`;
 }
 
@@ -529,7 +535,7 @@ function institutionDetailRenderBaseTable(baseRows) {
   document.querySelector("#institutionBaseRateCount").textContent = `${fmt(sorted.length)}明細。普通預金と店頭表示金利の履歴です。`;
   document.querySelector("#institutionBaseRateBody").innerHTML = sorted.length ? sorted.map((row) => {
     const eligible = institutionDetailText(row.current_ranking_eligible) === "1" ? "標準比較対象" : "条件付き・履歴";
-    return `<tr><td data-label="基準日">${esc(institutionDetailDate(row) || "日付不明")}</td><td data-label="商品分類">${esc(institutionDetailProductCategory(row))}</td><td data-label="商品名">${esc(row.product_label || "—")}</td><td data-label="年限">${esc(institutionDetailTermLabel(row) || "—")}</td><td data-label="金利" class="rate">${institutionDetailPercent(institutionDetailRate(row), 5)}</td><td data-label="金額・条件">${esc(row.amount_band || row.evidence_context || "—")}</td><td data-label="比較区分">${esc(eligible)}</td><td data-label="公式資料">${institutionDetailUrl(row.source_url)}</td></tr>`;
+    return `<tr><td data-label="基準日">${esc(baseRateDateLabel(row) || "日付不明")}</td><td data-label="商品分類">${esc(institutionDetailProductCategory(row))}</td><td data-label="商品名">${esc(row.product_label || "—")}</td><td data-label="年限">${esc(institutionDetailTermLabel(row) || "—")}</td><td data-label="金利" class="rate">${institutionDetailPercent(institutionDetailRate(row), 5)}</td><td data-label="金額・条件">${esc(row.amount_band || row.evidence_context || "—")}</td><td data-label="比較区分">${esc(eligible)}</td><td data-label="公式資料">${institutionDetailUrl(row.source_url)}</td></tr>`;
   }).join("") : `<tr><td colspan="8" class="table-empty">普通預金・店頭金利の履歴はありません。</td></tr>`;
 }
 

@@ -1,4 +1,20 @@
 "use strict";
+function baseRateSnapshotDate(row) {
+  return String(row?.effective_from || row?.source_as_of_date || row?.observation_date || row?.observed_at || row?.retrieved_at || "").slice(0,10);
+}
+function baseRateDateLabel(row) {
+  const date = baseRateSnapshotDate(row);
+  return row?.record_date_kind === "OBSERVATION" ? (row.date_display || `${date}取得（改定日不明）`) : row?.record_date_kind === "PUBLISHED_REFERENCE_DATE" ? `${date}公表基準日` : row?.record_date_kind === "REVISION_DATE" ? `${date}改定日` : date;
+}
+function baseRateCurrentSnapshotEligible(row) {
+  return row?.record_date_kind !== "OBSERVATION" || String(row.current_ranking_eligible) === "1";
+}
+
+function filterSupersededBaseRateRowsV20261119(rows) {
+  const superseded = new Set(rows.flatMap(row => [row.supersedes_record_id, ...(Array.isArray(row.supersedes_record_ids) ? row.supersedes_record_ids : [])]).filter(Boolean).map(String));
+  return rows.filter(row => !superseded.has(String(row.base_rate_record_id)));
+}
+
 
 const APP_VERSION = "2026.11.14.1";
 const PREFECTURE_ORDER = [
@@ -36,7 +52,7 @@ function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
 const DATA_URL = "campaign_all.json?v=20261114-1";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261114-1";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261119-2";
 const LATEST_UPDATE = {
   publishedOn: "2026-11-14",
   label: "2026年11月14日 全国巡回・Codex照査結果を反映",
@@ -775,8 +791,8 @@ function ordinaryHeatmapRecords() {
     const label = text(row.product_label || row.product_type);
     if (family !== "ORDINARY_DEPOSIT" && !/普通預金|普通貯金/.test(label)) return;
     const rate = Number(row.rate_percent);
-    if (!Number.isFinite(rate) || text(row.record_eligible) === "0") return;
-    const from = ordinaryHistoryDate(row.effective_from || row.source_as_of_date);
+    if (!Number.isFinite(rate) || text(row.record_eligible) === "0" || !baseRateCurrentSnapshotEligible(row)) return;
+    const from = ordinaryHistoryDate(row.effective_from || row.source_as_of_date || row.observation_date);
     const to = ordinaryHistoryDate(row.effective_to);
     if (from && from > TODAY_ISO) return;
     if (to && to < TODAY_ISO) return;
@@ -796,7 +812,7 @@ function ordinaryHeatmapRecords() {
           text(row.base_rate_role), text(row.product_label), text(row.amount_band),
           text(row.rate_condition), text(row.eligibility_conditions)
         ].join("\u241f");
-        const date = ordinaryHistoryDate(row.effective_from || row.source_as_of_date);
+        const date = ordinaryHistoryDate(row.effective_from || row.source_as_of_date || row.observation_date);
         const current = variants.get(variantKey);
         if (!current || date >= current.date) variants.set(variantKey, { date, row });
       });
@@ -804,10 +820,10 @@ function ordinaryHeatmapRecords() {
       const standardRows = currentRows.filter((row) => text(row.base_rate_role) === "STANDARD_BASE_RATE");
       if (!standardRows.length) return null;
       const newestStandardDate = standardRows.reduce((latest, row) => {
-        const date = ordinaryHistoryDate(row.effective_from || row.source_as_of_date);
+        const date = ordinaryHistoryDate(row.effective_from || row.source_as_of_date || row.observation_date);
         return date > latest ? date : latest;
       }, "");
-      const standardRow = standardRows.filter((row) => ordinaryHistoryDate(row.effective_from || row.source_as_of_date) === newestStandardDate)
+      const standardRow = standardRows.filter((row) => ordinaryHistoryDate(row.effective_from || row.source_as_of_date || row.observation_date) === newestStandardDate)
         .sort((a,b) => ordinaryHistorySmallBalanceScore(a)-ordinaryHistorySmallBalanceScore(b)
           || Number(b.rate_percent)-Number(a.rate_percent))[0];
       const maximumRow = currentRows.slice().sort((a,b) => Number(b.rate_percent)-Number(a.rate_percent))[0] || standardRow;
@@ -822,7 +838,7 @@ function ordinaryHeatmapRecords() {
         region:canonicalRegion(standardRow.region,standardRow.prefecture),
         product_type:"普通預金",
         campaign_name:text(maximumRow.product_label || standardRow.product_label || "普通預金"),
-        campaign_start_date:ordinaryHistoryDate(maximumRow.effective_from || maximumRow.source_as_of_date),
+        campaign_start_date:ordinaryHistoryDate(maximumRow.effective_from || maximumRow.source_as_of_date || maximumRow.observation_date),
         campaign_end_date:ordinaryHistoryDate(maximumRow.effective_to),
         term:"",
         interest_rate:`${maximumRate}％`,
@@ -1283,7 +1299,7 @@ async function loadData() {
     try {
       payload = await response.json();
       const baseHistoryPayload = await baseHistoryResponse.json();
-      state.baseRateHistory = Array.isArray(baseHistoryPayload) ? baseHistoryPayload : (baseHistoryPayload.records || []);
+      state.baseRateHistory = filterSupersededBaseRateRowsV20261119(Array.isArray(baseHistoryPayload) ? baseHistoryPayload : (baseHistoryPayload.records || []));
     }
     catch (error) { throw new Error(`JSONの解析に失敗しました: ${error.message}`); }
     if (!payload || !Array.isArray(payload.records)) throw new Error("JSONに records 配列がありません。");

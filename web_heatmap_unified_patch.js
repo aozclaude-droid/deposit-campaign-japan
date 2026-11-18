@@ -74,7 +74,7 @@
     row, "table_context", "source_table_context", "rate_type", "rate_category", "context"
   )).trim();
   const sourceDate = (row) => String(pick(
-    row, "source_as_of_date", "effective_from", "base_rate_source_date", "as_of_date", "date"
+    row, "source_as_of_date", "effective_from", "base_rate_source_date", "as_of_date", "date", "observation_date", "observed_at"
   )).trim();
 
   const isoDateOnly = (value) => {
@@ -84,7 +84,7 @@
 
   const effectiveFrom = (row) => isoDateOnly(pick(row, "effective_from", "valid_from", "start_date"));
   const effectiveTo = (row) => isoDateOnly(pick(row, "effective_to", "valid_to", "end_date"));
-  const observedDate = (row) => isoDateOnly(pick(row, "observed_at", "collected_at", "fetched_at", "updated_at"));
+  const observedDate = (row) => isoDateOnly(pick(row, "observation_date", "observed_at", "retrieved_at", "collected_at", "fetched_at", "updated_at"));
   const rowSnapshotDate = (row) => effectiveFrom(row) || isoDateOnly(sourceDate(row)) || observedDate(row);
 
   function todayIsoLocal() {
@@ -235,6 +235,7 @@
     // it must not be presented as a comparable current ordinary-deposit rate.
     const eligible = String(pick(row, "record_eligible", "record_eligible_v072", "record_eligible_v071")).trim();
     if (eligible && eligible !== "1") return false;
+    if (!baseRateCurrentSnapshotEligible(row)) return false;
 
     const measure = String(pick(row, "rate_measure_type", "rate_measure_type_v072")).trim();
     if (measure && measure !== "NOMINAL_INTEREST_RATE") return false;
@@ -385,7 +386,7 @@
         maximumRate: Math.max(...validRates),
         minimumRate: Math.min(...validRates),
         records: group,
-        source_date: dates.at(-1) || ""
+        source_date: group.length ? baseRateDateLabel(group.slice().sort((a,b)=>rowSnapshotDate(b).localeCompare(rowSnapshotDate(a)))[0]) : ""
       });
     }
     return out.sort((a, b) => b.averageRate - a.averageRate || a.institution.localeCompare(b.institution, "ja"));
@@ -598,7 +599,7 @@
       help.textContent = mode === "campaign"
         ? "指定した集計対象期間と1日以上重なるキャンペーン預金・貯金の比較可能金利を集計します。開始日が確認できない明細は期間集計から除外します。店頭表示金利は含みません。"
         : mode === "base_ordinary"
-          ? "R1の比較可能な普通預金金利を優先し、利用可能なR1データがない場合は全国JSONの開催中普通預金・普通貯金を表示します。普通預金には預入年限がないため期間切替は使用しません。"
+          ? "R1の比較可能な普通預金金利を優先し、利用可能なR1データがない場合は全国JSONの開催中普通預金・普通貯金を表示します。普通預金には預入年限がないため期間切替は使用しません。改定日が分からない掲載金利は取得日を表示します。"
           : "R1通常金利データの定期預金・定期貯金の店頭表示金利を表示します。キャンペーン金利は含みません。";
     }
 
