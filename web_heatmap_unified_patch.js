@@ -14,8 +14,8 @@
 
 (() => {
   const PATCH_VERSION = "20261102.1";
-  const R1_CURRENT_URL = "./r1_data/current_default_ranking.json?v=20261119-4";
-  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261114-1";
+  const R1_CURRENT_URL = "./r1_data/current_default_ranking.json?v=20261120-2";
+  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261120-2";
 
   const PRODUCT_MODES = [
     ["base_term", "定期預金"],
@@ -301,48 +301,8 @@
   }
 
   function currentOrdinaryRows() {
-    const today = todayIsoLocal();
-    const source = (R1.historyRows.length ? R1.historyRows : R1.rows)
-      .filter((row) => isOrdinary(row) && isR1OrdinaryEligible(row) && rate(row) !== null);
-
-    // Future-effective rows are not part of today's ordinary-deposit snapshot.
-    const eligible = source.filter((row) => {
-      const from = effectiveFrom(row);
-      const to = effectiveTo(row);
-      const snapshot = rowSnapshotDate(row);
-      if (from && from > today) return false;
-      if (to && to < today) return false;
-      if (!from && snapshot && snapshot > today) return false;
-      return true;
-    });
-
-    // base_rate_history is historical. Keep only the latest available snapshot
-    // for each institution / prefecture / institution-type combination so old
-    // observations do not get averaged into the current ordinary-deposit rate.
-    const latest = new Map();
-    for (const row of eligible) {
-      const key = [inst(row), pref(row), instType(row)].join("\u241f");
-      if (!inst(row)) continue;
-      const date = rowSnapshotDate(row);
-      const current = latest.get(key);
-      if (!current || date > current.date) latest.set(key, { date, rows: [row] });
-      else if (date === current.date) current.rows.push(row);
-    }
-
-    // When the latest snapshot contains amount tiers, use the small-balance
-    // tier as the institution's representative rate. This keeps, for example,
-    // Aozora Bank's <= 1 million yen rate (1.20%) instead of averaging it with
-    // the > 1 million yen rate (0.75%).
-    const smallBalanceScore = (row) => {
-      const band = String(pick(row, "amount_band") || pick(row, "product_label") || "").replace(/[,，\s]/g, "");
-      if (/100万円以下|100万円まで|百万円以下|百万円まで/.test(band)) return 0;
-      if (/以下|まで|未満/.test(band)) return 1;
-      if (/GENERAL_OR_UNSPECIFIED|一般|指定なし/.test(band)) return 2;
-      return 3;
-    };
-    return [...latest.values()].map((item) => item.rows.slice().sort((a, b) =>
-      smallBalanceScore(a) - smallBalanceScore(b) || (rate(b) ?? -Infinity) - (rate(a) ?? -Infinity)
-    )[0]).filter(Boolean);
+    const basis=q("#heatmapRateBasis")?.value || "maximum";
+    return window.DepositRateComparison.select(R1.historyRows.length ? R1.historyRows : R1.rows,{family:"ordinary",basis,today:todayIsoLocal()});
   }
 
   function campaignOrdinaryRows() {
@@ -386,10 +346,13 @@
         maximumRate: Math.max(...validRates),
         minimumRate: Math.min(...validRates),
         records: group,
+        condition_label: group.map(row => row.selected_condition_label || "").filter(Boolean).join(" / "),
         source_date: group.length ? baseRateDateLabel(group.slice().sort((a,b)=>rowSnapshotDate(b).localeCompare(rowSnapshotDate(a)))[0]) : ""
       });
     }
-    return out.sort((a, b) => b.averageRate - a.averageRate || a.institution.localeCompare(b.institution, "ja"));
+    out.sort((a, b) => b.averageRate - a.averageRate || a.institution.localeCompare(b.institution, "ja"));
+    let lastRate=null,lastRank=0;
+    return out.map((x,i)=>{const rank=lastRate!==null&&Math.abs(x.averageRate-lastRate)<1e-9?lastRank:i+1;lastRate=x.averageRate;lastRank=rank;return {...x,rank};});
   }
 
   function buildBaseData(mode) {
@@ -413,7 +376,7 @@
         rows = campaignOrdinaryRows();
       }
     } else {
-      rows = R1.rows.filter((row) => isYen(row) && isTerm(row) && termMonths(row) === term.months);
+      rows = window.DepositRateComparison.select([...R1.rows,...R1.historyRows.filter(row => /^CURRENT_(STANDARD|CONDITIONAL)$/.test(row.comparison_category || ""))],{family:"term",basis:q("#heatmapRateBasis")?.value || "maximum",termMonths:term.months,today:todayIsoLocal(),standardRows:R1.rows});
     }
 
     const regionalRows = rows.filter((row) => !isNetwork(row) && PREF_SET.has(pref(row)) && (!typeActive || selectedTypes.has(instType(row))));
@@ -449,7 +412,7 @@
     return {
       mode,
       label: mode === "base_ordinary" ? "普通預金" : "定期預金",
-      rateLabel: mode === "base_ordinary" ? "普通預金金利" : "店頭表示金利",
+      rateLabel: (q("#heatmapRateBasis")?.value === "standard" ? "標準金利" : "達成可能な最高金利"),
       term: mode === "base_ordinary" ? { key: "ordinary", label: "普通預金", months: null } : term,
       institutionTypes: [...selectedTypes],
       statuses: [],
@@ -752,7 +715,7 @@
       const rows = item.institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${x.institution}</th><td class="rate">${formatRate(x.averageRate)}</td><td>${formatRate(x.maximumRate)}</td><td>${x.records.length}件</td></tr>`).join("");
       detail.innerHTML = `<div class="heatmap-detail-heading"><div><p class="section-kicker">PREFECTURE DETAIL</p><h3>${item.prefecture}・${termLabel}</h3><p class="muted">キャンペーン平均 ${formatRate(item.averageRate)} / ${item.institutionCount}金融機関</p></div></div><div class="table-scroll"><table class="heatmap-detail-table"><thead><tr><th>順位</th><th>金融機関</th><th>機関内平均</th><th>最高金利</th><th>明細数</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     } else {
-      const rows = item.institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${x.institution}</th><td>${x.institution_type}</td><td class="rate">${formatRate(x.averageRate)}</td><td>${x.source_date || "—"}</td></tr>`).join("");
+      const rows = item.institutions.map((x, i) => `<tr><td>${x.rank || i + 1}</td><th scope="row">${esc(x.institution)}${x.condition_label ? `<small class="comparison-conditions" style="display:block;white-space:normal;font-weight:normal;max-width:460px">${esc(x.condition_label)}</small>` : ""}</th><td>${esc(x.institution_type)}</td><td class="rate">${formatRate(x.averageRate)}</td><td>${x.source_date || "—"}</td></tr>`).join("");
       detail.innerHTML = `<div class="heatmap-detail-heading"><div><p class="section-kicker">PREFECTURE DETAIL</p><h3>${item.prefecture}・${termLabel}</h3><p class="muted">${data.rateLabel}平均 ${formatRate(item.averageRate)} / ${item.institutionCount}金融機関</p></div></div><div class="table-scroll"><table class="heatmap-detail-table"><thead><tr><th>順位</th><th>金融機関</th><th>金融機関種別</th><th>${data.rateLabel}</th><th>基準日</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
     try {
@@ -791,7 +754,7 @@
     }
     const rows = data.mode === "campaign"
       ? institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${x.institution}</th><td class="rate">${formatRate(x.averageRate)}</td><td>${formatRate(x.maximumRate)}</td><td>${x.records.length}件</td></tr>`).join("")
-      : institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${x.institution}</th><td>${x.institution_type}</td><td class="rate">${formatRate(x.averageRate)}</td><td>${x.source_date || "—"}</td></tr>`).join("");
+      : institutions.map((x, i) => `<tr><td>${x.rank || i + 1}</td><th scope="row">${esc(x.institution)}${x.condition_label ? `<small class="comparison-conditions" style="display:block;white-space:normal;font-weight:normal;max-width:460px">${esc(x.condition_label)}</small>` : ""}</th><td>${esc(x.institution_type)}</td><td class="rate">${formatRate(x.averageRate)}</td><td>${x.source_date || "—"}</td></tr>`).join("");
     const highestInstitution = institutions.slice().sort((a, b) => b.maximumRate - a.maximumRate || a.institution.localeCompare(b.institution, "ja"))[0];
     results.innerHTML = `<div class="online-bank-summary">${summaryCardHtml("選択業種平均", formatRate(data.selectedTypeRankingAverage), `${institutions.length}金融機関を均等平均`, "online")}${summaryCardHtml("最高金利", formatRate(highestInstitution.maximumRate), highestInstitution.institution, "highest")}${summaryCardHtml("比較可能明細", `${rankingRecords.length}件`, data.label, "coverage")}</div><div class="table-scroll"><table class="heatmap-detail-table online-bank-table"><thead><tr><th>順位</th><th>金融機関</th>${data.mode === "campaign" ? "<th>機関内平均</th><th>最高金利</th><th>明細数</th>" : `<th>種別</th><th>${data.rateLabel}</th><th>基準日</th>`}</tr></thead><tbody>${rows}</tbody></table></div>`;
   }

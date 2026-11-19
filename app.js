@@ -7,6 +7,8 @@ function baseRateDateLabel(row) {
   return row?.record_date_kind === "OBSERVATION" ? (row.date_display || `${date}取得（改定日不明）`) : row?.record_date_kind === "PUBLISHED_REFERENCE_DATE" ? `${date}公表基準日` : row?.record_date_kind === "REVISION_DATE" ? `${date}改定日` : date;
 }
 function baseRateCurrentSnapshotEligible(row) {
+  if (row?.reference_only) return false;
+  if (baseRateSnapshotDate(row) > new Intl.DateTimeFormat("sv-SE", {timeZone:"Asia/Tokyo"}).format(new Date())) return false;
   return row?.record_date_kind !== "OBSERVATION" || String(row.current_ranking_eligible) === "1";
 }
 
@@ -16,7 +18,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
 }
 
 
-const APP_VERSION = "2026.11.14.1";
+const APP_VERSION = "2026.11.20.2";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -51,32 +53,34 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261114-1";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261119-2";
+const DATA_URL = "campaign_all.json?v=20261120-2";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261120-2";
 const LATEST_UPDATE = {
-  publishedOn: "2026-11-14",
-  label: "2026年11月14日 全国巡回・Codex照査結果を反映",
-  expectedTotalRecords: 17118,
-  addedStartIndex: 17078,
-  addedCount: 40,
-  updatedCount: 0,
-  movedToBaseHistoryCount: 31,
-  movedInstitutionCount: 11,
-  reclassifiedCount: 0,
-  ordinaryCampaignRetainedCount: 0,
-  ordinaryBaseAddedCount: 0,
-  baseHistoryTotalCount: 5497,
-  ordinaryInstitutionTotalCount: 11,
-  reviewedInstitutionCount: 9,
-  withheldInstitutionCount: 0,
-  segmentLabel: "9金融機関・9キャンペーン",
-  segmentMetricLabel: "対象金融機関",
-  primaryMetricLabel: "新しく追加",
-  leadText: "全国巡回資料をChatGPT/Codexで照査し、公式資料で条件を確定できた9金融機関・9キャンペーン・40明細を追加しました。SBI新生銀行の新キャンペーンを含みます。Gemini APIは使用していません。",
-  compactText: "9金融機関・9キャンペーン・40明細を追加",
-  featuredInstitutions: ["SBI新生銀行", "大光銀行", "JAレーク滋賀", "千葉興業銀行", "JAひがしうわ", "福井銀行", "JA菊池", "高知銀行", "南日本銀行"],
-  ordinaryAddedInstitutions: [],
-  updatedRecordKeys: []
+  "publishedOn": "2026-11-20",
+  "label": "2026年11月20日 参考金利の比較対象を修正",
+  "expectedTotalRecords": 17143,
+  "addedStartIndex": 17138,
+  "addedCount": 5,
+  "updatedCount": 0,
+  "movedToBaseHistoryCount": 0,
+  "movedInstitutionCount": 0,
+  "reclassifiedCount": 0,
+  "ordinaryCampaignRetainedCount": 0,
+  "ordinaryBaseAddedCount": 0,
+  "baseHistoryTotalCount": 29772,
+  "ordinaryInstitutionTotalCount": 0,
+  "reviewedInstitutionCount": 1,
+  "withheldInstitutionCount": 0,
+  "segmentLabel": "1金融機関・3商品",
+  "segmentMetricLabel": "対象金融機関",
+  "primaryMetricLabel": "新しく追加",
+  "leadText": "参考金利270候補を再分類。標準52候補・条件付き87候補をランキングとヒートマップの比較対象へ反映しました。キャンペーンの最新追加分は大阪信用金庫3商品5明細です。",
+  "compactText": "参考金利270候補を再分類／標準52・条件付き87候補を比較対象へ反映",
+  "featuredInstitutions": [
+    "大阪信用金庫"
+  ],
+  "ordinaryAddedInstitutions": [],
+  "updatedRecordKeys": []
 };
 let TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
@@ -379,8 +383,11 @@ function parseComparableInterestRate(rateText) {
   if (!Number.isFinite(value)) return { value: null, reason: "金利数値が不正", source: "" };
   return { value, reason: "", source: `${value}%` };
 }
+function campaignRateComparisonDate(record) {
+  return [record.campaign_start_date, record.rate_effective_from, record.rate_confirmed_from].filter(value => /^\d{4}-\d{2}-\d{2}$/.test(value || "")).sort().at(-1) || "";
+}
 function recordOverlapsPeriod(record, fromIso, toIso) {
-  const start = parseIso(record.campaign_start_date);
+  const start = parseIso(campaignRateComparisonDate(record));
   if (!start) return false;
   const rawEnd = parseIso(record.campaign_end_date);
   if (rawEnd && rawEnd < start) return false;
@@ -397,7 +404,7 @@ function formatRate(value) {
 }
 function selectedRateValue(record, basis) {
   const preferred = basis === "standard" ? record._standardComparableRate : record._maximumComparableRate;
-  return Number.isFinite(preferred) ? preferred : record._comparableRate;
+  return Number.isFinite(preferred) ? preferred : basis === "standard" && Object.prototype.hasOwnProperty.call(record,"_standardComparableRate") ? null : record._comparableRate;
 }
 function analyticsRateValue(record) {
   return selectedRateValue(record, $("#analyticsRateBasis")?.value || "maximum");
@@ -785,74 +792,15 @@ function ordinaryHistorySmallBalanceScore(row) {
   return 3;
 }
 function ordinaryHeatmapRecords() {
-  const grouped = new Map();
-  state.baseRateHistory.forEach((row) => {
-    const family = text(row.product_family).toUpperCase();
-    const label = text(row.product_label || row.product_type);
-    if (family !== "ORDINARY_DEPOSIT" && !/普通預金|普通貯金/.test(label)) return;
-    const rate = Number(row.rate_percent);
-    if (!Number.isFinite(rate) || text(row.record_eligible) === "0" || !baseRateCurrentSnapshotEligible(row)) return;
-    const from = ordinaryHistoryDate(row.effective_from || row.source_as_of_date || row.observation_date);
-    const to = ordinaryHistoryDate(row.effective_to);
-    if (from && from > TODAY_ISO) return;
-    if (to && to < TODAY_ISO) return;
-    const institution = text(row.institution_name).trim();
-    if (!institution) return;
-    const institutionType = text(row.institution_type_normalized || row.institution_type_raw || row.institution_type).trim();
-    const prefecture = text(row.prefecture).trim();
-    const key = [institution,prefecture,institutionType].join("\u241f");
-    if (!grouped.has(key)) grouped.set(key, []);
-    grouped.get(key).push(row);
-  });
-  return [...grouped.values()].map((rows) => {
-      // Keep only the newest observation for each product/condition variant.
-      const variants = new Map();
-      rows.forEach((row) => {
-        const variantKey = [
-          text(row.base_rate_role), text(row.product_label), text(row.amount_band),
-          text(row.rate_condition), text(row.eligibility_conditions)
-        ].join("\u241f");
-        const date = ordinaryHistoryDate(row.effective_from || row.source_as_of_date || row.observation_date);
-        const current = variants.get(variantKey);
-        if (!current || date >= current.date) variants.set(variantKey, { date, row });
-      });
-      const currentRows = [...variants.values()].map((item) => item.row);
-      const standardRows = currentRows.filter((row) => text(row.base_rate_role) === "STANDARD_BASE_RATE");
-      if (!standardRows.length) return null;
-      const newestStandardDate = standardRows.reduce((latest, row) => {
-        const date = ordinaryHistoryDate(row.effective_from || row.source_as_of_date || row.observation_date);
-        return date > latest ? date : latest;
-      }, "");
-      const standardRow = standardRows.filter((row) => ordinaryHistoryDate(row.effective_from || row.source_as_of_date || row.observation_date) === newestStandardDate)
-        .sort((a,b) => ordinaryHistorySmallBalanceScore(a)-ordinaryHistorySmallBalanceScore(b)
-          || Number(b.rate_percent)-Number(a.rate_percent))[0];
-      const maximumRow = currentRows.slice().sort((a,b) => Number(b.rate_percent)-Number(a.rate_percent))[0] || standardRow;
-      const standardRate = Number(standardRow.rate_percent);
-      const maximumRate = Math.max(standardRate, Number(maximumRow.rate_percent));
-      const institutionType = text(standardRow.institution_type_normalized || standardRow.institution_type_raw || standardRow.institution_type).trim();
-      const nationwideOnly = text(standardRow.ranking_scope) === "NATIONWIDE_ONLY" || text(standardRow.prefecture_aggregation_eligible) === "0";
-      return {
-        institution_name:text(standardRow.institution_name).trim(),
-        institution_type:institutionType,
-        prefecture:text(standardRow.prefecture).trim(),
-        region:canonicalRegion(standardRow.region,standardRow.prefecture),
-        product_type:"普通預金",
-        campaign_name:text(maximumRow.product_label || standardRow.product_label || "普通預金"),
-        campaign_start_date:ordinaryHistoryDate(maximumRow.effective_from || maximumRow.source_as_of_date || maximumRow.observation_date),
-        campaign_end_date:ordinaryHistoryDate(maximumRow.effective_to),
-        term:"",
-        interest_rate:`${maximumRate}％`,
-        rate_condition:text(maximumRow.rate_condition || maximumRow.amount_band),
-        status:"開催中",
-        _analyticsTermKey:null,
-        _comparableRate:maximumRate,
-        _standardComparableRate:standardRate,
-        _maximumComparableRate:maximumRate,
-        _ordinaryNationwideOnly:nationwideOnly,
-        _ordinarySourceRow:maximumRow,
-        _ordinaryStandardSourceRow:standardRow
-      };
-    }).filter(Boolean);
+  return window.DepositRateComparison.select(state.baseRateHistory, {family:"ordinary",basis:$("#heatmapRateBasis")?.value || "maximum",today:TODAY_ISO}).map(row => ({
+    institution_name:row.institution_name,institution_type:row.institution_type_normalized || row.institution_type_raw,
+    prefecture:row.prefecture,region:canonicalRegion(row.region,row.prefecture),product_type:"普通預金",
+    campaign_name:row.product_label,campaign_start_date:baseRateSnapshotDate(row),campaign_end_date:row.published_valid_to || row.effective_to || "",term:"",
+    interest_rate:`${row.rate_percent}％`,rate_condition:row.selected_condition_label,status:"開催中",_analyticsTermKey:null,
+    _comparableRate:row._comparableRate,_standardComparableRate:row._standardComparableRate,_maximumComparableRate:row._maximumComparableRate,
+    _ordinaryNationwideOnly:row.ranking_scope === "NATIONWIDE_ONLY" || row.prefecture_aggregation_eligible === "0",
+    _ordinarySourceRow:row._comparisonMaximumRow || row,_ordinaryStandardSourceRow:row._comparisonStandardRow
+  }));
 }
 
 function buildHeatmapData() {
@@ -1152,7 +1100,7 @@ function institutionTypeOptions({ includeOnline = true } = {}) {
   return [...ordered, ...unexpected];
 }
 function normalizeRecord(record, index) {
-  const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","term","interest_rate","applied_rate","standard_rate","maximum_rate","bonus_margin","tax_basis","achievement_state","currency","tiered_rate","amount_band","ranking_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes"];
+  const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","rate_effective_from","rate_confirmed_from","rate_date_basis","term","interest_rate","applied_rate","standard_rate","maximum_rate","bonus_margin","tax_basis","achievement_state","currency","tiered_rate","amount_band","ranking_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes","source_reviewed_on","source_sha256","rate_risk_class","requires_investment_purchase"];
   const normalized = { _index: index };
   fields.forEach((f) => { normalized[f] = text(record[f]); });
   normalized.region = canonicalRegion(normalized.region, normalized.prefecture);
@@ -1243,8 +1191,8 @@ function renderLatestUpdate() {
   $("#latestUpdateCompact").innerHTML = `<div class="latest-update-summary-text">
     <strong>${LATEST_UPDATE.compactText || `${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先・${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}明細を普通預金金利履歴へ追加`}</strong>
   </div><div class="latest-update-region-list" aria-label="今回の整理内容">
-    <span>今回追加 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}金融機関・9キャンペーン</span>
-    <span>募集上限到達による早期終了 ${fmt(LATEST_UPDATE.updatedCount || 0)}明細を更新</span>
+    <span>今回追加 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}金融機関・${fmt(new Set(added.map(row => row.campaign_name)).size)}商品</span>
+    <span>参考金利を再分類（標準52候補・条件付き87候補を比較対象へ）</span>
     <span>対象金融機関：${(LATEST_UPDATE.featuredInstitutions || latestInstitutionItems.map(([institution]) => institution)).map(esc).join("、")}</span>
   </div>`;
 

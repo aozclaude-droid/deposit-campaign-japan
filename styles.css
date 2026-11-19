@@ -918,3 +918,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
   .latest-update-list { grid-template-columns: 1fr; }
   .latest-update-item-head { flex-direction: column; gap: 6px; }
 }
+
+/* Current comparable deposit conditions. */
+.comparison-conditions{display:block;font-size:12px!important;line-height:1.6;white-space:normal!important;overflow-wrap:anywhere;color:#52657d;font-weight:normal}.r1-matrix-cell .comparison-conditions{max-width:320px;margin:5px auto}

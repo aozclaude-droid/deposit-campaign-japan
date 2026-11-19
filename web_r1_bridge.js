@@ -643,24 +643,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
   }
 
   function currentOrdinaryHistoryRows() {
-    const today = ordinaryMatrixToday();
-    const latest = new Map();
-    (R1.data.history || []).forEach(row => {
-      if (!isOrdinaryHistoryRow(row) || rateValue(row) === null) return;
-      if (String(pick(row,"record_eligible")).trim() === "0" || !baseRateCurrentSnapshotEligible(row)) return;
-      const from = ordinaryMatrixDate(pick(row,"effective_from","source_as_of_date"));
-      const to = ordinaryMatrixDate(pick(row,"effective_to"));
-      if (from && from > today) return;
-      if (to && to < today) return;
-      const name = inst(row);
-      if (!name) return;
-      const key = `${name}|||${pref(row)}|||${instType(row)}`;
-      const date = from || ordinaryMatrixDate(sourceDate(row));
-      const current = latest.get(key);
-      if (!current || date > current.date) latest.set(key,{date,rows:[row]});
-      else if (date === current.date) current.rows.push(row);
-    });
-    return [...latest.values()].flatMap(item => item.rows);
+    return window.DepositRateComparison.select(R1.data.history || [], {family:"ordinary",basis:$("#analyticsRateBasis")?.value || "maximum"});
   }
 
   function ordinarySmallBalanceScore(row) {
@@ -698,7 +681,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
         institutionType: selected ? instType(selected) : instType(rows[0]),
         prefecture: selected ? pref(selected) : pref(rows[0]),
         sourceDate: selected ? baseRateDateLabel(selected) : "",
-        amountBand: selected ? String(pick(selected,"amount_band","product_label")).trim() : "",
+        amountBand: selected ? window.DepositRateComparison.conditionLabel(selected) : "",
         sourceCount: rows.length
       };
     }).filter(item => item.rate !== null)
@@ -845,9 +828,9 @@ function filterSupersededBaseRateRowsV20261119(rows) {
       <td class="r1-matrix-cell"><strong>${fmtRate(item.rate)}</strong><small>${esc(item.sourceDate || "基準日不明")}${item.amountBand ? ` / ${esc(item.amountBand)}を採用` : ""}</small><span class="rank-badge">${item.rank}位</span></td>
     </tr>`).join("") : `<tr><td colspan="2" class="r1-empty">条件に一致する普通預金データがありません。</td></tr>`;
     return `<section class="r1-ordinary-matrix">
-      <div class="r1-analytics-matrix-summary"><span>全${fmt(model.allCount)}金融機関・全順位</span><span>通常金利履歴の最新スナップショットを使用（読込 ${fmt(model.sourceRowCount)}行・同一金利は同順位）</span></div>
+      <div class="r1-analytics-matrix-summary"><span>全${fmt(model.allCount)}金融機関・全順位</span><span>${$("#analyticsRateBasis")?.value === "standard" ? "標準金利" : "達成可能な最高金利"}・商品条件ごとの最新値（読込 ${fmt(model.sourceRowCount)}行・同一金利は同順位）</span></div>
       <div class="r1-matrix-stat-grid"><article class="r1-matrix-stat"><h4>普通預金</h4><div><span>最高</span><strong>${fmtRate(model.maximum)}</strong><small>${esc(names || "—")}</small></div><div><span>平均</span><strong>${fmtRate(model.average)}</strong><small>${fmt(model.allCount)}金融機関</small></div></article></div>
-      <p class="r1-matrix-scroll-hint">普通預金には預入期間がないため、専用の1列で比較します。金融機関ごとの最新掲載金利を表示します。改定日不明の明細は、確認できた取得日を表示します。</p>
+      <p class="r1-matrix-scroll-hint">普通預金には預入期間がないため、専用の1列で比較します。商品・条件ごとに現在の掲載値を選びます。最高金利には年金・年齢・ネット取引等の条件を併記します。改定日不明の明細は、確認できた取得日を表示します。</p>
       <div class="r1-matrix-scroll"><table class="r1-analytics-matrix"><thead><tr><th>金融機関</th><th>普通預金</th></tr></thead><tbody>${rows}</tbody></table></div>
       ${rateHistogramHtml(model.entries.map(item=>({rate:item.rate,institution:item.institution,institutionType:item.institutionType,prefecture:item.prefecture})),"普通預金")}
     </section>`;
@@ -871,7 +854,9 @@ function filterSupersededBaseRateRowsV20261119(rows) {
 
   function buildR1Matrix(mode) {
     const f = matrixFilters();
-    const source = mode === "effective" ? (R1.data.resolved || []) : (R1.data.current || []);
+    const basis = $("#analyticsRateBasis")?.value || "maximum";
+    const historyConditional = (R1.data.history || []).filter(row => /^CURRENT_(STANDARD|CONDITIONAL)$/.test(row.comparison_category || ""));
+    const source = mode === "effective" ? (R1.data.resolved || []) : R1_MATRIX_TERMS.flatMap(t => window.DepositRateComparison.select([...(R1.data.current || []),...historyConditional],{family:"term",termMonths:t.months,basis,standardRows:R1.data.current || []}).map(row => ({...row,term_months:t.months})));
     const cellRows = new Map();
     const institutionMeta = new Map();
     let excludedEquivalent = 0;
@@ -909,6 +894,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
         const rows = cellRows.get(`${name}|||${t.months}`) || [];
         const cell = mode === "effective" ? effectiveCell(rows) : representativeBaseCell(rows);
         if (mode === "base" && rows.length) cell.dateLabel = baseRateDateLabel(rows.slice().sort((a,b)=>sourceDate(b).localeCompare(sourceDate(a)))[0]);
+        if (mode === "base" && rows.length) cell.conditions = rows[0].selected_condition_label;
         if (mode === "base" && cell.status === "AMBIGUOUS_AMOUNT_BANDS") ambiguousBase++;
         cells.set(`${name}|||${t.months}`,cell);
         if (cell.rate !== null) termStats.get(t.months).push({institution:name,rate:cell.rate,cell});
@@ -955,8 +941,8 @@ function filterSupersededBaseRateRowsV20261119(rows) {
     }
     const detail = model.mode === "effective"
       ? `${c.rows}件${c.campaign ? ` / ${c.campaign}` : ""}`
-      : `${c.status === "CONSENSUS" ? "代表金利" : "標準小口帯"}${c.rows>1 ? ` / ${c.rows}行` : ""}`;
-    return `<td class="r1-matrix-cell"><strong>${fmtRate(c.rate)}</strong><small title="${esc(detail)}">${esc(detail)}</small>${c.dateLabel ? `<small>${esc(c.dateLabel)}</small>` : ""}${c.rank ? `<span class="rank-badge">${c.rank}位</span>` : ""}</td>`;
+      : `${$("#analyticsRateBasis")?.value === "standard" ? "標準金利" : "達成可能な最高金利"}${c.rows>1 ? ` / ${c.rows}行` : ""}`;
+    return `<td class="r1-matrix-cell"><strong>${fmtRate(c.rate)}</strong><small title="${esc(detail)}">${esc(detail)}</small>${c.dateLabel ? `<small>${esc(c.dateLabel)}</small>` : ""}${c.conditions ? `<small class="comparison-conditions">${esc(c.conditions)}</small>` : ""}${c.rank ? `<span class="rank-badge">${c.rank}位</span>` : ""}</td>`;
   }
 
   function r1MatrixHtml(model) {
@@ -979,7 +965,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
     }).join("") : `<tr><td colspan="5" class="r1-empty">条件に一致するR1比較データがありません。</td></tr>`;
 
     const baseNote = model.mode === "base"
-      ? `通常金利は同一金融機関・同一年限を1セルへ正規化。判定不能な金額帯 ${fmt(model.ambiguousBase)}セルは推測せず要確認。`
+      ? `${$("#analyticsRateBasis")?.value === "standard" ? "標準金利" : "達成可能な最高金利"}を同一金融機関・同一年限で比較。条件付き金利は条件を併記。改定日不明は取得日で表示。`
       : `実効金利は解決済みデータのみ。各金融機関・年限の最高実効金利を表示。相当利回り除外 ${fmt(model.excludedEquivalent)}件。`;
 
     const chartTerm = R1_MATRIX_TERMS.find(term=>term.months===R1.analyticsChartTerm) || R1_MATRIX_TERMS[1];
@@ -1029,7 +1015,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
     host.innerHTML = sections.join("") || '<div class="r1-empty">条件に一致する比較データがありません。</div>';
     if (ordinaryOnly && ordinaryModel) {
       const summary = $("#analyticsSummary");
-      if (summary) summary.textContent = `普通預金 / 通常金利履歴の最新スナップショット / ${fmt(ordinaryModel.allCount)}金融機関`;
+      if (summary) summary.textContent = `普通預金 / ${$("#analyticsRateBasis")?.value === "standard" ? "標準金利" : "達成可能な最高金利"} / ${fmt(ordinaryModel.allCount)}金融機関`;
       const legacySummary = $("#analyticsResults")?.querySelector(".analytics-data-summary");
       if (legacySummary) legacySummary.innerHTML = `<strong>${fmt(ordinaryModel.allCount)}金融機関</strong><span>最高 ${fmtRate(ordinaryModel.maximum)}</span><span>平均 ${fmtRate(ordinaryModel.average)}</span><span>最新スナップショット ${fmt(ordinaryModel.sourceRowCount)}行</span>`;
     }
@@ -1087,7 +1073,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
   }
 
   function bindExistingAnalyticsR1Sync() {
-    const targets = ["#analyticsRegionFilter","#analyticsPrefectureFilter","#analyticsProductFilter","#analyticsDisplayMode","#analyticsDateFrom","#analyticsDateTo"];
+    const targets = ["#analyticsRegionFilter","#analyticsPrefectureFilter","#analyticsProductFilter","#analyticsDisplayMode","#analyticsDateFrom","#analyticsDateTo","#analyticsRateBasis"];
     targets.forEach(sel => {
       const el=$(sel);
       if (el && !el.dataset.r1MatrixBound) {
