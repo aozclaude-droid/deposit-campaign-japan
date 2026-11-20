@@ -5,7 +5,7 @@
   "resolved_campaign_count": 468,
   "unresolved_campaign_count": 1316,
   "history_linked_campaign_count": 44,
-  "base_rate_history_record_count": 29966,
+  "base_rate_history_record_count": 29982,
   "base_rate_institution_count": 771,
   "bank_ordinary_institution_count": 115,
   "source_final_freeze_status": "PASS_DATED_ADDITIONS_WITH_SEPARATE_EVIDENCE_INSUFFICIENT_LEDGER",
@@ -56,5 +56,13 @@
     "institutions": 4,
     "rate_percent": 0.5,
     "corrected_foreign_rows": 4
+  },
+  "regional_ordinary_recheck": {
+    "date": "2026-11-20",
+    "reviewed_banks": 14,
+    "updated_to_050": 9,
+    "currently_040": 5,
+    "future_050_from_20261124": 2,
+    "official_index_only_live_unavailable": 2
   }
 }
