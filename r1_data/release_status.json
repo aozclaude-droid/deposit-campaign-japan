@@ -5,7 +5,7 @@
   "resolved_campaign_count": 468,
   "unresolved_campaign_count": 1316,
   "history_linked_campaign_count": 44,
-  "base_rate_history_record_count": 29962,
+  "base_rate_history_record_count": 29966,
   "base_rate_institution_count": 771,
   "bank_ordinary_institution_count": 115,
   "source_final_freeze_status": "PASS_DATED_ADDITIONS_WITH_SEPARATE_EVIDENCE_INSUFFICIENT_LEDGER",
@@ -50,5 +50,11 @@
   "normal_term_added_institutions": 5,
   "normal_term_added_records": 190,
   "normal_term_updated_on": "2026-11-20",
-  "normal_term_publication_version": "20261120-4"
+  "normal_term_publication_version": "20261120-4",
+  "ordinary_four_recheck": {
+    "date": "2026-11-20",
+    "institutions": 4,
+    "rate_percent": 0.5,
+    "corrected_foreign_rows": 4
+  }
 }

@@ -9,7 +9,7 @@
       "新規取扱終了の掲載金利は参考履歴として収録し、現在の集計から除外"
     ],
     "reference_only_closed_product_count": 12,
-    "base_rate_history_record_count": 29962
+    "base_rate_history_record_count": 29966
   },
   "records": [
     {
@@ -161697,12 +161697,12 @@
       "date_evidence": "",
       "source_sha256": "db2607d0607dd00f205a8c05d8002fcd95a6288bd5c4aafb94608ddcf20a0dff",
       "observation_date": "2026-11-18",
-      "currency": "JPY",
+      "currency": "FOREIGN_UNDETERMINED",
       "tax_basis": "PRE_TAX",
       "source_stage": "OBSERVATION_POLICY_REVIEW_20261119",
-      "source_review_status": "PUBLISHED_RATE_AND_CAPTURE_VERIFIED",
-      "record_eligible": "1",
-      "current_ranking_eligible": "1",
+      "source_review_status": "CORRECTED_FOREIGN_SOURCE_MISCLASSIFIED",
+      "record_eligible": "0",
+      "current_ranking_eligible": "0",
       "history_date_eligible": "0",
       "review_reasons": [],
       "followup3_decision": "VERIFIED",
@@ -161745,7 +161745,10 @@
       },
       "rate_observation_policy": "OBSERVED_OFFICIAL_RATE_V1",
       "original_candidate_record_id": "fe0000326580bbcdd7c77c43",
-      "published_record_id": "a39e0ed8700d29299f2c6a00"
+      "published_record_id": "a39e0ed8700d29299f2c6a00",
+      "comparison_eligible": "0",
+      "correction_reason": "外貨金利表の普通預金を円貨と誤分類。通貨未確定のため円預金比較・履歴チャートから除外。原値は証跡として保持。",
+      "corrected_on": "2026-11-20"
     },
     {
       "institution_name": "JA足利",
@@ -247127,12 +247130,12 @@
       "date_evidence": "",
       "source_sha256": "cd295f7acc425cfe995253d17056183a9fe07f4c5b5e625bcdb1d6651f59646e",
       "observation_date": "2026-11-18",
-      "currency": "JPY",
+      "currency": "FOREIGN_UNDETERMINED",
       "tax_basis": "PRE_TAX",
       "source_stage": "OBSERVATION_POLICY_REVIEW_20261119",
-      "source_review_status": "PUBLISHED_RATE_AND_CAPTURE_VERIFIED",
-      "record_eligible": "1",
-      "current_ranking_eligible": "1",
+      "source_review_status": "CORRECTED_FOREIGN_SOURCE_MISCLASSIFIED",
+      "record_eligible": "0",
+      "current_ranking_eligible": "0",
       "history_date_eligible": "0",
       "review_reasons": [],
       "followup3_decision": "VERIFIED",
@@ -247175,7 +247178,10 @@
       },
       "rate_observation_policy": "OBSERVED_OFFICIAL_RATE_V1",
       "original_candidate_record_id": "0dc665a93ab1bb97f857af03",
-      "published_record_id": "0725ba6c203663dd8f0a0c90"
+      "published_record_id": "0725ba6c203663dd8f0a0c90",
+      "comparison_eligible": "0",
+      "correction_reason": "外貨金利表の普通預金を円貨と誤分類。通貨未確定のため円預金比較・履歴チャートから除外。原値は証跡として保持。",
+      "corrected_on": "2026-11-20"
     },
     {
       "institution_name": "JAひろしま",

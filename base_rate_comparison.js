@@ -16,6 +16,7 @@
     const rate = number(row.rate_percent);
     if (rate === null || rate < 0 || rate > 10) return false;
     if (row.currency && !/^(JPY|YEN|円)$/i.test(text(row.currency))) return false;
+    if (/\/rates\/gaika\/|\/rate_foreign_currency_deposit\.pdf(?:[?#]|$)/i.test(text(row.source_url))) return false;
     if (row.tax_basis === "AFTER_TAX" || /YIELD|EQUIVALENT|RATE_COMPONENT/.test(text(row.rate_measure_type))) return false;
     if (/PRE_REVISION|CLOSED_PRODUCT|CORPORATE|COMPONENT/.test(text(row.base_rate_role))) return false;
     // Migrated marketing fragments must not become a current ordinary rate.
