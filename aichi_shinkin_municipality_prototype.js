@@ -59,7 +59,7 @@
     .municipality-map-card,.municipality-ranking-card,.municipality-selected-card{border:1px solid #d7e2ef;border-radius:12px;background:#fff;overflow:hidden}
     .municipality-map-toolbar{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.65rem .8rem;border-bottom:1px solid #e4ebf4;background:#f8fbff;font-size:.76rem;color:#53657c}
     .municipality-map-legend{display:flex;align-items:center;gap:.4rem;white-space:nowrap}
-    .municipality-map-gradient{width:112px;height:9px;border-radius:999px;background:linear-gradient(90deg,#2166ac 0%,#4393c3 12.5%,#92c5de 25%,#d1e5f0 37.5%,#f7f7f7 50%,#fddbc7 62.5%,#f4a582 75%,#d6604d 87.5%,#b2182b 100%)}
+    .municipality-map-gradient{width:112px;height:9px;border-radius:999px;background:linear-gradient(90deg,#2166ac 0%,#4393c3 12.5%,#6ca6d0 25%,#9aafd4 37.5%,#b6a5ce 50%,#cd91b6 62.5%,#df7e91 75%,#d6604d 87.5%,#b2182b 100%)}
     .municipality-map{display:block;width:100%;height:auto;min-height:390px;background:#f4f8fc}
     .municipality-shape{fill:#e5ebf2;stroke:#fff;stroke-width:1.1;vector-effect:non-scaling-stroke;transition:filter .15s,stroke .15s,stroke-width .15s;cursor:default}
     .municipality-shape.has-data{cursor:pointer}
@@ -213,7 +213,7 @@
   }
 
   function colorFor(value, min, max) {
-    const colors = ["#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7", "#fddbc7", "#f4a582", "#d6604d", "#b2182b"];
+    const colors = ["#2166ac", "#4393c3", "#6ca6d0", "#9aafd4", "#b6a5ce", "#cd91b6", "#df7e91", "#d6604d", "#b2182b"];
     if (!Number.isFinite(value)) return "#e5e9ef";
     value = Number(value.toFixed(6));
     min = Number.isFinite(min) ? Number(min.toFixed(6)) : null;

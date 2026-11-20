@@ -101,8 +101,8 @@ const HEATMAP_TERMS = [
 ];
 const PREFECTURE_CODE_NAMES = Object.fromEntries(PREFECTURE_ORDER.map((name, index) => [String(index + 1), name]));
 const HEATMAP_COLORS = [
-  "#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
-  "#fddbc7", "#f4a582", "#d6604d", "#b2182b"
+  "#2166ac", "#4393c3", "#6ca6d0", "#9aafd4", "#b6a5ce",
+  "#cd91b6", "#df7e91", "#d6604d", "#b2182b"
 ];
 const HEATMAP_NO_DATA_COLOR = "#e5e9ef";
 
