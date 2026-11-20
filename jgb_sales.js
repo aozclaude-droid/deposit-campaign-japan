@@ -5,7 +5,7 @@
   const deposit = document.getElementById('prefectureHeatmapPanel');
   if (!host || !deposit) return;
   const palette = ['#2166ac','#4393c3','#92c5de','#d1e5f0','#f7f7f7','#fddbc7','#f4a582','#d6604d','#b2182b'];
-  const noData = '#e5e9ef';
+  const noData = 'url(#jgb-no-data-pattern)';
   const prefectures = ['北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県','鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県'];
   const types = ['地方銀行','信用金庫','信用組合','労働金庫','JA等'];
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -68,6 +68,9 @@
       if (svg.localName!=='svg' || svgDoc.querySelector('parsererror')) throw Error('地図の読み込みに失敗しました。');
       svg.querySelectorAll('script,foreignObject').forEach(e=>e.remove());
       svg.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+      const defs=svgDoc.createElementNS('http://www.w3.org/2000/svg','defs');
+      defs.innerHTML='<pattern id="jgb-no-data-pattern" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)"><rect width="10" height="10" fill="#f8fafc"/><path d="M 0 0 V 10" stroke="#8491a3" stroke-width="3"/></pattern>';
+      svg.prepend(defs);
       svg.setAttribute('class','jgb-japan-map');svg.setAttribute('role','group');svg.setAttribute('aria-label','金融機関本店所在地別の公表国債販売額');
       svg.querySelectorAll('[data-code]').forEach(g=>{
         const pref=prefectures[Number(g.dataset.code)-1];g.setAttribute('class','jgb-prefecture');g.dataset.prefecture=pref;g.setAttribute('tabindex','0');g.setAttribute('role','button');
@@ -96,12 +99,12 @@
     $('#jgbCards').innerHTML=card('掲載機関の公表販売額',`${number(sum)}<small> 億円</small>`,'本店所在地別に合算')+card('掲載金融機関',`${number(count)}<small> 先</small>`,`対象業態の取扱機関 ${population}先`)+card('公表実績がある都道府県',`${rows.length}<small> / 47</small>`,'未掲載県は販売額不明')+card('公表額のカバー率',sourceTotal?`${number(sum/sourceTotal*100)}<small> %</small>`:'—',`対象業態全体 ${number(sourceTotal)}億円に対する比率`);
     $('#jgbMapTitle').textContent=current==='total'?'本店所在地別・公表販売額合計':'本店所在地別・掲載1機関当たり販売額';
     $('#jgbMapSubtitle').textContent=`${period.label} ／ ${ui.scale==='common'?`全${ui.data.periods.length}半期で共通の色尺度`:'選択半期の中で色を比較'}`;
-    $('#jgbLegend').innerHTML=`<span>少ない 0</span><span class="jgb-swatches">${palette.map(c=>`<i style="background:${c}"></i>`).join('')}</span><span>多い ${number(max)}億円</span><span class="jgb-no-data"><i></i>掲載なし（額不明）</span>`;
+    $('#jgbLegend').innerHTML=`<span>実績あり：少ない 0</span><span class="jgb-swatches">${palette.map(c=>`<i style="background:${c}"></i>`).join('')}</span><span>多い ${number(max)}億円</span><span class="jgb-no-data"><i></i>未掲載・販売額不明</span>`;
     $('#jgbMap').querySelectorAll('[data-code]').forEach(g=>{
       const row=byPref.get(g.dataset.prefecture),selected=ui.prefecture===g.dataset.prefecture,fill=row?color(row[current],max):noData;
-      g.style.fill=fill;g.setAttribute('aria-pressed',String(selected));const label=`${g.dataset.prefecture}：${row?`${number(row[current])}億円、掲載${row.count}機関`:'公表対象の掲載なし・販売額不明'}`;g.setAttribute('aria-label',label);
+      g.dataset.hasData=String(Boolean(row));g.style.fill=fill;g.setAttribute('aria-pressed',String(selected));const label=`${g.dataset.prefecture}：${row?`${number(row[current])}億円、掲載${row.count}機関`:'公表対象の掲載なし・販売額不明'}`;g.setAttribute('aria-label',label);
       let title=g.querySelector('title');if(!title){title=document.createElementNS('http://www.w3.org/2000/svg','title');g.prepend(title);}title.textContent=label;
-      g.querySelectorAll('path,polygon,polyline,rect').forEach(shape=>{shape.style.setProperty('fill',fill,'important');shape.style.stroke=selected?'#f59e0b':'#ffffff';shape.style.strokeWidth=selected?'3':'1';});
+      g.querySelectorAll('path,polygon,polyline,rect').forEach(shape=>{shape.style.setProperty('fill',fill,'important');shape.style.stroke=selected?'#f59e0b':row?'#ffffff':'#9aa6b6';shape.style.strokeWidth=selected?'3':'1';});
     });
     const sorted=[...rows].sort((a,b)=>b[current]-a[current]||prefectures.indexOf(a.prefecture)-prefectures.indexOf(b.prefecture));let rank=0,previous=null;
     $('#jgbRanking').innerHTML=sorted.map((r,i)=>{if(previous===null||Math.abs(previous-r[current])>1e-9)rank=i+1;previous=r[current];return `<button class="jgb-ranking-row${ui.prefecture===r.prefecture?' is-selected':''}" type="button" data-prefecture="${r.prefecture}"><span class="jgb-rank">${rank}</span><span><strong>${r.prefecture}</strong><small>掲載 ${r.count}機関</small></span><b>${number(r[current])}<small> 億円</small></b></button>`;}).join('')||'<p class="muted">この条件の公表実績はありません。</p>';
