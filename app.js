@@ -101,8 +101,8 @@ const HEATMAP_TERMS = [
 ];
 const PREFECTURE_CODE_NAMES = Object.fromEntries(PREFECTURE_ORDER.map((name, index) => [String(index + 1), name]));
 const HEATMAP_COLORS = [
-  "#eaf6ff", "#d4ebfa", "#b7dcef", "#f5e3df",
-  "#f2b8ae", "#e98278", "#d8514f", "#ad2837"
+  "#2166ac", "#4393c3", "#92c5de", "#d1e5f0", "#f7f7f7",
+  "#fddbc7", "#f4a582", "#d6604d", "#b2182b"
 ];
 const HEATMAP_NO_DATA_COLOR = "#e5e9ef";
 
@@ -886,7 +886,7 @@ function heatmapColor(value, min, max) {
   value = heatmapScaleRate(value);
   min = heatmapScaleRate(min);
   max = heatmapScaleRate(max);
-  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return HEATMAP_COLORS[3];
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return HEATMAP_COLORS[Math.floor(HEATMAP_COLORS.length / 2)];
   const ratio = Math.max(0, Math.min(1, (value - min) / (max - min)));
   return HEATMAP_COLORS[Math.min(HEATMAP_COLORS.length - 1, Math.floor(ratio * HEATMAP_COLORS.length))];
 }
