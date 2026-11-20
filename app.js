@@ -18,7 +18,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
 }
 
 
-const APP_VERSION = "2026.11.20.2";
+const APP_VERSION = "2026.11.20.4";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -53,31 +53,35 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261120-2";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261120-2";
+const DATA_URL = "campaign_all.json?v=20261120-4";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261120-4";
 const LATEST_UPDATE = {
   "publishedOn": "2026-11-20",
-  "label": "2026年11月20日 参考金利の比較対象を修正",
-  "expectedTotalRecords": 17143,
-  "addedStartIndex": 17138,
-  "addedCount": 5,
+  "label": "2026年11月20日 キャンペーン・通常定期を更新",
+  "expectedTotalRecords": 17415,
+  "addedStartIndex": 17143,
+  "addedCount": 272,
   "updatedCount": 0,
   "movedToBaseHistoryCount": 0,
-  "movedInstitutionCount": 0,
-  "reclassifiedCount": 0,
-  "ordinaryCampaignRetainedCount": 0,
+  "ordinaryCampaignRetainedCount": 3,
   "ordinaryBaseAddedCount": 0,
-  "baseHistoryTotalCount": 29772,
-  "ordinaryInstitutionTotalCount": 0,
-  "reviewedInstitutionCount": 1,
+  "baseHistoryTotalCount": 29962,
+  "reviewedInstitutionCount": 84,
   "withheldInstitutionCount": 0,
-  "segmentLabel": "1金融機関・3商品",
+  "segmentLabel": "84金融機関・100募集情報",
   "segmentMetricLabel": "対象金融機関",
-  "primaryMetricLabel": "新しく追加",
-  "leadText": "参考金利270候補を再分類。標準52候補・条件付き87候補をランキングとヒートマップの比較対象へ反映しました。キャンペーンの最新追加分は大阪信用金庫3商品5明細です。",
-  "compactText": "参考金利270候補を再分類／標準52・条件付き87候補を比較対象へ反映",
+  "primaryMetricLabel": "新しく追加した明細",
+  "leadText": "新規キャンペーン100募集情報・84金融機関・272明細を反映済みです。通常定期預金も5金融機関・190明細を通常金利履歴へ追加し、標準金利・条件付き最高金利の比較へ反映しました。",
+  "compactText": "新規100募集情報・84金融機関・272明細（普通預金のキャンペーン特典3明細を含む）",
   "featuredInstitutions": [
-    "大阪信用金庫"
+    "東邦銀行",
+    "楽天銀行",
+    "ゆうちょ銀行",
+    "水沢信用金庫",
+    "奈良中央信用金庫",
+    "蒲郡信用金庫",
+    "JA晴れの国岡山",
+    "UI銀行"
   ],
   "ordinaryAddedInstitutions": [],
   "updatedRecordKeys": []
@@ -1100,7 +1104,7 @@ function institutionTypeOptions({ includeOnline = true } = {}) {
   return [...ordered, ...unexpected];
 }
 function normalizeRecord(record, index) {
-  const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","rate_effective_from","rate_confirmed_from","rate_date_basis","term","interest_rate","applied_rate","standard_rate","maximum_rate","bonus_margin","tax_basis","achievement_state","currency","tiered_rate","amount_band","ranking_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes","source_reviewed_on","source_sha256","rate_risk_class","requires_investment_purchase"];
+  const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","rate_effective_from","rate_confirmed_from","rate_date_basis","term","interest_rate","applied_rate","standard_rate","maximum_rate","bonus_margin","tax_basis","achievement_state","currency","tiered_rate","amount_band","ranking_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes","source_reviewed_on","source_sha256","rate_risk_class","requires_investment_purchase","renewal_stage","ranking_eligible","source_document_id"];
   const normalized = { _index: index };
   fields.forEach((f) => { normalized[f] = text(record[f]); });
   normalized.region = canonicalRegion(normalized.region, normalized.prefecture);
@@ -1126,6 +1130,10 @@ function normalizeRecord(record, index) {
   const maximumComparable = parseComparableInterestRate(normalized.maximum_rate || normalized.ranking_rate || normalized.interest_rate);
   normalized._standardComparableRate = standardComparable.value;
   normalized._maximumComparableRate = maximumComparable.value;
+  if (Number(record.renewal_stage || 1) > 1 || record.ranking_eligible === false) {
+    normalized._comparableRate = normalized._standardComparableRate = normalized._maximumComparableRate = null;
+    normalized._rateExclusionReason = "継続後の段階金利のため初年度比較の対象外";
+  }
   const maturity = estimateMaturity(normalized);
   normalized.estimated_maturity_start_date = maturity.start;
   normalized.estimated_maturity_end_date = maturity.end;
@@ -1191,8 +1199,8 @@ function renderLatestUpdate() {
   $("#latestUpdateCompact").innerHTML = `<div class="latest-update-summary-text">
     <strong>${LATEST_UPDATE.compactText || `${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先・${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}明細を普通預金金利履歴へ追加`}</strong>
   </div><div class="latest-update-region-list" aria-label="今回の整理内容">
-    <span>今回追加 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}金融機関・${fmt(new Set(added.map(row => row.campaign_name)).size)}商品</span>
-    <span>参考金利を再分類（標準52候補・条件付き87候補を比較対象へ）</span>
+    <span>今回追加 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}金融機関・${fmt(new Set(added.map(row => row.source_document_id || [row.institution_name,row.campaign_name].join("|"))).size)}募集情報</span>
+    <span>通常定期5金融機関・190明細を追加</span>
     <span>対象金融機関：${(LATEST_UPDATE.featuredInstitutions || latestInstitutionItems.map(([institution]) => institution)).map(esc).join("、")}</span>
   </div>`;
 
@@ -1237,11 +1245,13 @@ function renderMetadataHistory() {
 
 async function loadData() {
   try {
-    const [response,baseHistoryResponse] = await Promise.all([
+    const [response,baseHistoryResponse,eventsResponse] = await Promise.all([
       fetch(DATA_URL, { cache: "no-store" }),
-      fetch(BASE_RATE_HISTORY_URL, { cache: "no-store" })
+      fetch(BASE_RATE_HISTORY_URL, { cache: "no-store" }),
+      fetch("r1_data/ordinary_campaign_events.json?v=20261120-4", { cache: "no-store" })
     ]);
     if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`);
+    if (!eventsResponse.ok) throw new Error("普通預金キャンペーン情報を読み込めません");
     if (!baseHistoryResponse.ok) throw new Error(`base_rate_history.json: HTTP ${baseHistoryResponse.status} ${baseHistoryResponse.statusText}`);
     let payload;
     try {
@@ -1252,7 +1262,10 @@ async function loadData() {
     catch (error) { throw new Error(`JSONの解析に失敗しました: ${error.message}`); }
     if (!payload || !Array.isArray(payload.records)) throw new Error("JSONに records 配列がありません。");
 
-    state.metadata = payload.metadata || {};
+    const eventPayload = await eventsResponse.json();
+    const eventRecords = Array.isArray(eventPayload.records) ? eventPayload.records : [];
+    payload.records = [...payload.records, ...eventRecords];
+    state.metadata = {...(payload.metadata || {}), record_count: payload.records.length};
     state.records = payload.records.map(normalizeRecord);
     markLatestUpdateRecords();
     initializeUi();

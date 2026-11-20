@@ -8,7 +8,8 @@
       "改定日はnullのまま保持。現在集計にはcurrent_ranking_eligibleが1の取得記録だけを使用",
       "新規取扱終了の掲載金利は参考履歴として収録し、現在の集計から除外"
     ],
-    "reference_only_closed_product_count": 12
+    "reference_only_closed_product_count": 12,
+    "base_rate_history_record_count": 29962
   },
   "records": [
     {

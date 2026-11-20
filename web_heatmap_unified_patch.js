@@ -14,8 +14,8 @@
 
 (() => {
   const PATCH_VERSION = "20261102.1";
-  const R1_CURRENT_URL = "./r1_data/current_default_ranking.json?v=20261120-2";
-  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261120-2";
+  const R1_CURRENT_URL = "./r1_data/current_default_ranking.json?v=20261120-4";
+  const R1_HISTORY_URL = "./r1_data/base_rate_history.json?v=20261120-4";
 
   const PRODUCT_MODES = [
     ["base_term", "定期預金"],
@@ -183,6 +183,7 @@
   }
 
   function rate(row) {
+    if (Number(row?.renewal_stage || 1) > 1 || row?.ranking_eligible === false || row?.ranking_eligible === "false") return null;
     if (typeof heatmapRateValue === "function" && row && ("_maximumComparableRate" in row || "_standardComparableRate" in row)) {
       return heatmapRateValue(row);
     }
