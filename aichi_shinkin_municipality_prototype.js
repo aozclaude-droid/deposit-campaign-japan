@@ -65,7 +65,7 @@
     .municipality-shape.has-data{cursor:pointer}
     .municipality-shape.has-data:hover,.municipality-shape.has-data:focus{filter:brightness(.93);stroke:#0f3d77;stroke-width:2;outline:none}
     .municipality-shape.is-selected{stroke:#f59e0b;stroke-width:3;filter:drop-shadow(0 1px 2px rgba(15,61,119,.28))}
-    .municipality-label{font-size:10px;font-weight:800;fill:#123b70;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+    .municipality-label{font-size:7.5px;font-weight:600;fill:#123b70;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:1.5px;stroke-linejoin:round;pointer-events:none}
     .municipality-ranking-card{display:flex;flex-direction:column;min-height:390px}
     .municipality-ranking-title{padding:.7rem .8rem;border-bottom:1px solid #e4ebf4;background:#f8fbff}
     .municipality-ranking-title strong{display:block;color:#123b70;font-size:.88rem}
