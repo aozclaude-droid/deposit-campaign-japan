@@ -4,10 +4,10 @@
     "region": "全国",
     "created_at": "2026-11-14T15:01:31+09:00",
     "source_file": "campaign_all.json",
-    "record_count": 17412,
+    "record_count": 17416,
     "institution_count": 928,
-    "campaign_count": 6463,
-    "review_count": 11196,
+    "campaign_count": 6465,
+    "review_count": 11473,
     "date_min": "2008-08-02",
     "date_max": "2029-03-30",
     "notes": [
@@ -73,12 +73,13 @@
       "collect_20261114_073100: 全国差分巡回をChatGPT/Codexで照査し、高確度40明細を反映（Gemini API不使用）。",
       "2026-11-19: 大阪協栄信用組合の公式商品概要を照合。現行金利20明細を募集開始日と金利確認日を分離して収録。",
       "2026-11-20：残513候補の個別照査完了。大阪信用金庫の公式PDFで確認した3商品5条件を追加。",
-      "2026-11-20：新規100募集情報272明細を反映。通常金利は別管理。うち普通預金の期間限定キャンペーン・口座開設特典3明細はordinary_campaign_events.jsonに分離して画面で合流。継続後の段階金利は初年度の比較対象外。"
+      "2026-11-20：新規100募集情報272明細を反映。通常金利は別管理。うち普通預金の期間限定キャンペーン・口座開設特典3明細はordinary_campaign_events.jsonに分離して画面で合流。継続後の段階金利は初年度の比較対象外。",
+      "2026-11-21：岡崎信用金庫ネット支店の現行2キャンペーン4年限明細を追加。旧IB専用定期等8明細は履歴保持・現在比較から除外し、現行の通常優遇8明細を別JSONへ収録。"
     ],
     "ordinary_records_moved_to_base_rate_history": 31,
-    "updated_at": "2026-11-20",
-    "latest_publication_id": "NEW_CAMPAIGNS_20261120",
-    "latest_added_records": 269,
+    "updated_at": "2026-11-21",
+    "latest_publication_id": "OKASHIN_INTERNET_20261121",
+    "latest_added_records": 4,
     "ordinary_campaign_events_file": "r1_data/ordinary_campaign_events.json",
     "ordinary_campaign_event_count": 3
   },
@@ -215738,8 +215739,11 @@
       "eligibility_conditions": "",
       "deposit_amount": "",
       "product_url": "",
-      "status": "開催中",
-      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認"
+      "status": "要確認",
+      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認／2026-11-21：旧掲載金利の履歴として保持。現行IB専用定期・ライトワンは店頭表示金利＋0.06％の通常優遇商品として通常金利履歴へ収録。旧金利の適用終了日は未確認のため推測せず、現在のキャンペーン比較対象から除外。",
+      "ranking_eligible": false,
+      "record_classification": "NORMAL_CONDITIONAL_LEGACY_HISTORY",
+      "classification_reviewed_on": "2026-11-21"
     },
     {
       "region": "東海",
@@ -215756,8 +215760,11 @@
       "eligibility_conditions": "",
       "deposit_amount": "",
       "product_url": "",
-      "status": "開催中",
-      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認"
+      "status": "要確認",
+      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認／2026-11-21：旧掲載金利の履歴として保持。現行IB専用定期・ライトワンは店頭表示金利＋0.06％の通常優遇商品として通常金利履歴へ収録。旧金利の適用終了日は未確認のため推測せず、現在のキャンペーン比較対象から除外。",
+      "ranking_eligible": false,
+      "record_classification": "NORMAL_CONDITIONAL_LEGACY_HISTORY",
+      "classification_reviewed_on": "2026-11-21"
     },
     {
       "region": "東海",
@@ -215774,8 +215781,11 @@
       "eligibility_conditions": "",
       "deposit_amount": "",
       "product_url": "",
-      "status": "開催中",
-      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認"
+      "status": "要確認",
+      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認／2026-11-21：旧掲載金利の履歴として保持。現行IB専用定期・ライトワンは店頭表示金利＋0.06％の通常優遇商品として通常金利履歴へ収録。旧金利の適用終了日は未確認のため推測せず、現在のキャンペーン比較対象から除外。",
+      "ranking_eligible": false,
+      "record_classification": "NORMAL_CONDITIONAL_LEGACY_HISTORY",
+      "classification_reviewed_on": "2026-11-21"
     },
     {
       "region": "東海",
@@ -215792,8 +215802,11 @@
       "eligibility_conditions": "",
       "deposit_amount": "",
       "product_url": "",
-      "status": "開催中",
-      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認"
+      "status": "要確認",
+      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認／2026-11-21：旧掲載金利の履歴として保持。現行IB専用定期・ライトワンは店頭表示金利＋0.06％の通常優遇商品として通常金利履歴へ収録。旧金利の適用終了日は未確認のため推測せず、現在のキャンペーン比較対象から除外。",
+      "ranking_eligible": false,
+      "record_classification": "NORMAL_CONDITIONAL_LEGACY_HISTORY",
+      "classification_reviewed_on": "2026-11-21"
     },
     {
       "region": "東海",
@@ -215810,8 +215823,11 @@
       "eligibility_conditions": "",
       "deposit_amount": "",
       "product_url": "",
-      "status": "開催中",
-      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認"
+      "status": "要確認",
+      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認／2026-11-21：旧掲載金利の履歴として保持。現行IB専用定期・ライトワンは店頭表示金利＋0.06％の通常優遇商品として通常金利履歴へ収録。旧金利の適用終了日は未確認のため推測せず、現在のキャンペーン比較対象から除外。",
+      "ranking_eligible": false,
+      "record_classification": "NORMAL_CONDITIONAL_LEGACY_HISTORY",
+      "classification_reviewed_on": "2026-11-21"
     },
     {
       "region": "東海",
@@ -215828,8 +215844,11 @@
       "eligibility_conditions": "",
       "deposit_amount": "",
       "product_url": "",
-      "status": "開催中",
-      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認"
+      "status": "要確認",
+      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認／2026-11-21：旧掲載金利の履歴として保持。現行IB専用定期・ライトワンは店頭表示金利＋0.06％の通常優遇商品として通常金利履歴へ収録。旧金利の適用終了日は未確認のため推測せず、現在のキャンペーン比較対象から除外。",
+      "ranking_eligible": false,
+      "record_classification": "NORMAL_CONDITIONAL_LEGACY_HISTORY",
+      "classification_reviewed_on": "2026-11-21"
     },
     {
       "region": "東海",
@@ -215846,8 +215865,11 @@
       "eligibility_conditions": "",
       "deposit_amount": "",
       "product_url": "",
-      "status": "開催中",
-      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認"
+      "status": "要確認",
+      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認／2026-11-21：旧掲載金利の履歴として保持。現行IB専用定期・ライトワンは店頭表示金利＋0.06％の通常優遇商品として通常金利履歴へ収録。旧金利の適用終了日は未確認のため推測せず、現在のキャンペーン比較対象から除外。",
+      "ranking_eligible": false,
+      "record_classification": "NORMAL_CONDITIONAL_LEGACY_HISTORY",
+      "classification_reviewed_on": "2026-11-21"
     },
     {
       "region": "東海",
@@ -216062,8 +216084,11 @@
       "eligibility_conditions": "",
       "deposit_amount": "",
       "product_url": "",
-      "status": "開催中",
-      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認"
+      "status": "要確認",
+      "review_notes": "東海元CSV簡略スキーマのため対象者・預入金額・商品URL等未収録; 終了日未設定; 過去金利との期間対応要確認／2026-11-21：旧掲載金利の履歴として保持。現行IB専用定期・ライトワンは店頭表示金利＋0.06％の通常優遇商品として通常金利履歴へ収録。旧金利の適用終了日は未確認のため推測せず、現在のキャンペーン比較対象から除外。",
+      "ranking_eligible": false,
+      "record_classification": "NORMAL_CONDITIONAL_LEGACY_HISTORY",
+      "classification_reviewed_on": "2026-11-21"
     },
     {
       "region": "東海",
@@ -316551,6 +316576,182 @@
       "renewal_stage": 1,
       "ranking_eligible": true,
       "campaign_record_id": "CAMP_61298241a0382bbc87fb9a67"
+    },
+    {
+      "region": "東海",
+      "prefecture": "愛知県",
+      "institution_name": "岡崎信用金庫",
+      "institution_type": "信用金庫",
+      "product_type": "定期預金",
+      "campaign_name": "おかしんインターネット支店 コンティニューボンド2026",
+      "campaign_start_date": "2026-11-02",
+      "campaign_end_date": "2027-03-31",
+      "term": "1年",
+      "interest_rate": "1.55％",
+      "rate_condition": "税引前年率。初回満期日まで。単利。自動継続後は継続時の店頭表示金利。",
+      "eligibility_conditions": "おかしんインターネット支店に取引のある個人。2026年11月1日までの普通預金口座開設申込者を含む。 インターネットバンキング限定（窓口・ATM不可）。",
+      "deposit_amount": "1口300万円以上（1円単位）",
+      "product_url": "https://www.okashin.co.jp/internetstore/pdf/20261030_info_it2.pdf",
+      "status": "開催中",
+      "review_notes": "募集総額200億円。募集額到達で早期終了。2026-11-21：公式PDF第1ページと現行取扱商品ページを照合。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "applied_rate": "1.55％",
+      "maximum_rate": "1.55％",
+      "renewal_stage": 1,
+      "ranking_eligible": true,
+      "subscription_cap_oku_yen": 200,
+      "source_reviewed_on": "2026-11-21",
+      "source_sha256": "c48987859b19d97df47580464591779a8770733307b37b65d449f6703e54ee5c",
+      "source_document_id": "OKASHIN_20261030_info_it2.pdf",
+      "source_parent_url": "https://www.okashin.co.jp/internetstore/index.html",
+      "source_page_number": 1,
+      "source_evidence_locator": {
+        "page": 1,
+        "table": "商品概要",
+        "rows": [
+          "取扱期間",
+          "販売対象",
+          "預金の種類",
+          "預入金額",
+          "適用金利",
+          "募集総額"
+        ]
+      },
+      "publication_id": "OKASHIN_INTERNET_20261121",
+      "campaign_record_id": "CAMP_eb92e713e56669df40216138"
+    },
+    {
+      "region": "東海",
+      "prefecture": "愛知県",
+      "institution_name": "岡崎信用金庫",
+      "institution_type": "信用金庫",
+      "product_type": "定期預金",
+      "campaign_name": "おかしんインターネット支店 コンティニューボンド2026",
+      "campaign_start_date": "2026-11-02",
+      "campaign_end_date": "2027-03-31",
+      "term": "2年",
+      "interest_rate": "1.85％",
+      "rate_condition": "税引前年率。初回満期日まで。単利。自動継続後は継続時の店頭表示金利。",
+      "eligibility_conditions": "おかしんインターネット支店に取引のある個人。2026年11月1日までの普通預金口座開設申込者を含む。 インターネットバンキング限定（窓口・ATM不可）。",
+      "deposit_amount": "1口300万円以上（1円単位）",
+      "product_url": "https://www.okashin.co.jp/internetstore/pdf/20261030_info_it2.pdf",
+      "status": "開催中",
+      "review_notes": "募集総額200億円。募集額到達で早期終了。2026-11-21：公式PDF第1ページと現行取扱商品ページを照合。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "applied_rate": "1.85％",
+      "maximum_rate": "1.85％",
+      "renewal_stage": 1,
+      "ranking_eligible": true,
+      "subscription_cap_oku_yen": 200,
+      "source_reviewed_on": "2026-11-21",
+      "source_sha256": "c48987859b19d97df47580464591779a8770733307b37b65d449f6703e54ee5c",
+      "source_document_id": "OKASHIN_20261030_info_it2.pdf",
+      "source_parent_url": "https://www.okashin.co.jp/internetstore/index.html",
+      "source_page_number": 1,
+      "source_evidence_locator": {
+        "page": 1,
+        "table": "商品概要",
+        "rows": [
+          "取扱期間",
+          "販売対象",
+          "預金の種類",
+          "預入金額",
+          "適用金利",
+          "募集総額"
+        ]
+      },
+      "publication_id": "OKASHIN_INTERNET_20261121",
+      "campaign_record_id": "CAMP_0682120294bbcc9d29f9c2fc"
+    },
+    {
+      "region": "東海",
+      "prefecture": "愛知県",
+      "institution_name": "岡崎信用金庫",
+      "institution_type": "信用金庫",
+      "product_type": "定期預金",
+      "campaign_name": "おかしんインターネット支店 コンティニューボンド2026",
+      "campaign_start_date": "2026-11-02",
+      "campaign_end_date": "2027-03-31",
+      "term": "3年",
+      "interest_rate": "1.90％",
+      "rate_condition": "税引前年率。初回満期日まで。半年複利。自動継続後は継続時の店頭表示金利。",
+      "eligibility_conditions": "おかしんインターネット支店に取引のある個人。2026年11月1日までの普通預金口座開設申込者を含む。 インターネットバンキング限定（窓口・ATM不可）。",
+      "deposit_amount": "1口300万円以上（1円単位）",
+      "product_url": "https://www.okashin.co.jp/internetstore/pdf/20261030_info_it2.pdf",
+      "status": "開催中",
+      "review_notes": "募集総額200億円。募集額到達で早期終了。2026-11-21：公式PDF第1ページと現行取扱商品ページを照合。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "applied_rate": "1.90％",
+      "maximum_rate": "1.90％",
+      "renewal_stage": 1,
+      "ranking_eligible": true,
+      "subscription_cap_oku_yen": 200,
+      "source_reviewed_on": "2026-11-21",
+      "source_sha256": "c48987859b19d97df47580464591779a8770733307b37b65d449f6703e54ee5c",
+      "source_document_id": "OKASHIN_20261030_info_it2.pdf",
+      "source_parent_url": "https://www.okashin.co.jp/internetstore/index.html",
+      "source_page_number": 1,
+      "source_evidence_locator": {
+        "page": 1,
+        "table": "商品概要",
+        "rows": [
+          "取扱期間",
+          "販売対象",
+          "預金の種類",
+          "預入金額",
+          "適用金利",
+          "募集総額"
+        ]
+      },
+      "publication_id": "OKASHIN_INTERNET_20261121",
+      "campaign_record_id": "CAMP_c35535f881cf4782a3ad1000"
+    },
+    {
+      "region": "東海",
+      "prefecture": "愛知県",
+      "institution_name": "岡崎信用金庫",
+      "institution_type": "信用金庫",
+      "product_type": "定期預金",
+      "campaign_name": "おかしんインターネット支店 プレミアム定期預金4",
+      "campaign_start_date": "2026-11-02",
+      "campaign_end_date": "2027-01-31",
+      "term": "1年",
+      "interest_rate": "1.65％",
+      "rate_condition": "税引前年率。初回満期日まで。単利。自動継続後は継続時の店頭表示金利。",
+      "eligibility_conditions": "2026年11月2日以降におかしんインターネット支店普通預金口座の開設を申し込んだ個人。過去の同支店取引者は対象外。 インターネットバンキング限定（窓口・ATM不可）。",
+      "deposit_amount": "1人100万円以上3,000万円以下（1円単位）",
+      "product_url": "https://www.okashin.co.jp/internetstore/pdf/20261030_info_it.pdf",
+      "status": "開催中",
+      "review_notes": "募集総額50億円。募集額到達で早期終了。2026-11-21：公式PDF第1ページと現行取扱商品ページを照合。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "applied_rate": "1.65％",
+      "maximum_rate": "1.65％",
+      "renewal_stage": 1,
+      "ranking_eligible": true,
+      "subscription_cap_oku_yen": 50,
+      "source_reviewed_on": "2026-11-21",
+      "source_sha256": "7b8e26e4192b4eb85d80afee2be32b423a266d69aa676decb6651026a27d36b4",
+      "source_document_id": "OKASHIN_20261030_info_it.pdf",
+      "source_parent_url": "https://www.okashin.co.jp/internetstore/index.html",
+      "source_page_number": 1,
+      "source_evidence_locator": {
+        "page": 1,
+        "table": "商品概要",
+        "rows": [
+          "取扱期間",
+          "販売対象",
+          "預金の種類",
+          "預入金額",
+          "適用金利",
+          "募集総額"
+        ]
+      },
+      "publication_id": "OKASHIN_INTERNET_20261121",
+      "campaign_record_id": "CAMP_0d02f589a753500f2b1a37b6"
     }
   ]
 }

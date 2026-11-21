@@ -53,38 +53,40 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261120-4";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261120-4";
+const DATA_URL = "campaign_all.json?v=20261121-7";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261121-7";
 const LATEST_UPDATE = {
-  "publishedOn": "2026-11-20",
-  "label": "2026年11月20日 キャンペーン・通常定期を更新",
-  "expectedTotalRecords": 17415,
-  "addedStartIndex": 17143,
-  "addedCount": 272,
-  "updatedCount": 0,
+  "publishedOn": "2026-11-21",
+  "label": "2026年11月21日 岡崎信用金庫インターネット支店を反映",
+  "expectedTotalRecords": 17419,
+  "addedStartIndex": 17412,
+  "addedCount": 4,
+  "updatedCount": 8,
   "movedToBaseHistoryCount": 0,
   "ordinaryCampaignRetainedCount": 3,
   "ordinaryBaseAddedCount": 0,
-  "baseHistoryTotalCount": 29962,
-  "reviewedInstitutionCount": 84,
+  "baseHistoryTotalCount": 29990,
+  "reviewedInstitutionCount": 1,
   "withheldInstitutionCount": 0,
-  "segmentLabel": "84金融機関・100募集情報",
+  "segmentLabel": "岡崎信用金庫・2キャンペーン4明細・通常優遇8明細",
   "segmentMetricLabel": "対象金融機関",
-  "primaryMetricLabel": "新しく追加した明細",
-  "leadText": "新規キャンペーン100募集情報・84金融機関・272明細を反映済みです。通常定期預金も5金融機関・190明細を通常金利履歴へ追加し、標準金利・条件付き最高金利の比較へ反映しました。",
-  "compactText": "新規100募集情報・84金融機関・272明細（普通預金のキャンペーン特典3明細を含む）",
+  "primaryMetricLabel": "新しく追加したキャンペーン明細",
+  "leadText": "ネット支店のプレミアム定期預金4・コンティニューボンド2026を追加。IB専用定期・ライトワンは店頭表示金利＋0.06％の通常優遇金利として更新し、旧掲載金利は現在比較から除外しました。",
+  "compactText": "期間限定キャンペーン4明細／通常優遇8明細／旧掲載8明細を現在比較から除外",
   "featuredInstitutions": [
-    "東邦銀行",
-    "楽天銀行",
-    "ゆうちょ銀行",
-    "水沢信用金庫",
-    "奈良中央信用金庫",
-    "蒲郡信用金庫",
-    "JA晴れの国岡山",
-    "UI銀行"
+    "岡崎信用金庫"
   ],
   "ordinaryAddedInstitutions": [],
-  "updatedRecordKeys": []
+  "updatedRecordKeys": [
+    "岡崎信用金庫␟おかしんインターネット支店 IB専用定期預金␟2026-02-09␟␟10年␟0.960％←0.560％←0.550％␟␟",
+    "岡崎信用金庫␟おかしんインターネット支店 IB専用定期預金␟2026-02-09␟␟1年␟0.460％←0.335％←0.325％␟␟",
+    "岡崎信用金庫␟おかしんインターネット支店 IB専用定期預金␟2026-02-09␟␟2年␟0.560％←0.385％←0.375％␟␟",
+    "岡崎信用金庫␟おかしんインターネット支店 IB専用定期預金␟2026-02-09␟␟3年␟0.660％←0.410％←0.400％␟␟",
+    "岡崎信用金庫␟おかしんインターネット支店 IB専用定期預金␟2026-02-09␟␟4年␟0.710％←0.435％←0.425％␟␟",
+    "岡崎信用金庫␟おかしんインターネット支店 IB専用定期預金␟2026-02-09␟␟5年␟0.760％←0.460％←0.450％␟␟",
+    "岡崎信用金庫␟おかしんインターネット支店 IB専用定期預金␟2026-02-09␟␟7年␟0.860％←0.510％←0.500％␟␟",
+    "岡崎信用金庫␟インターネット支店専用定期預金 ライトワン定期␟2026-02-09␟␟1か月␟0.435％←0.31％←0.10％␟␟"
+  ]
 };
 let TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
