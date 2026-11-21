@@ -1106,11 +1106,15 @@ function filterSupersededBaseRateRowsV20261119(rows) {
       ]);
       R1.data = {status,current,history:filterSupersededBaseRateRowsV20261119(history),resolved,historyLinked};
       R1.loaded = true;
+      window.DepositCurrentRates = Object.freeze({rows:current, loaded:true});
+      document.dispatchEvent(new Event('deposit-current-rates-ready'));
       populateFilters();
       render();
       initR1AnalyticsMatrixIntegration();
     } catch (err) {
       R1.error = String(err?.message || err);
+      window.DepositCurrentRates = Object.freeze({rows:[], loaded:false, error:R1.error});
+      document.dispatchEvent(new Event('deposit-current-rates-ready'));
       const box=$("#r1Error");
       box.hidden=false;
       box.textContent=`R1データを読み込めませんでした: ${R1.error}`;

@@ -1,0 +1,23 @@
+.institution-current-rate-panel{border-top:3px solid #3478cb}
+.institution-current-rate-date{font-size:12px;color:#5c718c;background:#eef5fe;border-radius:20px;padding:7px 11px;white-space:nowrap}
+.institution-current-rate-status,.institution-current-rate-empty{padding:13px 16px;background:#f4f8fd;border-radius:8px;color:#58718e;font-size:14px}
+.institution-current-matrix-scroll{max-width:100%;overflow-x:auto;border:1px solid #d7e3f0;border-radius:11px;margin-top:13px}
+.institution-current-rate-matrix{width:100%;border-collapse:separate;border-spacing:0;table-layout:auto;font-size:14px}
+.institution-matrix-caption{text-align:left;padding:12px 16px;color:#435e80;font-weight:700;font-size:13px;background:#f8fbff}
+.institution-current-rate-matrix th,.institution-current-rate-matrix td{border-bottom:1px solid #e0e9f4;border-right:1px solid #e0e9f4;vertical-align:top}
+.institution-current-rate-matrix thead th{background:#edf4fd;color:#284d7c;padding:13px;white-space:nowrap;font-weight:800;text-align:center;min-width:150px}
+.institution-current-rate-matrix thead th:first-child{min-width:168px;text-align:left}
+.institution-current-rate-matrix tbody th{background:#f7faff;color:#345272;font-size:13px;padding:15px 13px;white-space:nowrap;position:sticky;left:0;z-index:1;border-right:2px solid #d4e0ef}
+.institution-current-rate-matrix thead th:first-child{position:sticky;left:0;z-index:2}
+.institution-current-rate-matrix td{padding:5px;min-width:150px;max-width:220px;text-align:center;background:white}
+.institution-rate-cell-button{display:block;width:100%;padding:12px 10px;min-height:76px;border:1px solid transparent;border-radius:8px;background:transparent;font-family:inherit;cursor:pointer;color:#174b99;text-align:center}
+.institution-rate-cell-button:hover{background:#eef5ff;border-color:#adc8f0}.institution-rate-cell-button:focus-visible{outline:3px solid #e7a126;outline-offset:-2px}.institution-rate-cell-button.is-selected{border-color:#3478cb;background:#eaf3ff}
+.institution-rate-cell-button strong{display:block;font-size:23px;line-height:1.3;font-weight:800;font-variant-numeric:tabular-nums}
+.institution-rate-cell-button small{display:block;margin-top:6px;color:#6d8097;font-size:11px;line-height:1.6}
+.institution-current-rate-matrix .institution-matrix-preferred{background:#fff8ed}.institution-matrix-preferred strong{color:#a95207}
+.institution-current-rate-matrix .institution-matrix-missing{padding:17px 12px;font-size:20px;color:#8998ab;background:#fbfcfe}.institution-matrix-missing small{display:block;font-size:11px;margin-top:4px}
+.institution-matrix-condition-row td{padding:12px 13px;text-align:left;line-height:1.7;font-size:12px;color:#637995;background:#fcfdff}.institution-matrix-condition-row td>span{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.institution-current-matrix-note{font-size:12px;color:#6c819a;line-height:1.9;margin:12px 0}
+.institution-current-rate-evidence{padding:15px 18px;border:1px solid #d9e5f3;border-radius:9px;background:#f6faff;font-size:13px;line-height:1.8}.institution-current-rate-evidence>p{margin:0}.institution-current-rate-evidence h4{margin:0 0 10px;color:#254d7d;font-size:15px}.institution-current-rate-evidence h4 strong{font-size:21px;color:#175399;margin-left:8px}
+.institution-current-rate-evidence dl{margin:0}.institution-current-rate-evidence dl>div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;padding:5px 0}.institution-current-rate-evidence dt{font-weight:700;color:#5b718f}.institution-current-rate-evidence dd{margin:0;overflow-wrap:anywhere}.institution-current-rate-evidence dd p{margin:5px 0}
+@media(max-width:650px){.institution-current-rate-panel .institution-subpanel-heading{flex-direction:column;align-items:flex-start}.institution-current-rate-matrix thead th,.institution-current-rate-matrix td{min-width:145px}.institution-current-rate-matrix thead th:first-child{min-width:125px}.institution-current-rate-matrix tbody th{white-space:normal;min-width:125px;max-width:125px}.institution-rate-cell-button strong{font-size:21px}.institution-current-rate-evidence dl>div{grid-template-columns:1fr;gap:1px}.institution-current-rate-evidence{padding:13px}}
