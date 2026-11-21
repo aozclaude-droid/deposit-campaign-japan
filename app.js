@@ -715,6 +715,154 @@ function buildPrefectureMapLabels(svg) {
   svg.querySelectorAll('.prefecture-label-layer, .prefecture-map-label').forEach(label => label.remove());
 }
 
+function uniqueHeatmapRecords(records) {
+  const seen = new Set();
+  return records.filter((record) => {
+    const key = [record.institution_name, record.campaign_name, record.campaign_start_date, record.campaign_end_date,
+      record.product_type, record.term, record.interest_rate, record.rate_condition, record.status].map(text).join("\u241f");
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+function buildInstitutionRateGroups(records, rateSelector = heatmapRateValue) {
+  const grouped = new Map();
+  uniqueHeatmapRecords(records).forEach((record) => {
+    const current = grouped.get(record.institution_name) || { institution: record.institution_name, rates: [], records: [] };
+    current.rates.push(rateSelector(record));
+    current.records.push(record);
+    grouped.set(record.institution_name, current);
+  });
+  return [...grouped.values()].map((item) => ({
+    ...item,
+    averageRate: average(item.rates),
+    maximumRate: item.rates.length ? Math.max(...item.rates) : null,
+    minimumRate: item.rates.length ? Math.min(...item.rates) : null
+  })).sort((a, b) => b.averageRate - a.averageRate || a.institution.localeCompare(b.institution, "ja"));
+}
+function ordinaryHistoryDate(value) {
+  const normalized = text(value).trim().slice(0,10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(normalized) ? normalized : "";
+}
+function ordinaryHistorySmallBalanceScore(row) {
+  const band = text(row.amount_band || row.product_label || row.rate_condition).replace(/[,，\s]/g, "");
+  if (/100万円以下|100万円まで|百万円以下|百万円まで/.test(band)) return 0;
+  if (/以下|まで|未満/.test(band)) return 1;
+  if (/GENERAL_OR_UNSPECIFIED|一般|指定なし/.test(band)) return 2;
+  return 3;
+}
+function ordinaryHeatmapRecords() {
+  return window.DepositRateComparison.select(state.baseRateHistory, {family:"ordinary",basis:$("#heatmapRateBasis")?.value || "maximum",today:TODAY_ISO}).map(row => ({
+    institution_name:row.institution_name,institution_type:row.institution_type_normalized || row.institution_type_raw,
+    prefecture:row.prefecture,region:canonicalRegion(row.region,row.prefecture),product_type:"普通預金",
+    campaign_name:row.product_label,campaign_start_date:baseRateSnapshotDate(row),campaign_end_date:row.published_valid_to || row.effective_to || "",term:"",
+    interest_rate:`${row.rate_percent}％`,rate_condition:row.selected_condition_label,status:"開催中",_analyticsTermKey:null,
+    _comparableRate:row._comparableRate,_standardComparableRate:row._standardComparableRate,_maximumComparableRate:row._maximumComparableRate,
+    _ordinaryNationwideOnly:row.ranking_scope === "NATIONWIDE_ONLY" || row.prefecture_aggregation_eligible === "0",
+    _ordinarySourceRow:row._comparisonMaximumRow || row,_ordinaryStandardSourceRow:row._comparisonStandardRow
+  }));
+}
+
+function buildHeatmapData() {
+  const selectedProduct = selectedHeatmapProduct();
+  const products = new Set(selectedProduct ? [selectedProduct] : []);
+  const institutionTypes = new Set(selectedValues("#heatmapInstitutionTypeFilter"));
+  const statuses = new Set(selectedValues("#heatmapStatusFilter"));
+  const term = heatmapTerm();
+  const productFilterActive = products.size > 0;
+  const typeFilterActive = institutionTypes.size > 0;
+  const statusFilterActive = statuses.size > 0;
+  const campaignFrom = $("#heatmapCampaignDateFrom")?.value || "";
+  const campaignTo = $("#heatmapCampaignDateTo")?.value || "";
+  const sourceRecords = term.key === "ordinary" ? ordinaryHeatmapRecords() : state.records;
+  const termRecords = sourceRecords.filter((record) => {
+    const matchesTerm = term.key === "ordinary"
+      ? ORDINARY_PRODUCT_TYPES.has(record.product_type)
+      : record._analyticsTermKey === term.key;
+    if (!matchesTerm || !Number.isFinite(heatmapRateValue(record))) return false;
+    if (productFilterActive && !products.has(record.product_type)) return false;
+    if (statusFilterActive && !statuses.has(record.status)) return false;
+    if (selectedProduct === "campaign" && !recordOverlapsPeriod(record, campaignFrom, campaignTo)) return false;
+    return true;
+  });
+  const regionalRecords = termRecords.filter((record) => !/ネット銀行/.test(record.institution_type)
+    && !record._ordinaryNationwideOnly
+    && PREFECTURE_RANK.has(record.prefecture)
+    && (!typeFilterActive || institutionTypes.has(record.institution_type)));
+  const onlineRecords = termRecords.filter((record) => (/ネット銀行/.test(record.institution_type) || record._ordinaryNationwideOnly)
+    && (!typeFilterActive || institutionTypes.has(record.institution_type)));
+  const selectedTypeRankingRecords = termRecords.filter((record) => !typeFilterActive || institutionTypes.has(record.institution_type));
+  const byPrefectureRecords = new Map(PREFECTURE_ORDER.map((prefecture) => [prefecture, []]));
+  regionalRecords.forEach((record) => byPrefectureRecords.get(record.prefecture)?.push(record));
+  const prefectures = new Map();
+  byPrefectureRecords.forEach((records, prefecture) => {
+    const institutions = buildInstitutionRateGroups(records);
+    const institutionRates = institutions.map((item) => item.averageRate).filter(Number.isFinite);
+    const rawRates = uniqueHeatmapRecords(records).map(heatmapRateValue).filter(Number.isFinite);
+    prefectures.set(prefecture, {
+      prefecture,
+      averageRate: average(institutionRates),
+      institutionCount: institutions.length,
+      recordCount: records.length,
+      comparableCount: rawRates.length,
+      maximumRate: rawRates.length ? Math.max(...rawRates) : null,
+      minimumRate: rawRates.length ? Math.min(...rawRates) : null,
+      institutions,
+      records
+    });
+  });
+  const rankedPrefectures = [...prefectures.values()].filter((item) => Number.isFinite(item.averageRate))
+    .sort((a, b) => heatmapScaleRate(b.averageRate) - heatmapScaleRate(a.averageRate) || comparePrefectures(a.prefecture, b.prefecture));
+  const allRegionalInstitutions = buildInstitutionRateGroups(regionalRecords);
+  const onlineInstitutions = buildInstitutionRateGroups(onlineRecords);
+  const selectedTypeRankingInstitutions = buildInstitutionRateGroups(selectedTypeRankingRecords);
+  return {
+    term,
+    products: [...products],
+    institutionTypes: [...institutionTypes],
+    statuses: [...statuses],
+    regionalRecords,
+    onlineRecords,
+    prefectures,
+    rankedPrefectures,
+    regionalInstitutions: allRegionalInstitutions,
+    onlineInstitutions,
+    selectedTypeRankingRecords,
+    selectedTypeRankingInstitutions,
+    selectedTypeRankingAverage: average(selectedTypeRankingInstitutions.map((item) => item.averageRate)),
+    nationalAverage: average(allRegionalInstitutions.map((item) => item.averageRate)),
+    onlineAverage: average(onlineInstitutions.map((item) => item.averageRate))
+  };
+}
+function heatmapScaleRate(value) {
+  return Number.isFinite(value) ? Number(value.toFixed(6)) : null;
+}
+function heatmapColor(value, min, max) {
+  if (!Number.isFinite(value)) return HEATMAP_NO_DATA_COLOR;
+  value = heatmapScaleRate(value);
+  min = heatmapScaleRate(min);
+  max = heatmapScaleRate(max);
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return HEATMAP_COLORS[Math.floor(HEATMAP_COLORS.length / 2)];
+  const ratio = Math.max(0, Math.min(1, (value - min) / (max - min)));
+  return HEATMAP_COLORS[Math.min(HEATMAP_COLORS.length - 1, Math.floor(ratio * HEATMAP_COLORS.length))];
+}
+function heatmapLabelColor(backgroundColor, hasData = true) {
+  if (!hasData) return "#7f8b9b";
+  const hex = text(backgroundColor).replace("#", "");
+  if (!/^[0-9a-f]{6}$/i.test(hex)) return "#26384f";
+  const channel = (offset) => {
+    const value = parseInt(hex.slice(offset, offset + 2), 16) / 255;
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  };
+  const luminance = 0.2126 * channel(0) + 0.7152 * channel(2) + 0.0722 * channel(4);
+  return luminance < 0.34 ? "#ffffff" : "#26384f";
+}
+function renderHeatmapLegend(min, max) {
+  const legend = $("#heatmapLegend");
+  if (!legend) return;
+  const swatches = HEATMAP_COLORS.map((color) => `<i style="background:${color}"></i>`).join("");
+  legend.innerHTML = `<span class="heatmap-legend-end"><b>低い</b>${esc(formatRate(min))}</span><span class="heatmap-legend-swatches">${swatches}</span><span class="heatmap-legend-end"><b>高い</b>${esc(formatRate(max))}</span><span class="heatmap-no-data-key"><i style="background:${HEATMAP_NO_DATA_COLOR}"></i>データなし</span>`;
+}
 function summaryCardHtml(label, value, detail, className = "") {
   return `<article class="heatmap-summary-card ${className}"><div class="heatmap-summary-label">${esc(label)}</div><div class="heatmap-summary-value">${esc(value)}</div><div class="heatmap-summary-detail">${esc(detail)}</div></article>`;
 }
