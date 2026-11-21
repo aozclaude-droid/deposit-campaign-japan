@@ -238,7 +238,7 @@
       const source = selectedLocationMode === "branches"
         ? `<a href="${escapeHtml(institution.branchCoverage.sourceUrl)}" target="_blank" rel="noopener">公式一覧</a>`
         : "—";
-      return `<tr><td>${index + 1}</td><th scope="row">${escapeHtml(institution.institution)}</th><td>${location}</td><td class="rate">${formatRate(institution.averageRate)}</td><td>${formatRate(institution.maximumRate)}</td><td>${count}件</td>${selectedLocationMode === "branches" ? `<td>${source}</td>` : ""}</tr>`;
+      return `<tr><td>${index + 1}</td><th scope="row">${institutionProfileLink(institution.institution)}</th><td>${location}</td><td class="rate">${formatRate(institution.averageRate)}</td><td>${formatRate(institution.maximumRate)}</td><td>${count}件</td>${selectedLocationMode === "branches" ? `<td>${source}</td>` : ""}</tr>`;
     }).join("");
     const locationHeading = selectedLocationMode === "headquarters" ? "本店所在地" : "市町村内店舗数";
     const description = selectedLocationMode === "headquarters" ? "本店所在地が同じ信用金庫を表示" : "店舗がある信用金庫を表示（金融機関均等平均）";

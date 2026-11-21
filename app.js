@@ -145,6 +145,11 @@ function localIso(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 const parseIso = (s) => /^\d{4}-\d{2}-\d{2}$/.test(text(s)) ? new Date(`${s}T00:00:00`) : null;
+// All deposit tables use the existing delegated institution-profile navigation.
+function institutionProfileLink(name) {
+  const label = String(name ?? '').trim();
+  return label ? `<button type="button" class="institution-table-link institution-detail-trigger" data-institution="${esc(label)}" title="${esc(label)}の詳細・金利履歴を開く">${esc(label)}</button>` : '—';
+}
 const dayMs = 86400000;
 const campaignKey = (r) => `${text(r.institution_name)}\u241f${text(r.campaign_name)}`;
 const groupKey = (r) => [r.institution_name, r.campaign_name, r.campaign_start_date, r.campaign_end_date, r.product_type, r.status].map(text).join("\u241f");
@@ -558,7 +563,7 @@ function productAnalyticsHtml(analytics, displayMode = "all") {
     </article>`;
   }).join("");
   const body = institutions.length
-    ? institutions.map((institution) => `<tr><th scope="row">${esc(institution)}</th>${ANALYTICS_TERMS.map((term) => analyticsCellHtml(analytics, institution, term)).join("")}</tr>`).join("")
+    ? institutions.map((institution) => `<tr><th scope="row">${institutionProfileLink(institution)}</th>${ANALYTICS_TERMS.map((term) => analyticsCellHtml(analytics, institution, term)).join("")}</tr>`).join("")
     : `<tr><td colspan="5" class="table-empty">比較可能データがありません。</td></tr>`;
   const modeLabel = showAll
     ? `全${fmt(institutions.length)}金融機関を表示（行内最高金利順）`
@@ -958,7 +963,7 @@ function renderHeatmapSelection() {
       : '<div class="heatmap-empty">地図またはランキングから都道府県を選択してください。</div>';
     return;
   }
-  const rows = item.institutions.map((institution, index) => `<tr><td>${index + 1}</td><th scope="row">${esc(institution.institution)}</th><td class="rate">${esc(formatRate(institution.averageRate))}</td><td>${esc(formatRate(institution.maximumRate))}</td><td>${fmt(institution.records.length)}件</td><td><button class="btn small heatmap-search-institution" data-institution="${esc(institution.institution)}" data-prefecture="${esc(item.prefecture)}" type="button">検索</button></td></tr>`).join("");
+  const rows = item.institutions.map((institution, index) => `<tr><td>${index + 1}</td><th scope="row">${institutionProfileLink(institution.institution)}</th><td class="rate">${esc(formatRate(institution.averageRate))}</td><td>${esc(formatRate(institution.maximumRate))}</td><td>${fmt(institution.records.length)}件</td><td><button class="btn small heatmap-search-institution" data-institution="${esc(institution.institution)}" data-prefecture="${esc(item.prefecture)}" type="button">検索</button></td></tr>`).join("");
   detail.innerHTML = `<div class="heatmap-detail-heading"><div><p class="section-kicker">PREFECTURE DETAIL</p><h3>${esc(item.prefecture)}・${esc(data.term.label)}</h3><p class="muted">平均 ${esc(formatRate(item.averageRate))} / ${fmt(item.institutionCount)}金融機関 / 比較可能 ${fmt(item.comparableCount)}明細</p></div><button class="btn heatmap-search-prefecture" data-prefecture="${esc(item.prefecture)}" type="button">キャンペーン検索で見る</button></div>
     <div class="table-scroll"><table class="heatmap-detail-table"><thead><tr><th>順位</th><th>金融機関</th><th>機関内平均</th><th>最高金利</th><th>明細数</th><th>検索</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
@@ -973,7 +978,7 @@ function renderOnlineBankSection() {
   }
   const highestInstitution = [...institutions].sort((a, b) => b.maximumRate - a.maximumRate || a.institution.localeCompare(b.institution, "ja"))[0];
   $("#onlineBankResults").innerHTML = `<div class="online-bank-summary">${summaryCardHtml("選択業種平均", formatRate(data.selectedTypeRankingAverage), `${fmt(institutions.length)}行を均等平均`, "online")}${summaryCardHtml("最高金利", formatRate(highestInstitution.maximumRate), highestInstitution.institution, "highest")}${summaryCardHtml("比較可能明細", `${fmt(rankingRecords.length)}件`, `${data.term.label}・選択商品区分`, "coverage")}</div>
-    <div class="table-scroll"><table class="heatmap-detail-table online-bank-table"><thead><tr><th>順位</th><th>ネット銀行</th><th>機関内平均</th><th>最高金利</th><th>明細数</th><th>検索</th></tr></thead><tbody>${institutions.map((item, index) => `<tr><td>${index + 1}</td><th scope="row">${esc(item.institution)}</th><td class="rate">${esc(formatRate(item.averageRate))}</td><td>${esc(formatRate(item.maximumRate))}</td><td>${fmt(item.records.length)}件</td><td><button class="btn small heatmap-search-institution" data-institution="${esc(item.institution)}" data-online="true" type="button">検索</button></td></tr>`).join("")}</tbody></table></div>`;
+    <div class="table-scroll"><table class="heatmap-detail-table online-bank-table"><thead><tr><th>順位</th><th>ネット銀行</th><th>機関内平均</th><th>最高金利</th><th>明細数</th><th>検索</th></tr></thead><tbody>${institutions.map((item, index) => `<tr><td>${index + 1}</td><th scope="row">${institutionProfileLink(item.institution)}</th><td class="rate">${esc(formatRate(item.averageRate))}</td><td>${esc(formatRate(item.maximumRate))}</td><td>${fmt(item.records.length)}件</td><td><button class="btn small heatmap-search-institution" data-institution="${esc(item.institution)}" data-online="true" type="button">検索</button></td></tr>`).join("")}</tbody></table></div>`;
 }
 function transferHeatmapToTimeline({ prefecture = "", institution = "", online = false } = {}) {
   const data = state.heatmapData;

@@ -225,7 +225,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
     const rows = shown.map((r,i)=>`
       <tr>
         <td class="r1-rank">${i+1}</td>
-        <td><strong>${esc(r.institution_name)}</strong><small>${esc(r.institution_type)} / ${esc(r.prefecture || "全国")}</small></td>
+        <td><strong>${institutionProfileLink(r.institution_name)}</strong><small>${esc(r.institution_type)} / ${esc(r.prefecture || "全国")}</small></td>
         <td class="r1-rate">${fmtRate(r.rate)}</td>
         <td>${esc(r.source_date || "—")}</td>
       </tr>`).join("");
@@ -464,7 +464,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
             <h3>全国向け（ネット銀行等）</h3>
             <p>都道府県平均には含めません。</p>
             <div class="r1-netbank-list">
-              ${net.length ? net.map((r,i)=>`<div><span>${i+1}. ${esc(r.institution_name)}</span><strong>${fmtRate(r.rate)}</strong></div>`).join("") : `<p>該当データなし</p>`}
+              ${net.length ? net.map((r,i)=>`<div><span>${i+1}. ${institutionProfileLink(r.institution_name)}</span><strong>${fmtRate(r.rate)}</strong></div>`).join("") : `<p>該当データなし</p>`}
             </div>
           </div>
           <div class="r1-map-side-card">
@@ -804,7 +804,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
         bar.classList.add("is-selected");
         panel.querySelector("[data-r1-histogram-title]").textContent=`${bar.dataset.r1HistogramRange}の金融機関`;
         panel.querySelector("[data-r1-histogram-summary]").textContent=`${fmt(members.length)}金融機関（同一階級内は金利の高い順）`;
-        panel.querySelector("[data-r1-histogram-list]").innerHTML=members.map(item=>`<li><strong>${esc(item.institution || "名称不明")}</strong><span>${fmtRate(Number(item.rate))}</span><small>${esc([item.institutionType,item.prefecture].filter(Boolean).join(" / "))}</small></li>`).join("");
+        panel.querySelector("[data-r1-histogram-list]").innerHTML=members.map(item=>`<li><strong>${institutionProfileLink(item.institution || "名称不明")}</strong><span>${fmtRate(Number(item.rate))}</span><small>${esc([item.institutionType,item.prefecture].filter(Boolean).join(" / "))}</small></li>`).join("");
         panel.hidden=false;
         panel.scrollIntoView({block:"nearest",behavior:"smooth"});
       };
@@ -824,7 +824,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
       ? `${model.maximumInstitutions.slice(0,2).join("・")}ほか${fmt(model.maximumInstitutions.length-2)}先`
       : model.maximumInstitutions.join("・");
     const rows = model.entries.length ? model.entries.map((item,index)=>`<tr>
-      <th scope="row"><strong>${esc(item.institution)}</strong><small>${esc(item.institutionType)}${item.prefecture ? ` / ${esc(item.prefecture)}` : ""}</small></th>
+      <th scope="row"><strong>${institutionProfileLink(item.institution)}</strong><small>${esc(item.institutionType)}${item.prefecture ? ` / ${esc(item.prefecture)}` : ""}</small></th>
       <td class="r1-matrix-cell"><strong>${fmtRate(item.rate)}</strong><small>${esc(item.sourceDate || "基準日不明")}${item.amountBand ? ` / ${esc(item.amountBand)}を採用` : ""}</small><span class="rank-badge">${item.rank}位</span></td>
     </tr>`).join("") : `<tr><td colspan="2" class="r1-empty">条件に一致する普通預金データがありません。</td></tr>`;
     return `<section class="r1-ordinary-matrix">
@@ -959,7 +959,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
     const body = model.institutions.length ? model.institutions.map(name => {
       const meta = model.institutionMeta.get(name);
       return `<tr>
-        <th scope="row"><strong>${esc(name)}</strong><small>${esc(meta?.institutionType || "")}${meta?.prefecture ? ` / ${esc(meta.prefecture)}` : ""}</small></th>
+        <th scope="row"><strong>${institutionProfileLink(name)}</strong><small>${esc(meta?.institutionType || "")}${meta?.prefecture ? ` / ${esc(meta.prefecture)}` : ""}</small></th>
         ${R1_MATRIX_TERMS.map(t => r1MatrixCellHtml(model,name,t)).join("")}
       </tr>`;
     }).join("") : `<tr><td colspan="5" class="r1-empty">条件に一致するR1比較データがありません。</td></tr>`;

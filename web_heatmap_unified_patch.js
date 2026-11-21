@@ -713,10 +713,10 @@
     }
 
     if (data.mode === "campaign") {
-      const rows = item.institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${x.institution}</th><td class="rate">${formatRate(x.averageRate)}</td><td>${formatRate(x.maximumRate)}</td><td>${x.records.length}件</td></tr>`).join("");
+      const rows = item.institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${institutionProfileLink(x.institution)}</th><td class="rate">${formatRate(x.averageRate)}</td><td>${formatRate(x.maximumRate)}</td><td>${x.records.length}件</td></tr>`).join("");
       detail.innerHTML = `<div class="heatmap-detail-heading"><div><p class="section-kicker">PREFECTURE DETAIL</p><h3>${item.prefecture}・${termLabel}</h3><p class="muted">キャンペーン平均 ${formatRate(item.averageRate)} / ${item.institutionCount}金融機関</p></div></div><div class="table-scroll"><table class="heatmap-detail-table"><thead><tr><th>順位</th><th>金融機関</th><th>機関内平均</th><th>最高金利</th><th>明細数</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     } else {
-      const rows = item.institutions.map((x, i) => `<tr><td>${x.rank || i + 1}</td><th scope="row">${esc(x.institution)}${x.condition_label ? `<small class="comparison-conditions" style="display:block;white-space:normal;font-weight:normal;max-width:460px">${esc(x.condition_label)}</small>` : ""}</th><td>${esc(x.institution_type)}</td><td class="rate">${formatRate(x.averageRate)}</td><td>${x.source_date || "—"}</td></tr>`).join("");
+      const rows = item.institutions.map((x, i) => `<tr><td>${x.rank || i + 1}</td><th scope="row">${institutionProfileLink(x.institution)}${x.condition_label ? `<small class="comparison-conditions" style="display:block;white-space:normal;font-weight:normal;max-width:460px">${esc(x.condition_label)}</small>` : ""}</th><td>${esc(x.institution_type)}</td><td class="rate">${formatRate(x.averageRate)}</td><td>${x.source_date || "—"}</td></tr>`).join("");
       detail.innerHTML = `<div class="heatmap-detail-heading"><div><p class="section-kicker">PREFECTURE DETAIL</p><h3>${item.prefecture}・${termLabel}</h3><p class="muted">${data.rateLabel}平均 ${formatRate(item.averageRate)} / ${item.institutionCount}金融機関</p></div></div><div class="table-scroll"><table class="heatmap-detail-table"><thead><tr><th>順位</th><th>金融機関</th><th>金融機関種別</th><th>${data.rateLabel}</th><th>基準日</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
     try {
@@ -754,8 +754,8 @@
       return;
     }
     const rows = data.mode === "campaign"
-      ? institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${x.institution}</th><td class="rate">${formatRate(x.averageRate)}</td><td>${formatRate(x.maximumRate)}</td><td>${x.records.length}件</td></tr>`).join("")
-      : institutions.map((x, i) => `<tr><td>${x.rank || i + 1}</td><th scope="row">${esc(x.institution)}${x.condition_label ? `<small class="comparison-conditions" style="display:block;white-space:normal;font-weight:normal;max-width:460px">${esc(x.condition_label)}</small>` : ""}</th><td>${esc(x.institution_type)}</td><td class="rate">${formatRate(x.averageRate)}</td><td>${x.source_date || "—"}</td></tr>`).join("");
+      ? institutions.map((x, i) => `<tr><td>${i + 1}</td><th scope="row">${institutionProfileLink(x.institution)}</th><td class="rate">${formatRate(x.averageRate)}</td><td>${formatRate(x.maximumRate)}</td><td>${x.records.length}件</td></tr>`).join("")
+      : institutions.map((x, i) => `<tr><td>${x.rank || i + 1}</td><th scope="row">${institutionProfileLink(x.institution)}${x.condition_label ? `<small class="comparison-conditions" style="display:block;white-space:normal;font-weight:normal;max-width:460px">${esc(x.condition_label)}</small>` : ""}</th><td>${esc(x.institution_type)}</td><td class="rate">${formatRate(x.averageRate)}</td><td>${x.source_date || "—"}</td></tr>`).join("");
     const highestInstitution = institutions.slice().sort((a, b) => b.maximumRate - a.maximumRate || a.institution.localeCompare(b.institution, "ja"))[0];
     results.innerHTML = `<div class="online-bank-summary">${summaryCardHtml("選択業種平均", formatRate(data.selectedTypeRankingAverage), `${institutions.length}金融機関を均等平均`, "online")}${summaryCardHtml("最高金利", formatRate(highestInstitution.maximumRate), highestInstitution.institution, "highest")}${summaryCardHtml("比較可能明細", `${rankingRecords.length}件`, data.label, "coverage")}</div><div class="table-scroll"><table class="heatmap-detail-table online-bank-table"><thead><tr><th>順位</th><th>金融機関</th>${data.mode === "campaign" ? "<th>機関内平均</th><th>最高金利</th><th>明細数</th>" : `<th>種別</th><th>${data.rateLabel}</th><th>基準日</th>`}</tr></thead><tbody>${rows}</tbody></table></div>`;
   }
