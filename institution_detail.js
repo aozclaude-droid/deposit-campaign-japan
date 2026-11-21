@@ -434,6 +434,54 @@ function institutionDetailRenderChart(campaigns, baseRows) {
     : `TIBOR比較データを読み込めませんでした。<a href="https://www.jbatibor.or.jp/rate/log.html" target="_blank" rel="noopener noreferrer">公式履歴</a>をご確認ください。`;
 }
 
+// Match only a known single tenor: never spread a range or ambiguous multi-rate table.
+function institutionDetailCampaignMatrixGroups(campaigns, today) {
+  const groups = new Map();
+  const terms = new Map();
+  let unmatched = 0;
+  for (const row of campaigns) {
+    if (effectiveStatus({...row, status:row._sourceStatus || row.status}) !== '開催中') continue;
+    if ((row.campaign_start_date && row.campaign_start_date > today) || (row.campaign_end_date && row.campaign_end_date < today)) continue;
+    if (row.campaign_start_date && row.campaign_end_date && row.campaign_start_date > row.campaign_end_date) continue;
+    if (campaignRateComparisonDate(row) > today) continue;
+    if (!['普通預金','普通貯金','定期預金','定期貯金'].includes(row.product_type)) continue;
+    if (row.currency && !/^(JPY|YEN|円|円貨|日本円)$/i.test(String(row.currency).trim())) continue;
+    if (/AFTER_TAX|税引後/i.test(row.tax_basis || '') || row.ranking_eligible === false || row.ranking_eligible === 'false' || row.ranking_eligible === '0' || Number(row.renewal_stage || 1) > 1) continue;
+    if (!row.currency && /外貨|米ドル|豪ドル|NZドル|ユーロ|南アフリカランド/.test([row.product_type,row.campaign_name,row.interest_rate].join(' '))) continue;
+    const rate = selectedRateValue(row, 'maximum');
+    if (!Number.isFinite(rate) || rate < 0 || rate > 10) { unmatched++; continue; }
+    let term = {key:'ordinary',label:'普通預金',order:0,months:null};
+    if (!/^普通/.test(row.product_type)) {
+      const parsed = parseTermDurations(String(row.term || '').replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xfee0)).replace(/箇月/g,'か月'));
+      if (parsed?.kind !== 'exact' || parsed.durations.length !== 1) { unmatched++; continue; }
+      const duration = parsed.durations[0];
+      if (duration.months > 0) term = {key:`term-${duration.months}`,label:duration.months % 12 === 0 ? `${duration.months/12}年` : `${duration.months}か月`,order:duration.months*31,months:duration.months};
+      else if (duration.days > 0) term = {key:`term-day-${duration.days}`,label:`${duration.days}日`,order:duration.days,months:null};
+      else { unmatched++; continue; }
+    }
+    terms.set(term.key,term);
+    if (!groups.has(term.key)) groups.set(term.key,[]);
+    const rows=groups.get(term.key);
+    const key=[row.campaign_name,row.campaign_start_date,row.campaign_end_date,row.term,rate,row.rate_condition,row.eligibility_conditions,row.deposit_amount,row.product_url].join('\u241f');
+    if (!rows.some(item=>item.key===key)) rows.push({row,rate,key});
+  }
+  for (const rows of groups.values()) rows.sort((a,b)=>b.rate-a.rate || String(b.row.campaign_start_date||'').localeCompare(String(a.row.campaign_start_date||'')) || a.row.campaign_name.localeCompare(b.row.campaign_name,'ja'));
+  return {groups,terms,unmatched};
+}
+
+function institutionDetailCampaignMatrixCondition(row) {
+  return [row.campaign_name,row.deposit_amount,row.eligibility_conditions,row.rate_condition].filter(Boolean).join(' / ');
+}
+
+function institutionDetailRenderMatrixCampaignEvidence(column) {
+  const items=column.campaigns || [];
+  document.querySelector('#institutionCurrentRateEvidence').innerHTML=`<h4>${esc(column.key==='ordinary'?'普通預金':`定期預金 ${column.label}`)}・現在実施中のキャンペーン ${items.length}明細</h4><p class="muted">金利の高い順です。対象者・金額帯などが異なるため、同じ条件で利用できるとは限りません。</p>${items.map(({row,rate})=>{
+    const delta=column.standard ? rate-Number(column.standard.rate_percent) : null;
+    const period=`${row.campaign_start_date || '開始日未設定'} ～ ${row.campaign_end_date || '終了日未設定'}`;
+    return `<article class="institution-matrix-campaign-detail"><h5>${esc(row.campaign_name)} <strong>${institutionDetailPercent(rate,5)}</strong></h5><dl><div><dt>募集期間</dt><dd>${esc(period)}</dd></div><div><dt>預入期間</dt><dd>${esc(row.term || '期間なし')}</dd></div><div><dt>通常標準金利との差</dt><dd>${delta===null?'比較対象の通常金利なし':`${delta>=0?'+':''}${Number(delta.toFixed(5))}ポイント`}</dd></div><div><dt>金額・対象者・条件</dt><dd>${esc(institutionDetailCampaignMatrixCondition(row))}</dd></div><div><dt>確認根拠</dt><dd>${institutionDetailUrl(row.product_url)}${row.review_notes?`<p>${esc(row.review_notes)}</p>`:''}</dd></div></dl></article>`;
+  }).join('')}`;
+}
+
 // Uses the same current-rate selection as the nationwide ranking and heatmap.
 function institutionDetailCurrentRateModel(name, baseRows) {
   const api = window.DepositRateComparison;
@@ -442,20 +490,23 @@ function institutionDetailCurrentRateModel(name, baseRows) {
   const standardRows = (snapshot?.rows || []).filter(row => institutionDetailText(row.institution_name).trim() === name);
   const termHistory = baseRows.filter(row => /^CURRENT_(STANDARD|CONDITIONAL)$/.test(row.comparison_category || ''));
   const today = api.todayInJapan();
+  const campaignModel = institutionDetailCampaignMatrixGroups(institutionDetailCampaignRows(name), today);
   function column(key, label, family, termMonths) {
     const source = family === 'ordinary' ? baseRows : [...standardRows, ...termHistory];
     const options = { family, today, termMonths };
     if (family === 'term') options.standardRows = standardRows;
-    const standard = api.select(source, { ...options, basis: 'standard' })[0] || null;
-    const maximum = api.select(source, { ...options, basis: 'maximum' })[0] || null;
-    return { key, label, standard, maximum };
+    const standard = family === 'day' ? null : api.select(source, { ...options, basis: 'standard' })[0] || null;
+    const maximum = family === 'day' ? null : api.select(source, { ...options, basis: 'maximum' })[0] || null;
+    return { key, label, standard, maximum, campaigns:campaignModel.groups.get(key) || [] };
   }
   const columns = [column('ordinary', '普通預金', 'ordinary', null)];
-  for (const months of [1,3,6,12,24,36,48,60,72,84,96,108,120]) {
-    const item = column(`term-${months}`, months < 12 ? `${months}か月` : `${months / 12}年`, 'term', months);
-    if (item.standard || item.maximum) columns.push(item);
+  const terms = new Map([1,3,6,12,24,36,48,60,72,84,96,108,120].map(months=>[`term-${months}`,{key:`term-${months}`,label:months<12?`${months}か月`:`${months/12}年`,months,order:months*31}]));
+  for (const [key,term] of campaignModel.terms) if (key !== 'ordinary') terms.set(key,term);
+  for (const term of [...terms.values()].sort((a,b)=>a.order-b.order)) {
+    const item = column(term.key,term.label,term.months?'term':'day',term.months);
+    if (item.standard || item.maximum || item.campaigns.length) columns.push(item);
   }
-  return { columns, ready: Boolean(snapshot?.loaded), error: snapshot?.error || '', today };
+  return { columns, ready: Boolean(snapshot?.loaded), error: snapshot?.error || '', today, unmatchedCampaigns:campaignModel.unmatched };
 }
 
 function institutionDetailRateCondition(row) {
@@ -480,7 +531,7 @@ function institutionDetailRenderCurrentRateMatrix(name, baseRows) {
   }
   const model = institutionDetailCurrentRateModel(name, baseRows);
   const columns = model.columns;
-  const hasRates = columns.some(c => c.standard || c.maximum);
+  const hasRates = columns.some(c => c.standard || c.maximum || c.campaigns.length);
   const cell = (c, basis) => {
     const row = c[basis];
     if (!row) return '<td class="institution-matrix-missing">—<small>比較データなし</small></td>';
@@ -488,19 +539,27 @@ function institutionDetailRenderCurrentRateMatrix(name, baseRows) {
     const date = row.date_display || baseRateDateLabel(row) || '日付情報なし';
     return `<td class="${higher ? 'institution-matrix-preferred' : ''}"><button type="button" class="institution-rate-cell-button" data-column="${esc(c.key)}" data-basis="${basis}" aria-label="${esc(c.label)}・${basis === 'standard' ? '標準金利' : '達成可能な最高金利'} ${esc(institutionDetailPercent(Number(row.rate_percent), 5))}の条件と根拠"><strong>${institutionDetailPercent(Number(row.rate_percent), 5)}</strong><small>${esc(date)}</small></button></td>`;
   };
-  panel.innerHTML = `<div class="institution-subpanel-heading"><div><p class="section-kicker">CURRENT DEPOSIT RATES</p><h3>普通預金・定期預金 金利マトリクス</h3><p class="muted">金利を選ぶと、預入金額・優遇条件・確認日・公式資料を表示します。</p></div><span class="institution-current-rate-date">${esc(model.today || '')}の比較対象</span></div>
+  const campaignCell = c => {
+    const item = c.campaigns[0];
+    if (!item) return '<td class="institution-matrix-missing">—<small>比較可能な開催中データなし</small></td>';
+    const delta = c.standard ? item.rate-Number(c.standard.rate_percent) : null;
+    return `<td class="institution-matrix-campaign"><button type="button" class="institution-rate-cell-button" data-column="${esc(c.key)}" data-basis="campaign" aria-label="${esc(c.label)}の開催中キャンペーンと条件"><strong>${institutionDetailPercent(item.rate,5)}</strong>${delta===null?'<small>通常金利は未収録</small>':`<span class="institution-matrix-delta">標準比 ${delta>=0?'+':''}${Number(delta.toFixed(5))}ポイント</span>`}<small>${esc(item.row.campaign_name)}</small><small>同年限 ${c.campaigns.length}明細・詳細を見る</small></button></td>`;
+  };
+  panel.innerHTML = `<div class="institution-subpanel-heading"><div><p class="section-kicker">CURRENT DEPOSIT RATES</p><h3>普通預金・定期預金・キャンペーン 金利マトリクス</h3><p class="muted">同じ年限の通常金利と開催中キャンペーンを比較できます。金利を選ぶと、商品・条件・募集期間・公式資料を表示します。</p></div><span class="institution-current-rate-date">${esc(model.today || '')}の比較対象</span></div>
     ${!model.ready ? `<p class="institution-current-rate-status" role="status">${model.error ? '定期預金の比較データを読み込めませんでした。ページを再読み込みしてください。' : '定期預金の比較データを読み込み中です。'}</p>` : ''}
-    ${!hasRates && model.ready ? '<p class="institution-current-rate-empty">現在比較できる普通預金・定期預金金利は未収録です。過去・参考値は下の通常金利履歴をご確認ください。</p>' : ''}
-    <div class="institution-current-matrix-scroll" tabindex="0" aria-label="金融機関の金利マトリクス。横にスクロールできます。"><table class="institution-current-rate-matrix"><caption class="institution-matrix-caption">${esc(name)}の通常金利（年率％）</caption><thead><tr><th scope="col">金利区分</th>${columns.map(c => `<th scope="col">${c.key === 'ordinary' ? '普通預金' : `定期 ${esc(c.label)}`}</th>`).join('')}</tr></thead><tbody>
-    <tr data-rate-basis="standard"><th scope="row">標準金利</th>${columns.map(c => cell(c, 'standard')).join('')}</tr>
-    <tr data-rate-basis="maximum"><th scope="row">達成可能な最高金利</th>${columns.map(c => cell(c, 'maximum')).join('')}</tr>
-    <tr class="institution-matrix-condition-row"><th scope="row">最高金利の商品・条件</th>${columns.map(c => `<td title="${esc(institutionDetailRateCondition(c.maximum))}"><span>${esc(institutionDetailRateCondition(c.maximum))}</span></td>`).join('')}</tr>
+    ${!hasRates && model.ready ? '<p class="institution-current-rate-empty">現在比較できる通常金利・開催中キャンペーン金利は未収録です。過去・参考値は下の通常金利履歴をご確認ください。</p>' : ''}
+    <div class="institution-current-matrix-scroll" tabindex="0" aria-label="金融機関の金利マトリクス。横にスクロールできます。"><table class="institution-current-rate-matrix"><caption class="institution-matrix-caption">${esc(name)}の通常金利・現在実施中のキャンペーン金利（年率％）</caption><thead><tr><th scope="col">金利区分</th>${columns.map(c => `<th scope="col">${c.key === 'ordinary' ? '普通預金' : `定期 ${esc(c.label)}`}</th>`).join('')}</tr></thead><tbody>
+    <tr data-rate-basis="standard"><th scope="row">通常の標準金利</th>${columns.map(c => cell(c, 'standard')).join('')}</tr>
+    <tr data-rate-basis="maximum"><th scope="row">通常の最高金利</th>${columns.map(c => cell(c, 'maximum')).join('')}</tr>
+    <tr class="institution-matrix-condition-row"><th scope="row">通常最高の商品・条件</th>${columns.map(c => `<td title="${esc(institutionDetailRateCondition(c.maximum))}"><span>${esc(institutionDetailRateCondition(c.maximum))}</span></td>`).join('')}</tr>
+    <tr data-rate-basis="campaign"><th scope="row">開催中キャンペーン<br><small>各年限の最高金利</small></th>${columns.map(c=>campaignCell(c)).join('')}</tr>
     </tbody></table></div>
-    <p class="institution-current-matrix-note">通常金利のみを掲載し、キャンペーン金利とは分けています。定期預金は比較可能な年限のみ表示します。「—」は未収録・比較対象外であり、金利ゼロではありません。掲載基準日や取得日は改定日と区別しています。</p>
+    <p class="institution-current-matrix-note">通常金利と開催中キャンペーンを行別に表示します。開催状況は収録データと表示日から判定しています。キャンペーンは各年限の比較可能な最高金利を掲載し、クリックで同年限の全明細を確認できます。標準比は「キャンペーン金利－通常標準金利」の差（％ポイント）です。対象者・金額帯などの条件は一致するとは限りません。定期預金は比較可能な年限のみ表示します。開催予定・終了済み・外貨・税引後金利はキャンペーン比較に含めません。「—」は未収録・比較対象外であり、金利ゼロではありません。掲載基準日や取得日は改定日と区別しています。${model.unmatchedCampaigns?` 年限または適用金利を確定できない開催中キャンペーン${model.unmatchedCampaigns}明細は、この表への配置を見送っています。下のキャンペーン一覧で原文を確認できます。`:""}</p>
     <div class="institution-current-rate-evidence" id="institutionCurrentRateEvidence" aria-live="polite"><p class="muted">表の金利を選択すると、この欄に条件と根拠を表示します。</p></div>`;
   panel.querySelectorAll('[data-column]').forEach(button => button.addEventListener('click', () => {
     panel.querySelectorAll('.institution-rate-cell-button').forEach(b => b.classList.toggle('is-selected', b === button));
     const column = columns.find(c => c.key === button.dataset.column);
+    if (button.dataset.basis === 'campaign' && column) { institutionDetailRenderMatrixCampaignEvidence(column); return; }
     const row = column?.[button.dataset.basis];
     if (!row) return;
     const tax = row.tax_basis === 'PRE_TAX' ? '税引前' : row.tax_basis === 'AFTER_TAX' ? '税引後' : '税区分は公式資料をご確認ください';
