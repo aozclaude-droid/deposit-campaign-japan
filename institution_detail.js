@@ -473,9 +473,9 @@ function institutionDetailCampaignMatrixCondition(row) {
   return [row.campaign_name,row.deposit_amount,row.eligibility_conditions,row.rate_condition].filter(Boolean).join(' / ');
 }
 
-function institutionDetailRenderMatrixCampaignEvidence(column) {
+function institutionDetailRenderMatrixCampaignEvidence(column, targetSelector = '#institutionCurrentRateEvidence', bankName = '') {
   const items=column.campaigns || [];
-  document.querySelector('#institutionCurrentRateEvidence').innerHTML=`<h4>${esc(column.key==='ordinary'?'普通預金':`定期預金 ${column.label}`)}・現在実施中のキャンペーン ${items.length}明細</h4><p class="muted">金利の高い順です。対象者・金額帯などが異なるため、同じ条件で利用できるとは限りません。</p>${items.map(({row,rate})=>{
+  document.querySelector(targetSelector).innerHTML=`<h4>${bankName?esc(bankName)+' / ':''}${esc(column.key==='ordinary'?'普通預金':`定期預金 ${column.label}`)}・現在実施中のキャンペーン ${items.length}明細</h4><p class="muted">金利の高い順です。対象者・金額帯などが異なるため、同じ条件で利用できるとは限りません。</p>${items.map(({row,rate})=>{
     const delta=column.standard ? rate-Number(column.standard.rate_percent) : null;
     const period=`${row.campaign_start_date || '開始日未設定'} ～ ${row.campaign_end_date || '終了日未設定'}`;
     return `<article class="institution-matrix-campaign-detail"><h5>${esc(row.campaign_name)} <strong>${institutionDetailPercent(rate,5)}</strong></h5><dl><div><dt>募集期間</dt><dd>${esc(period)}</dd></div><div><dt>預入期間</dt><dd>${esc(row.term || '期間なし')}</dd></div><div><dt>通常標準金利との差</dt><dd>${delta===null?'比較対象の通常金利なし':`${delta>=0?'+':''}${Number(delta.toFixed(5))}ポイント`}</dd></div><div><dt>金額・対象者・条件</dt><dd>${esc(institutionDetailCampaignMatrixCondition(row))}</dd></div><div><dt>確認根拠</dt><dd>${institutionDetailUrl(row.product_url)}${row.review_notes?`<p>${esc(row.review_notes)}</p>`:''}</dd></div></dl></article>`;
@@ -713,77 +713,66 @@ function institutionDetailInstitutionType(row) {
 }
 
 function institutionDetailNearbyCampaignGroups(name, prefecture) {
-  const canonicalPrefecture = institutionDetailPrefecture(prefecture);
-  const neighbors = new Set(INSTITUTION_NEIGHBOR_PREFECTURES[canonicalPrefecture] || []);
-  const grouped = new Map();
-  state.records.forEach((row) => {
-    if (row.institution_name === name || !["開催中", "開催予定"].includes(row.status)) return;
-    const rowPrefecture = institutionDetailPrefecture(row.prefecture);
-    const scope = rowPrefecture === canonicalPrefecture ? "same" : neighbors.has(rowPrefecture) ? "nearby" : "";
-    if (!scope) return;
-    const institutionType = institutionDetailInstitutionType(row) || "業態不明";
-    const key = [scope, row.institution_name, institutionType, row.campaign_name, row.product_type].join("\u0000");
-    if (!grouped.has(key)) grouped.set(key, { scope, institution: row.institution_name, institutionType, prefecture: rowPrefecture, productType: row.product_type, campaignName: row.campaign_name, status: row.status, rows: [] });
-    grouped.get(key).rows.push(row);
-  });
-  return [...grouped.values()].map((group) => {
-    const comparable = group.rows.filter((row) => Number.isFinite(Number(row._comparableRate))).sort((a, b) => Number(b._comparableRate) - Number(a._comparableRate));
-    const highest = comparable[0] || group.rows[0];
-    const terms = [...new Set(group.rows.map((row) => row.term).filter(Boolean))];
-    const endDates = group.rows.map((row) => row.campaign_end_date).filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(institutionDetailText(date))).sort();
-    return { ...group, rate: highest?._comparableRate, interestRate: highest?.interest_rate, terms, endDate: endDates[0] || "", productUrl: highest?.product_url || group.rows.find((row) => row.product_url)?.product_url || "" };
-  }).sort((a, b) => (a.status === "開催中" ? 0 : 1) - (b.status === "開催中" ? 0 : 1) || Number(b.rate ?? -Infinity) - Number(a.rate ?? -Infinity) || a.institution.localeCompare(b.institution, "ja"));
-}
-
-function institutionDetailNearbyCard(group) {
-  const rate = Number.isFinite(Number(group.rate)) ? institutionDetailPercent(Number(group.rate)) : esc(group.interestRate || "—");
-  const terms = group.terms.length ? group.terms.slice(0, 4).join("・") + (group.terms.length > 4 ? `ほか${group.terms.length - 4}件` : "") : "年限記載なし";
-  const period = group.endDate ? `${group.endDate}まで` : "終了日未設定";
-  return `<article class="institution-nearby-card">
-    <div class="institution-nearby-card-head"><button type="button" class="institution-table-link institution-detail-trigger" data-institution="${esc(group.institution)}">${esc(group.institution)}</button><span class="institution-nearby-badge">${esc(group.institutionType)}</span><span class="institution-nearby-badge">${esc(group.prefecture)}</span><span class="institution-nearby-badge">${esc(group.status)}</span></div>
-    <strong class="institution-nearby-rate">${rate}</strong>
-    <div class="institution-nearby-campaign">${esc(group.campaignName)}</div>
-    <div class="institution-nearby-meta">${esc(group.productType || "商品区分不明")} / ${esc(terms)} / ${esc(period)}${group.productUrl ? ` / ${institutionDetailUrl(group.productUrl)}` : ""}</div>
-  </article>`;
+  const canonical = institutionDetailPrefecture(prefecture);
+  if (!canonical || canonical === '全国') return [];
+  const neighbors = new Set(INSTITUTION_NEIGHBOR_PREFECTURES[canonical] || []);
+  const today = window.DepositRateComparison.todayInJapan();
+  const banks = new Map();
+  for (const row of state.records) {
+    if (row.institution_name === name || effectiveStatus({...row,status:row._sourceStatus||row.status}) !== '開催中') continue;
+    if (!['普通預金','普通貯金','定期預金','定期貯金'].includes(row.product_type)) continue;
+    const pref = institutionDetailPrefecture(row.prefecture);
+    const scope = pref === canonical ? 'same' : neighbors.has(pref) ? 'nearby' : '';
+    if (!scope) continue;
+    const key = [scope,row.institution_name,pref].join('\u241f');
+    if (!banks.has(key)) banks.set(key,{key,scope,institution:row.institution_name,prefecture:pref,institutionType:institutionDetailInstitutionType(row)||'業態不明',rows:[]});
+    banks.get(key).rows.push(row);
+  }
+  return [...banks.values()].map(bank=>{
+    const model=institutionDetailCampaignMatrixGroups(bank.rows,today);
+    return {...bank,model,highest:Math.max(-Infinity,...[...model.groups.values()].flat().map(item=>item.rate))};
+  }).sort((a,b)=>b.highest-a.highest || a.institution.localeCompare(b.institution,'ja'));
 }
 
 function institutionDetailRenderNearby(name, prefecture) {
-  const target = document.querySelector("#institutionNearbyCampaigns");
-  const description = document.querySelector("#institutionNearbyDescription");
+  const target=document.querySelector('#institutionNearbyCampaigns');
   if (!target) return;
-  const canonicalPrefecture = institutionDetailPrefecture(prefecture);
-  const allGroups = institutionDetailNearbyCampaignGroups(name, canonicalPrefecture);
-  const typeSelect = document.querySelector("#institutionNearbyTypeFilter");
-  const preferredOrder = Array.isArray(window.DEPOSIT_INSTITUTION_TYPE_ORDER) ? window.DEPOSIT_INSTITUTION_TYPE_ORDER : [];
-  const availableTypes = [...new Set(allGroups.map((group) => group.institutionType).filter(Boolean))]
-    .sort((a, b) => {
-      const ai = preferredOrder.indexOf(a);
-      const bi = preferredOrder.indexOf(b);
-      if (ai >= 0 || bi >= 0) return (ai < 0 ? 999 : ai) - (bi < 0 ? 999 : bi);
-      return a.localeCompare(b, "ja");
-    });
+  const canonical=institutionDetailPrefecture(prefecture);
+  const all= institutionDetailNearbyCampaignGroups(name,canonical);
+  const typeSelect=document.querySelector('#institutionNearbyTypeFilter');
+  const order=Array.isArray(window.DEPOSIT_INSTITUTION_TYPE_ORDER)?window.DEPOSIT_INSTITUTION_TYPE_ORDER:[];
+  const types=[...new Set(all.map(b=>b.institutionType))].sort((a,b)=>(order.includes(a)?order.indexOf(a):999)-(order.includes(b)?order.indexOf(b):999)||a.localeCompare(b,'ja'));
   if (typeSelect) {
-    typeSelect.innerHTML = `<option value="">すべての業態</option>${availableTypes.map((type) => `<option value="${esc(type)}">${esc(type)}</option>`).join("")}`;
-    if (institutionDetailState.nearbyInstitutionType && availableTypes.includes(institutionDetailState.nearbyInstitutionType)) {
-      typeSelect.value = institutionDetailState.nearbyInstitutionType;
-    } else {
-      institutionDetailState.nearbyInstitutionType = "";
-      typeSelect.value = "";
-    }
+    typeSelect.innerHTML='<option value="">すべての業態</option>'+types.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
+    if (!types.includes(institutionDetailState.nearbyInstitutionType)) institutionDetailState.nearbyInstitutionType='';
+    typeSelect.value=institutionDetailState.nearbyInstitutionType;
   }
-  const groups = allGroups.filter((group) => !institutionDetailState.nearbyInstitutionType || group.institutionType === institutionDetailState.nearbyInstitutionType);
-  const neighbors = INSTITUTION_NEIGHBOR_PREFECTURES[canonicalPrefecture] || [];
-  const sections = [
-    { key: "same", title: `同じ都道府県（${canonicalPrefecture || "都道府県不明"}）`, detail: "同県", rows: groups.filter((group) => group.scope === "same") },
-    { key: "nearby", title: "近隣県", detail: neighbors.join("・") || "隣接県未設定", rows: groups.filter((group) => group.scope === "nearby") }
-  ];
-  const typeLabel = institutionDetailState.nearbyInstitutionType || "すべての業態";
-  description.textContent = canonicalPrefecture ? `${canonicalPrefecture}と近隣県の${typeLabel}について、現在開催中・開催予定のキャンペーンを表示します。金利の高い順です。` : "所在地を特定できないため、近隣キャンペーンを表示できません。";
-  target.innerHTML = sections.map((section) => `<section class="institution-nearby-group">
-    <div class="institution-nearby-group-heading"><h4>${esc(section.title)}</h4><span>${fmt(section.rows.length)}キャンペーン</span></div>
-    <div class="institution-nearby-list">${section.rows.length ? section.rows.map(institutionDetailNearbyCard).join("") : `<div class="institution-nearby-empty">${esc(section.detail)}の現在のキャンペーンはありません。</div>`}</div>
-  </section>`).join("");
+  const banks=all.filter(b=>!institutionDetailState.nearbyInstitutionType||b.institutionType===institutionDetailState.nearbyInstitutionType);
+  const terms=new Map();
+  for (const b of banks) for (const [key,term] of b.model.terms) terms.set(key,term);
+  if (!terms.size) terms.set('term-12',{key:'term-12',label:'1年',order:372});
+  const columns=[...terms.values()].sort((a,b)=>a.order-b.order);
+  const typeLabel=institutionDetailState.nearbyInstitutionType||'すべての業態';
+  document.querySelector('#institutionNearbyDescription').textContent=canonical&&canonical!=='全国'?`${canonical}・隣接県の${typeLabel}を、金融機関×預入年限で比較します。各セルは開催中キャンペーンの最高金利です。金利を選ぶと同年限の全キャンペーンを確認できます。`:'都道府県を特定できないため、同県・近隣の比較対象はありません。';
+  const sections=[{scope:'same',title:`同県（${canonical||'都道府県不明'}）`},{scope:'nearby',title:'近隣県（隣接県）'}];
+  function cell(bank,column) {
+    const items=bank.model.groups.get(column.key)||[];
+    if (!items.length) return '<td class="institution-nearby-missing">—<small>比較データなし</small></td>';
+    return `<td><button type="button" class="institution-nearby-rate-button" data-nearby-bank="${esc(bank.key)}" data-nearby-term="${esc(column.key)}" aria-label="${esc(bank.institution)} ${esc(column.label)}のキャンペーン条件"><strong>${institutionDetailPercent(items[0].rate,5)}</strong><small>${items.length}明細・詳細を見る</small></button></td>`;
+  }
+  target.innerHTML=sections.map(section=>{
+    const rows=banks.filter(b=>b.scope===section.scope);
+    return `<section class="institution-nearby-group"><div class="institution-nearby-group-heading"><h4>${esc(section.title)}</h4><span>${rows.length}金融機関</span></div>${rows.length?`<div class="institution-nearby-matrix-scroll" tabindex="0" aria-label="${esc(section.title)}のキャンペーン金利比較表。横にスクロールできます。"><table class="institution-nearby-matrix"><caption>${esc(section.title)}・開催中キャンペーンの金利（年率％）</caption><thead><tr><th scope="col">金融機関</th>${columns.map(c=>`<th scope="col">${c.key==='ordinary'?'普通預金':`定期 ${esc(c.label)}`}</th>`).join('')}</tr></thead><tbody>${rows.map(bank=>`<tr><th scope="row"><button type="button" class="institution-table-link institution-detail-trigger" data-institution="${esc(bank.institution)}">${esc(bank.institution)}</button><small>${esc(bank.prefecture)} / ${esc(bank.institutionType)}</small></th>${columns.map(c=>cell(bank,c)).join('')}</tr>`).join('')}</tbody></table></div>`:'<div class="institution-nearby-empty">現在の条件に該当する金融機関はありません。</div>'}</section>`;
+  }).join('')+`<p class="institution-nearby-matrix-note">同県・近隣県で同じ年限の列を表示します。金融機関は収録された最高金利の高い順です。対象者・金額帯は各商品で異なります。「—」は比較可能な金利がない状態で、金利ゼロを意味しません。開催予定・終了済み・外貨・税引後金利や、年限・金利が確定できない明細は集計に含めません。開催状況は収録データと表示日で判定しています。</p><div id="institutionNearbyRateEvidence" class="institution-current-rate-evidence" aria-live="polite"><p class="muted">表の金利を選ぶと、キャンペーン名・募集期間・条件をここに表示します。</p></div>`;
+  target.querySelectorAll('[data-nearby-term]').forEach(button=>button.addEventListener('click',()=>{
+    target.querySelectorAll('.institution-nearby-rate-button').forEach(b=>b.classList.toggle('is-selected',b===button));
+    const bank=banks.find(b=>b.key===button.dataset.nearbyBank),term=columns.find(c=>c.key===button.dataset.nearbyTerm);
+    if (!bank||!term) return;
+    const normal=institutionDetailCurrentRateModel(bank.institution,institutionDetailBaseRows(bank.institution)).columns.find(c=>c.key===term.key);
+    institutionDetailRenderMatrixCampaignEvidence({...term,standard:normal?.standard||null,campaigns:bank.model.groups.get(term.key)||[]},'#institutionNearbyRateEvidence',bank.institution);
+  }));
 }
+
 
 function renderInstitutionDetail() {
   const name = institutionDetailState.institution;
