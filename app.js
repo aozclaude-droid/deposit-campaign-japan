@@ -53,8 +53,8 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261122-1";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261122-1";
+const DATA_URL = "campaign_all.json?v=20261122-2";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261122-2";
 const LATEST_UPDATE = {
   "publishedOn": "2026-11-22",
   "label": "2026年11月22日 逆転候補34先の公式再照査を反映",
@@ -67,12 +67,12 @@ const LATEST_UPDATE = {
   "ordinaryBaseAddedCount": 0,
   "baseHistoryTotalCount": 30409,
   "reviewedInstitutionCount": 34,
-  "withheldInstitutionCount": 1,
+  "withheldInstitutionCount": 0,
   "segmentLabel": "逆転候補34先・公式再照査",
   "segmentMetricLabel": "照査した金融機関",
   "primaryMetricLabel": "現行キャンペーン条件を追加",
   "leadText": "34先177候補を公式資料と再照合。キャンペーン37条件・通常金利419条件を収録し、旧金利や通常商品を現在のキャンペーン集計から整理しました。募集開始日と金利確認日を区別しています。",
-  "compactText": "現行キャンペーン37条件／通常金利419条件／旧商品5条件は同一性未確定で保留",
+  "compactText": "現行キャンペーン37条件／通常金利419条件／旧商品5条件は過去履歴として確認終了",
   "featuredInstitutions": [
     "JA新いわて",
     "JA氷見市",
@@ -449,8 +449,9 @@ function institutionProfileLink(name) {
 const dayMs = 86400000;
 const campaignKey = (r) => `${text(r.institution_name)}\u241f${text(r.campaign_name)}`;
 const groupKey = (r) => [r.institution_name, r.campaign_name, r.campaign_start_date, r.campaign_end_date, r.product_type, r.status].map(text).join("\u241f");
-const statusClass = (status) => ({"開催中":"status-active","開催予定":"status-scheduled","終了済み":"status-ended","要確認":"status-review"}[status] || "status-review");
+const statusClass = (status) => ({"開催中":"status-active","開催予定":"status-scheduled","終了済み":"status-ended","過去履歴":"status-ended","要確認":"status-review"}[status] || "status-review");
 function effectiveStatus(record) {
+  if (record.history_only === true || record.record_classification === "HISTORICAL_ARCHIVE") return "過去履歴";
   const rawStatus = text(record.status) || "要確認";
   const sourceStatus = ({ active: "開催中", "実施中": "開催中" })[rawStatus] || rawStatus;
   const start = parseIso(text(record.campaign_start_date));
@@ -1362,7 +1363,7 @@ function institutionTypeOptions({ includeOnline = true } = {}) {
 }
 function normalizeRecord(record, index) {
   const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","rate_effective_from","rate_confirmed_from","rate_date_basis","term","interest_rate","applied_rate","standard_rate","maximum_rate","bonus_margin","tax_basis","achievement_state","currency","tiered_rate","amount_band","ranking_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes","source_reviewed_on","source_sha256","rate_risk_class","requires_investment_purchase","renewal_stage","ranking_eligible","source_document_id"];
-  const normalized = { _index: index };
+  const normalized = { _index: index, history_only:record.history_only === true, review_required:record.review_required, record_classification:record.record_classification || "" };
   fields.forEach((f) => { normalized[f] = text(record[f]); });
   normalized.region = canonicalRegion(normalized.region, normalized.prefecture);
   normalized.institution_type = canonicalInstitutionType(normalized.institution_type, normalized.institution_name);
@@ -1545,7 +1546,7 @@ function initializeUi() {
   fillSelect("#prefectureFilter", uniqueSorted("prefecture"));
   fillSelect("#institutionTypeFilter", institutionTypeOptions());
   fillSelect("#productTypeFilter", uniqueSorted("product_type"));
-  fillSelect("#statusFilter", ["開催中","開催予定","終了済み","要確認"].filter((s) => state.records.some((r) => r.status === s)));
+  fillSelect("#statusFilter", ["開催中","開催予定","終了済み","過去履歴","要確認"].filter((s) => state.records.some((r) => r.status === s)));
   setSelectedValues("#statusFilter", ["開催中","開催予定"]);
   const maturityYears = [...new Set(state.records.flatMap((r) => r._maturityYears))].sort((a,b) => b-a);
   $("#maturityYearFilter").innerHTML = `<option value="">指定なし</option>${maturityYears.map((year) => `<option value="${year}">${year}年</option>`).join("")}`;
@@ -1810,8 +1811,8 @@ function applyFilters() {
       if (f.endTo && (!r.campaign_end_date || r.campaign_end_date > f.endTo)) return false;
     }
     if (f.maturityYear && !r._maturityYears.includes(f.maturityYear)) return false;
-    if (f.review === "yes" && !r.review_notes.trim()) return false;
-    if (f.review === "no" && r.review_notes.trim()) return false;
+    if (f.review === "yes" && (r.review_required === false || !r.review_notes.trim())) return false;
+    if (f.review === "no" && r.review_required !== false && r.review_notes.trim()) return false;
     return true;
   });
 
@@ -1871,6 +1872,7 @@ function buildGanttGroups() {
 }
 
 function dateIssueReason(r) {
+  if (r.history_only === true || r.review_required === false) return "";
   const start = parseIso(r.campaign_start_date);
   const end = parseIso(r.campaign_end_date);
   const reasons = [];
