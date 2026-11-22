@@ -53,8 +53,8 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261122-2";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261122-2";
+const DATA_URL = "campaign_all.json?v=20261122-3";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261122-3";
 const LATEST_UPDATE = {
   "publishedOn": "2026-11-22",
   "label": "2026年11月22日 逆転候補34先の公式再照査を反映",
@@ -451,6 +451,7 @@ const campaignKey = (r) => `${text(r.institution_name)}\u241f${text(r.campaign_n
 const groupKey = (r) => [r.institution_name, r.campaign_name, r.campaign_start_date, r.campaign_end_date, r.product_type, r.status].map(text).join("\u241f");
 const statusClass = (status) => ({"開催中":"status-active","開催予定":"status-scheduled","終了済み":"status-ended","過去履歴":"status-ended","要確認":"status-review"}[status] || "status-review");
 function effectiveStatus(record) {
+  if (record.history_only === true && record.preserve_historical_analytics === true && record.status === "終了済み") return "終了済み";
   if (record.history_only === true || record.record_classification === "HISTORICAL_ARCHIVE") return "過去履歴";
   const rawStatus = text(record.status) || "要確認";
   const sourceStatus = ({ active: "開催中", "実施中": "開催中" })[rawStatus] || rawStatus;
@@ -1363,7 +1364,7 @@ function institutionTypeOptions({ includeOnline = true } = {}) {
 }
 function normalizeRecord(record, index) {
   const fields = ["region","prefecture","institution_name","institution_type","product_type","campaign_name","campaign_start_date","rate_effective_from","rate_confirmed_from","rate_date_basis","term","interest_rate","applied_rate","standard_rate","maximum_rate","bonus_margin","tax_basis","achievement_state","currency","tiered_rate","amount_band","ranking_rate","rate_condition","eligibility_conditions","deposit_amount","product_url","status","review_notes","source_reviewed_on","source_sha256","rate_risk_class","requires_investment_purchase","renewal_stage","ranking_eligible","source_document_id"];
-  const normalized = { _index: index, history_only:record.history_only === true, review_required:record.review_required, record_classification:record.record_classification || "" };
+  const normalized = { _index: index, history_only:record.history_only === true, preserve_historical_analytics:record.preserve_historical_analytics === true, review_required:record.review_required, record_classification:record.record_classification || "" };
   fields.forEach((f) => { normalized[f] = text(record[f]); });
   normalized.region = canonicalRegion(normalized.region, normalized.prefecture);
   normalized.institution_type = canonicalInstitutionType(normalized.institution_type, normalized.institution_name);

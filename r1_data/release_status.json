@@ -1,6 +1,6 @@
 {
   "status": "R1_RELEASE_CURRENT",
-  "release_version": "20261122-2",
+  "release_version": "20261122-3",
   "r1_collection_complete": true,
   "resolved_campaign_count": 468,
   "unresolved_campaign_count": 1316,
@@ -46,7 +46,7 @@
   "campaign_new_offers_added": 100,
   "campaign_new_institutions_added": 84,
   "campaign_new_condition_rows_added": 272,
-  "campaign_last_release_version": "20261122-2",
+  "campaign_last_release_version": "20261122-3",
   "normal_term_added_institutions": 5,
   "normal_term_added_records": 190,
   "normal_term_updated_on": "2026-11-22",
@@ -81,5 +81,16 @@
     "unconfirmed_legacy_product_rows": 0,
     "archived_legacy_product_rows": 7,
     "closure_reason": "USER_CONFIRMED_HISTORY_ARCHIVE"
+  },
+  "history_pending_cleanup": {
+    "date": "2026-11-22",
+    "archived_records": 1766,
+    "institutions": 131,
+    "campaign_status_review_before": 673,
+    "campaign_status_review_after": 390,
+    "document_queue_before": 1647,
+    "document_queue_after": 1624,
+    "resolved_document_requests": 23,
+    "historic_analytics_retained": 1463
   }
 }
