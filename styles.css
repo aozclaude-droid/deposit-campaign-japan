@@ -927,3 +927,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .latest-update-summary-text {flex:1 1 300px;min-width:0;}
 .latest-update-region-list {flex:1 1 420px;min-width:0;}
 .latest-update-region-list span {white-space:normal;overflow-wrap:anywhere;}
+
+/* Keep release summaries readable when many institutions change. */
+.latest-update-compact {flex-wrap:wrap;align-items:flex-start;}
+.latest-update-summary-text {flex:1 1 300px;min-width:0;}
+.latest-update-region-list {flex:1 1 420px;min-width:0;}
+.latest-update-region-list span {white-space:normal;overflow-wrap:anywhere;}

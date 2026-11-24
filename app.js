@@ -18,7 +18,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
 }
 
 
-const APP_VERSION = "2026.11.24.2";
+const APP_VERSION = "2026.11.24.3";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -53,16 +53,16 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261124-2";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261124-2";
+const DATA_URL = "campaign_all.json?v=20261124-3";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261124-3";
 const LATEST_UPDATE = {
   "publishedOn": "2026-11-24",
   "label": "2026年11月24日 追加URL53先の公式照査を反映",
-  "expectedTotalRecords": 17552,
+  "expectedTotalRecords": 17560,
   "addedStartIndex": 17457,
-  "addedCount": 92,
-  "updatedCount": 69,
-  "movedToBaseHistoryCount": 15,
+  "addedCount": 100,
+  "updatedCount": 76,
+  "movedToBaseHistoryCount": 17,
   "ordinaryCampaignRetainedCount": 3,
   "ordinaryBaseAddedCount": 146,
   "baseHistoryTotalCount": 30604,
@@ -72,7 +72,7 @@ const LATEST_UPDATE = {
   "segmentMetricLabel": "照査した金融機関",
   "primaryMetricLabel": "キャンペーン明細を追加",
   "leadText": "追加URL53先を巡回し、金利・年限・募集期間・対象者・金額条件を照合。早期終了、段階金利、常設優遇商品の分類を反映しました。",
-  "compactText": "追加92条件・既存69条件を確認／通常金利146条件",
+  "compactText": "追加100条件・既存76条件を確認／通常金利146条件",
   "featuredInstitutions": [
     "JAいぶすき",
     "JAごとう",
@@ -129,23 +129,30 @@ const LATEST_UPDATE = {
     "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟3年␟年率1.80%（税引き前）␟税引前年率。。Aコース：55歳以上の年金予約、当行公的年金受取、または他行から公的年金受取口座を変更。1年単利・3年半年複利。初回満期まで。␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
     "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟1年␟年率1.40%（税引き前）␟税引前年率。。Bコース：Aコース以外の個人。1年単利・3年半年複利。初回満期まで。␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
     "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟3年␟年率1.60%（税引き前）␟税引前年率。。Bコース：Aコース以外の個人。1年単利・3年半年複利。初回満期まで。␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
+    "大分県信用組合␟大分県信用組合 健康寿命日本一おうえん定期預金「あるとっく」␟2026-04-01␟2027-03-31␟1年␟年0.575％␟店頭表示金利年0.375％＋上乗せ年0.20％。特別優遇金利は初回満期日まで␟https://www.oita-kenshin.co.jp/deposit/limited_altok.html",
     "大分県信用組合␟退職者専用定期預金「彩～いろどり」␟2026-03-02␟2027-02-26␟1年␟年0.70％␟税引前年率。。年金契約・予約なし。初回1年のみ。出資加入店舗で取扱。␟https://www.oita-kenshin.co.jp/deposit/limited_irodori.html",
     "大分県信用組合␟退職者専用定期預金「彩～いろどり」␟2026-03-02␟2027-02-26␟1年␟年1.00％␟税引前年率。。公的年金受取契約・予約あり。初回1年のみ。出資加入店舗で取扱。␟https://www.oita-kenshin.co.jp/deposit/limited_irodori.html",
     "肥後銀行␟肥後福祉年金定期預金␟2026-04-01␟2027-03-31␟1年␟店頭表示金利＋年0.1％␟税引前年率。店頭表示金利＋年0.1％。1年のみ。自動継続不可。␟https://www.higobank.co.jp/individual/pdf/nenkinteiki_fukushi.pdf",
     "JA福岡市東部␟貯めドキ 定期貯金␟2026-10-01␟2027-03-31␟6か月␟1.8%␟税引前年率。。組合員加入なし。新規資金のみ。既存定期からの預け替え不可。出資金は預金金利ではない。␟https://ja-fukutou.or.jp/wp-content/uploads/2026/09/c8581291ab8f6aa3abd59f54e48c60c7.pdf",
     "JA福岡市東部␟貯めドキ 定期貯金␟2026-10-01␟2027-03-31␟6か月␟2.1%␟税引前年率。。組合員または同時加入。新規資金のみ。既存定期からの預け替え不可。出資金は預金金利ではない。␟https://ja-fukutou.or.jp/wp-content/uploads/2026/09/c8581291ab8f6aa3abd59f54e48c60c7.pdf",
+    "大牟田柳川信用金庫␟大牟田柳川信用金庫 子育て応援定期積金␟2026-04-01␟2027-03-31␟3年～5年（36回～60回）␟店頭表示金利＋年0.10％␟税引前。固定金利。契約時の金利を満期まで適用␟http://www.shinkin.co.jp/omuta/save/pdf/osusume_child.pdf",
     "田川信用金庫␟定期預金キャンペーン ドリームOne␟2026-10-01␟2026-12-30␟1年␟1.0%␟税引前年率。。␟https://www.tagawashinkin.co.jp/2026/09/%e5%ae%9a%e6%9c%9f%e9%a0%90%e9%87%91%e3%82%ad%e3%83%a3%e3%83%b3%e3%83%9a%e3%83%bc%e3%83%b3%e3%81%ae%e3%81%8a%e7%9f%a5%e3%82%89%e3%81%9b/",
     "福岡信用金庫␟にこにこ定期預金1プラス／にこにこ定期預金1␟2026-10-05␟2027-03-31␟1年␟年1.0％（税引後　年0.796％）␟税引前年率。。新たな資金以外・にこにこ1。年金は公的年金だけでなくiDeCo・企業年金・個人年金等も対象。初回のみ。␟https://www.fukuoka-shinkin.co.jp/dt_fix_niconico.html#nenkinsnack",
     "福岡信用金庫␟にこにこ定期預金1プラス／にこにこ定期預金1␟2026-10-05␟2027-03-31␟1年␟年1.2％（税引後　年0.956％）␟税引前年率。。新たな資金・にこにこ1プラス。年金は公的年金だけでなくiDeCo・企業年金・個人年金等も対象。初回のみ。␟https://www.fukuoka-shinkin.co.jp/dt_fix_niconico.html#nenkinsnack",
     "福岡信用金庫␟もっときになる定期預金␟2026-10-05␟2026-12-30␟1年␟年1.0%␟税引前年率。。個人・個人事業主（1年単利・3年と5年複利）。同じ税引前年率でも個人・法人で複利計算と利払方法が異なるため別行に分離。␟https://www.fukuoka-shinkin.co.jp/dt_fix_mottokininaru.html",
     "福岡信用金庫␟もっときになる定期預金␟2026-10-05␟2026-12-30␟3年␟年1.5%␟税引前年率。。個人・個人事業主（1年単利・3年と5年複利）。同じ税引前年率でも個人・法人で複利計算と利払方法が異なるため別行に分離。␟https://www.fukuoka-shinkin.co.jp/dt_fix_mottokininaru.html",
     "福岡信用金庫␟もっときになる定期預金␟2026-10-05␟2026-12-30␟5年␟年1.8%␟税引前年率。。個人・個人事業主（1年単利・3年と5年複利）。同じ税引前年率でも個人・法人で複利計算と利払方法が異なるため別行に分離。␟https://www.fukuoka-shinkin.co.jp/dt_fix_mottokininaru.html",
-    "たちばな信用金庫␟トリプル3ステップ定期預金␟2026-10-15␟2026-12-30␟1年␟1.50%␟税引前年率。。契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。␟https://www.tachibana-shinkin.jp/files/uploads/campaign_008.pdf",
+    "福岡県信用組合␟合併８周年記念定期預金␟2026-09-01␟2026-12-17␟1年␟1.2%␟特別金利 1.2%␟https://kenshin-f.jp/deposit/lineup/",
+    "遠賀信用金庫␟遠賀信用金庫 あんしん定期預金␟2016-02-16␟␟1年␟年0.15％␟条件A␟http://www.onshin.com/news/info/detail/id/97",
+    "遠賀信用金庫␟遠賀信用金庫 あんしん定期預金␟2016-02-16␟␟1年␟年0.20％␟条件A / (年金,給与振込,公共料金自動振替2種目以上ある)の一つ␟http://www.onshin.com/news/info/detail/id/97",
+    "遠賀信用金庫␟遠賀信用金庫 あんしん定期預金␟2016-02-16␟␟1年␟年0.30％␟条件A / 貸金庫契約者␟http://www.onshin.com/news/info/detail/id/97",
+    "たちばな信用金庫␟トリプル3ステップ定期預金␟2026-10-15␟2026-12-30␟1年␟1.50%␟税引前年率。。第1回の1年契約（1年目）・初回新規預入。契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。␟https://www.tachibana-shinkin.jp/files/uploads/campaign_008.pdf",
     "たちばな信用金庫␟トリプル3ステップ定期預金␟2026-10-15␟2026-12-30␟2年目␟1.60%␟当初3年間適用金利（2年目：年1.60%）。税引前・複利。1年ごとの自動継続（最長3年）。4年目以降は継続日における店頭表示利率を適用。␟https://www.tachibana-shinkin.jp/files/uploads/campaign_008.pdf",
     "たちばな信用金庫␟トリプル3ステップ定期預金␟2026-10-15␟2026-12-30␟3年目␟1.70%␟当初3年間適用金利（3年目：年1.70%）。税引前・複利。1年ごとの自動継続（最長3年）。4年目以降は継続日における店頭表示利率を適用。␟https://www.tachibana-shinkin.jp/files/uploads/campaign_008.pdf",
     "JAさつま日置␟退職金専用定期貯金␟␟␟3ヶ月␟年利1.0％（税引前）␟特別金利は、初回満期日とし自動継続後の適用金利は継続日の店頭表示金利を適用します。中途解約の場合は、初回金利は適用されず、中途解約利率を適用します。初回満期日以降、窓口で継続手続きされた場合、期間に関係なく0.01％上乗せいたします。お預入れ時に「年金口座指定」「組合員新規加入」「ＪＡカード新規お申込み」のいずれか1つご契約でさらに0.01%上乗せ。␟https://ja-satsumahioki.or.jp/wp-content/uploads/2026/01/退職金専用定期貯金（ダウンロード）.pdf",
     "鹿児島信用金庫␟かしんウィンターキャンペーン「かごしま応援定期預金～鹿児島を旅しよう～」␟2026-10-15␟2027-01-29␟1年␟0.8％␟税引前年率。。既存預金＋新規資金10％以上かつ10万円以上。抽選名産品と銀行負担の寄付0.01％を利率に含めない。␟https://www.shinkin.co.jp/kashin/_news/contents/223.html",
     "鹿児島信用金庫␟かしんウィンターキャンペーン「かごしま応援定期預金～鹿児島を旅しよう～」␟2026-10-15␟2027-01-29␟1年␟1.0％␟税引前年率。。全額新規資金。抽選名産品と銀行負担の寄付0.01％を利率に含めない。␟https://www.shinkin.co.jp/kashin/_news/contents/223.html",
+    "鹿児島信用金庫␟鹿信ハッピー会定期預金「絆」 PDF␟2009-05-21␟␟1年␟0.30％＋店頭金利 0.025％＝0.325％␟␟http://kashin.co.jp/information/kizuna.pdf",
     "福岡県信用組合␟すこやかバンザイ␟␟␟1年␟店頭表示金利＋年0.10％␟しんくみの年金サービス対象商品。␟https://kenshin-f.jp/nenkin/",
     "福岡県信用組合␟すこやかステップ␟␟␟6か月以上5年以下␟1年もの店頭表示金利＋年0.30％␟しんくみの年金サービス対象商品。␟https://kenshin-f.jp/nenkin/",
     "福岡県信用組合␟すこやかゴールド␟␟␟1年␟店頭表示金利＋年0.40％␟しんくみの年金サービス対象商品。␟https://kenshin-f.jp/nenkin/",

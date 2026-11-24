@@ -4,9 +4,9 @@
     "region": "全国",
     "created_at": "2026-11-14T15:01:31+09:00",
     "source_file": "campaign_all.json",
-    "record_count": 17549,
+    "record_count": 17557,
     "institution_count": 931,
-    "campaign_count": 6500,
+    "campaign_count": 6502,
     "review_count": 9732,
     "date_min": "2008-08-02",
     "date_max": "2029-03-30",
@@ -84,7 +84,7 @@
     "ordinary_records_moved_to_base_rate_history": 31,
     "updated_at": "2026-11-24",
     "latest_publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
-    "latest_added_records": 92,
+    "latest_added_records": 100,
     "ordinary_campaign_events_file": "r1_data/ordinary_campaign_events.json",
     "ordinary_campaign_event_count": 3,
     "archived_kyoei_legacy_rows": 7,
@@ -39623,8 +39623,18 @@
       "eligibility_conditions": "大分県民で大分県公式健康アプリ「あるとっく」をダウンロードした方。新規預入または同商品の満期分の預け替え。元金または元利金自動継続。",
       "deposit_amount": "1口10万円以上1,000万円未満（1人2,000万円以内）",
       "product_url": "https://www.oita-kenshin.co.jp/deposit/limited_altok.html",
-      "status": "開催中",
-      "review_notes": "公式チラシから2026年度の新期間・新金利として追加。同一URLの前期間明細とは期間・金利が異なる。;手動訂正[auto_20260723_081400_0013] 公式資料「13_大分県信用組合_健康寿命日本一おうえん定期預金あるとっく.pdf」に基づく新規キャンペーンの自動追加 [元ID:add_20260722_062 元ファイル:manual_corrections_batch_20260722_05.csv] 訂正日:2026-07-22 根拠URL:https://www.oita-kenshin.co.jp/deposit/limited_altok.html"
+      "status": "過去履歴",
+      "review_notes": "公式チラシから2026年度の新期間・新金利として追加。同一URLの前期間明細とは期間・金利が異なる。;手動訂正[auto_20260723_081400_0013] 公式資料「13_大分県信用組合_健康寿命日本一おうえん定期預金あるとっく.pdf」に基づく新規キャンペーンの自動追加 [元ID:add_20260722_062 元ファイル:manual_corrections_batch_20260722_05.csv] 訂正日:2026-07-22 根拠URL:https://www.oita-kenshin.co.jp/deposit/limited_altok.html",
+      "history_only": true,
+      "preserve_historical_analytics": false,
+      "ranking_eligible": false,
+      "review_required": false,
+      "history_classification": "SUPERSEDED_OFFICIAL_CONDITION_VERSION",
+      "history_resolution_reason": "最新の公式資料で年限・金利・条件の対応を確定。旧条件は上書きせず履歴保持。",
+      "resolution_publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
+      "replaced_by_record_ids": [
+        "A53_C_836986d09b4c7a95835ae9f7"
+      ]
     },
     {
       "region": "九州・沖縄",
@@ -45940,8 +45950,18 @@
       "eligibility_conditions": "契約時に18歳未満の子どもを扶養している個人（個人事業者を含む）、またはその方の18歳未満（契約時年齢）の子どもを対象。妊娠中の方またはその家族も対象。窓口申込。原則として満期日前の中途解約不可。他の優遇金利との併用不可。募集総額25億円",
       "deposit_amount": "毎月1口10,000円以上（1,000円単位）",
       "product_url": "http://www.shinkin.co.jp/omuta/save/pdf/osusume_child.pdf",
-      "status": "開催中",
-      "review_notes": "公式チラシ（2026年4月作成）から追加。契約期間は資料記載の連続範囲を1明細として保持;手動訂正[auto_20260722_140455_0006] 公式資料「03_大牟田柳川信用金庫_子育て応援定期積金.pdf」に基づく新規キャンペーン追加 [元ID:add_20260722_006 元ファイル:manual_corrections_batch_20260722_01_clean.csv] 訂正日:2026-07-22 根拠URL:http://www.shinkin.co.jp/omuta/save/pdf/osusume_child.pdf"
+      "status": "過去履歴",
+      "review_notes": "公式チラシ（2026年4月作成）から追加。契約期間は資料記載の連続範囲を1明細として保持;手動訂正[auto_20260722_140455_0006] 公式資料「03_大牟田柳川信用金庫_子育て応援定期積金.pdf」に基づく新規キャンペーン追加 [元ID:add_20260722_006 元ファイル:manual_corrections_batch_20260722_01_clean.csv] 訂正日:2026-07-22 根拠URL:http://www.shinkin.co.jp/omuta/save/pdf/osusume_child.pdf",
+      "history_only": true,
+      "preserve_historical_analytics": false,
+      "ranking_eligible": false,
+      "review_required": false,
+      "history_classification": "SUPERSEDED_OFFICIAL_CONDITION_VERSION",
+      "history_resolution_reason": "最新の公式資料で年限・金利・条件の対応を確定。旧条件は上書きせず履歴保持。",
+      "resolution_publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
+      "replaced_by_record_ids": [
+        "A53_C_2e1106995609f8810edf6640"
+      ]
     },
     {
       "region": "九州・沖縄",
@@ -47509,8 +47529,14 @@
       "eligibility_conditions": "ニューマネー限定（2026年７月31日から12月17日までの間に「他の金融機関で保有されているご資金」または「現金で保有しているご資金」から当組合にお預け替えいただいたご資金）",
       "deposit_amount": "50万円以上3,000万円以内（1口のお預入れは50万円以上）",
       "product_url": "https://kenshin-f.jp/deposit/lineup/",
-      "status": "開催中",
-      "review_notes": "募集金額は80億円。;手動訂正[auto_20260913_134042_0004] AIバッチから自動ADD [元ID:v1_369067531331fec0229dcd1bb1d3109c643c9a49862e35ab5c8231735e32539e 元ファイル:manual_corrections_batch_PHASE2_collect_20260831_230438_20260913_133641.csv] 訂正日:2026-09-13 根拠URL:https://kenshin-f.jp/deposit/lineup/"
+      "status": "要確認",
+      "review_notes": "募集金額は80億円。;手動訂正[auto_20260913_134042_0004] AIバッチから自動ADD [元ID:v1_369067531331fec0229dcd1bb1d3109c643c9a49862e35ab5c8231735e32539e 元ファイル:manual_corrections_batch_PHASE2_collect_20260831_230438_20260913_133641.csv] 訂正日:2026-09-13 根拠URL:https://kenshin-f.jp/deposit/lineup/。旧商品の公式URLは404、または現行商品一覧に当該名称・金利の掲載なし。現行商品の同一性・現在の新規募集可否を確定できないため過去掲載値を現在の数値ランキングに使用しない",
+      "ranking_eligible": false,
+      "review_required": true,
+      "source_reviewed_on": "2026-11-24",
+      "current_availability_verified": false,
+      "current_review_reason": "OFFICIAL_CURRENT_PRODUCT_NOT_CONFIRMED",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124"
     },
     {
       "region": "九州・沖縄",
@@ -48708,7 +48734,13 @@
       "deposit_amount": "20万円以上300万円以内(一人300万円まで)",
       "product_url": "http://www.onshin.com/news/info/detail/id/97",
       "status": "要確認",
-      "review_notes": "完売終了(終了日未設定);終了日が募集金額到達時;終了日未設定"
+      "review_notes": "完売終了(終了日未設定);終了日が募集金額到達時;終了日未設定。旧商品の公式URLは404、または現行商品一覧に当該名称・金利の掲載なし。現行商品の同一性・現在の新規募集可否を確定できないため過去掲載値を現在の数値ランキングに使用しない",
+      "ranking_eligible": false,
+      "review_required": true,
+      "source_reviewed_on": "2026-11-24",
+      "current_availability_verified": false,
+      "current_review_reason": "OFFICIAL_CURRENT_PRODUCT_NOT_CONFIRMED",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124"
     },
     {
       "region": "九州・沖縄",
@@ -48726,7 +48758,13 @@
       "deposit_amount": "20万円以上300万円以内(一人300万円まで)",
       "product_url": "http://www.onshin.com/news/info/detail/id/97",
       "status": "要確認",
-      "review_notes": "完売終了(終了日未設定);終了日が募集金額到達時;終了日未設定"
+      "review_notes": "完売終了(終了日未設定);終了日が募集金額到達時;終了日未設定。旧商品の公式URLは404、または現行商品一覧に当該名称・金利の掲載なし。現行商品の同一性・現在の新規募集可否を確定できないため過去掲載値を現在の数値ランキングに使用しない",
+      "ranking_eligible": false,
+      "review_required": true,
+      "source_reviewed_on": "2026-11-24",
+      "current_availability_verified": false,
+      "current_review_reason": "OFFICIAL_CURRENT_PRODUCT_NOT_CONFIRMED",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124"
     },
     {
       "region": "九州・沖縄",
@@ -48744,7 +48782,13 @@
       "deposit_amount": "20万円以上300万円以内(一人300万円まで)",
       "product_url": "http://www.onshin.com/news/info/detail/id/97",
       "status": "要確認",
-      "review_notes": "完売終了(終了日未設定);終了日が募集金額到達時;終了日未設定"
+      "review_notes": "完売終了(終了日未設定);終了日が募集金額到達時;終了日未設定。旧商品の公式URLは404、または現行商品一覧に当該名称・金利の掲載なし。現行商品の同一性・現在の新規募集可否を確定できないため過去掲載値を現在の数値ランキングに使用しない",
+      "ranking_eligible": false,
+      "review_required": true,
+      "source_reviewed_on": "2026-11-24",
+      "current_availability_verified": false,
+      "current_review_reason": "OFFICIAL_CURRENT_PRODUCT_NOT_CONFIRMED",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124"
     },
     {
       "region": "九州・沖縄",
@@ -48937,8 +48981,8 @@
       "campaign_end_date": "2026-12-30",
       "term": "1年",
       "interest_rate": "1.50%",
-      "rate_condition": "税引前年率。。契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。",
-      "eligibility_conditions": "個人（個人事業主含む）・法人。新たな資金。既存定期解約金不可。",
+      "rate_condition": "税引前年率。。第1回の1年契約（1年目）・初回新規預入。契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。",
+      "eligibility_conditions": "第1回の1年契約（1年目）・初回新規預入。個人（個人事業主含む）・法人。新たな資金。既存定期解約金不可。",
       "deposit_amount": "1口50万円以上・1円単位",
       "product_url": "https://www.tachibana-shinkin.jp/files/uploads/campaign_008.pdf",
       "status": "開催中",
@@ -48959,7 +49003,8 @@
           "months": 12,
           "rate": 1.5,
           "margin": null,
-          "stage": 1
+          "stage": 1,
+          "condition": "第1回の1年契約（1年目）・初回新規預入"
         },
         "notes": "契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。"
       },
@@ -48985,7 +49030,7 @@
       "applied_rate": "1.5％",
       "maximum_rate": "1.5％",
       "comparison_rate_percent": 1.5,
-      "campaign_record_id": "A53_C_c7184983d8203ec0d3adfb4e"
+      "campaign_record_id": "A53_C_1e1f062643d02f0d6542a925"
     },
     {
       "region": "九州・沖縄",
@@ -49012,9 +49057,9 @@
       "history_resolution_reason": "最新の公式資料で年限・金利・条件の対応を確定。旧条件は上書きせず履歴保持。",
       "resolution_publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
       "replaced_by_record_ids": [
-        "A53_C_c7184983d8203ec0d3adfb4e",
-        "A53_C_1324f61ed0864bd9e36ed8d7",
-        "A53_C_74e32f37e72353952aa4a07e"
+        "A53_C_1e1f062643d02f0d6542a925",
+        "A53_C_b4fabf52a2169e3d2a066847",
+        "A53_C_5a1d884c36c26bfba3fcb88c"
       ]
     },
     {
@@ -49042,9 +49087,9 @@
       "history_resolution_reason": "最新の公式資料で年限・金利・条件の対応を確定。旧条件は上書きせず履歴保持。",
       "resolution_publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
       "replaced_by_record_ids": [
-        "A53_C_c7184983d8203ec0d3adfb4e",
-        "A53_C_1324f61ed0864bd9e36ed8d7",
-        "A53_C_74e32f37e72353952aa4a07e"
+        "A53_C_1e1f062643d02f0d6542a925",
+        "A53_C_b4fabf52a2169e3d2a066847",
+        "A53_C_5a1d884c36c26bfba3fcb88c"
       ]
     },
     {
@@ -50902,7 +50947,13 @@
       "deposit_amount": "100万円以内",
       "product_url": "http://kashin.co.jp/information/kizuna.pdf",
       "status": "要確認",
-      "review_notes": "終了日未設定"
+      "review_notes": "終了日未設定。旧商品の公式URLは404、または現行商品一覧に当該名称・金利の掲載なし。現行商品の同一性・現在の新規募集可否を確定できないため過去掲載値を現在の数値ランキングに使用しない",
+      "ranking_eligible": false,
+      "review_required": true,
+      "source_reviewed_on": "2026-11-24",
+      "current_availability_verified": false,
+      "current_review_reason": "OFFICIAL_CURRENT_PRODUCT_NOT_CONFIRMED",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124"
     },
     {
       "region": "九州・沖縄",
@@ -352276,8 +352327,8 @@
       "campaign_end_date": "2026-12-30",
       "term": "1年",
       "interest_rate": "1.6％",
-      "rate_condition": "税引前年率。。契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。",
-      "eligibility_conditions": "個人（個人事業主含む）・法人。新たな資金。既存定期解約金不可。",
+      "rate_condition": "税引前年率。。第2回の1年契約（2年目）・既存契約の継続専用。契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。",
+      "eligibility_conditions": "第2回の1年契約（2年目）・既存契約の継続専用。個人（個人事業主含む）・法人。新たな資金。既存定期解約金不可。",
       "deposit_amount": "1口50万円以上・1円単位",
       "product_url": "https://www.tachibana-shinkin.jp/files/uploads/campaign_008.pdf",
       "status": "開催中",
@@ -352298,7 +352349,8 @@
           "months": 12,
           "rate": 1.6,
           "margin": null,
-          "stage": 2
+          "stage": 2,
+          "condition": "第2回の1年契約（2年目）・既存契約の継続専用"
         },
         "notes": "契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。"
       },
@@ -352324,7 +352376,7 @@
       "applied_rate": "1.6％",
       "maximum_rate": "1.6％",
       "comparison_rate_percent": 1.6,
-      "campaign_record_id": "A53_C_1324f61ed0864bd9e36ed8d7"
+      "campaign_record_id": "A53_C_b4fabf52a2169e3d2a066847"
     },
     {
       "region": "九州・沖縄",
@@ -352337,8 +352389,8 @@
       "campaign_end_date": "2026-12-30",
       "term": "1年",
       "interest_rate": "1.7％",
-      "rate_condition": "税引前年率。。契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。",
-      "eligibility_conditions": "個人（個人事業主含む）・法人。新たな資金。既存定期解約金不可。",
+      "rate_condition": "税引前年率。。第3回の1年契約（3年目）・既存契約の継続専用。契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。",
+      "eligibility_conditions": "第3回の1年契約（3年目）・既存契約の継続専用。個人（個人事業主含む）・法人。新たな資金。既存定期解約金不可。",
       "deposit_amount": "1口50万円以上・1円単位",
       "product_url": "https://www.tachibana-shinkin.jp/files/uploads/campaign_008.pdf",
       "status": "開催中",
@@ -352359,7 +352411,8 @@
           "months": 12,
           "rate": 1.7,
           "margin": null,
-          "stage": 3
+          "stage": 3,
+          "condition": "第3回の1年契約（3年目）・既存契約の継続専用"
         },
         "notes": "契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。"
       },
@@ -352385,7 +352438,7 @@
       "applied_rate": "1.7％",
       "maximum_rate": "1.7％",
       "comparison_rate_percent": 1.7,
-      "campaign_record_id": "A53_C_74e32f37e72353952aa4a07e"
+      "campaign_record_id": "A53_C_5a1d884c36c26bfba3fcb88c"
     },
     {
       "region": "九州・沖縄",
@@ -354428,7 +354481,7 @@
       "interest_rate": "店頭表示金利＋年0.1％",
       "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
       "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
-      "deposit_amount": "1円以上・300万円未満／300万円以上の階層別",
+      "deposit_amount": "1円以上300万円未満",
       "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
       "status": "開催中",
       "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
@@ -354451,7 +354504,8 @@
           "term": "6か月以上1年未満",
           "base_months": 6,
           "min_months": 6,
-          "max_months": 12
+          "max_months": 12,
+          "amount": "1円以上300万円未満"
         },
         "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
       },
@@ -354476,7 +354530,71 @@
       },
       "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
       "maturity_type": "SELECTABLE_AFTER_LOCKUP",
-      "campaign_record_id": "A53_C_da86aba6f492f2cca630285a"
+      "campaign_record_id": "A53_C_38b6cf6e5f728ff260943cbd"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "沖縄県",
+      "institution_name": "琉球銀行",
+      "institution_type": "地銀",
+      "product_type": "定期預金",
+      "campaign_name": "りゅうぎんナイスプラン特別金利キャンペーン",
+      "campaign_start_date": "2026-11-02",
+      "campaign_end_date": "2027-07-30",
+      "term": "6か月以上1年未満",
+      "interest_rate": "店頭表示金利＋年0.1％",
+      "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
+      "deposit_amount": "300万円以上",
+      "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "status": "開催中",
+      "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "renewal_stage": 1,
+      "ranking_eligible": false,
+      "rate_formula": "店頭表示金利＋年0.1％",
+      "margin_rate": 0.1,
+      "subscription_limit_yen": 100000000000,
+      "evidence": {
+        "official_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+        "sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+        "document_id": "cafa0dda8f880b3f22",
+        "verified_on": "2026-11-24",
+        "variant": {
+          "months": null,
+          "rate": null,
+          "margin": 0.1,
+          "term": "6か月以上1年未満",
+          "base_months": 6,
+          "min_months": 6,
+          "max_months": 12,
+          "amount": "300万円以上"
+        },
+        "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
+      },
+      "term_months": null,
+      "term_min_months": 6,
+      "term_max_months": 12,
+      "rate_measure_type": "NOMINAL_INTEREST_RATE",
+      "source_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "source_sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+      "source_reviewed_on": "2026-11-24",
+      "source_evidence_locator": "公式商品概要の金利・年限・取扱期間・対象者・金額欄を資料単位で照合。PDFはページ画像とOCRを併用。",
+      "source_document_id": "cafa0dda8f880b3f22",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
+      "review_required": false,
+      "item_confidence": {
+        "rate": "HIGH",
+        "term": "HIGH",
+        "start_date": "AS_PUBLISHED",
+        "end_date": "HIGH",
+        "eligibility": "HIGH",
+        "amount": "AS_PUBLISHED_NOT_INFERRED"
+      },
+      "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
+      "maturity_type": "SELECTABLE_AFTER_LOCKUP",
+      "campaign_record_id": "A53_C_175467bdf097dd1ec6b84bd6"
     },
     {
       "region": "九州・沖縄",
@@ -354491,7 +354609,7 @@
       "interest_rate": "店頭表示金利＋年0.1％",
       "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
       "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
-      "deposit_amount": "1円以上・300万円未満／300万円以上の階層別",
+      "deposit_amount": "1円以上300万円未満",
       "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
       "status": "開催中",
       "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
@@ -354514,7 +354632,8 @@
           "term": "1年以上2年未満",
           "base_months": 12,
           "min_months": 12,
-          "max_months": 24
+          "max_months": 24,
+          "amount": "1円以上300万円未満"
         },
         "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
       },
@@ -354539,7 +354658,71 @@
       },
       "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
       "maturity_type": "SELECTABLE_AFTER_LOCKUP",
-      "campaign_record_id": "A53_C_6752e4d15a0275d8f085f9bf"
+      "campaign_record_id": "A53_C_8cd369822e8d91a5b7156e9f"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "沖縄県",
+      "institution_name": "琉球銀行",
+      "institution_type": "地銀",
+      "product_type": "定期預金",
+      "campaign_name": "りゅうぎんナイスプラン特別金利キャンペーン",
+      "campaign_start_date": "2026-11-02",
+      "campaign_end_date": "2027-07-30",
+      "term": "1年以上2年未満",
+      "interest_rate": "店頭表示金利＋年0.1％",
+      "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
+      "deposit_amount": "300万円以上",
+      "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "status": "開催中",
+      "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "renewal_stage": 1,
+      "ranking_eligible": false,
+      "rate_formula": "店頭表示金利＋年0.1％",
+      "margin_rate": 0.1,
+      "subscription_limit_yen": 100000000000,
+      "evidence": {
+        "official_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+        "sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+        "document_id": "cafa0dda8f880b3f22",
+        "verified_on": "2026-11-24",
+        "variant": {
+          "months": null,
+          "rate": null,
+          "margin": 0.1,
+          "term": "1年以上2年未満",
+          "base_months": 12,
+          "min_months": 12,
+          "max_months": 24,
+          "amount": "300万円以上"
+        },
+        "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
+      },
+      "term_months": null,
+      "term_min_months": 12,
+      "term_max_months": 24,
+      "rate_measure_type": "NOMINAL_INTEREST_RATE",
+      "source_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "source_sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+      "source_reviewed_on": "2026-11-24",
+      "source_evidence_locator": "公式商品概要の金利・年限・取扱期間・対象者・金額欄を資料単位で照合。PDFはページ画像とOCRを併用。",
+      "source_document_id": "cafa0dda8f880b3f22",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
+      "review_required": false,
+      "item_confidence": {
+        "rate": "HIGH",
+        "term": "HIGH",
+        "start_date": "AS_PUBLISHED",
+        "end_date": "HIGH",
+        "eligibility": "HIGH",
+        "amount": "AS_PUBLISHED_NOT_INFERRED"
+      },
+      "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
+      "maturity_type": "SELECTABLE_AFTER_LOCKUP",
+      "campaign_record_id": "A53_C_677cf3149e03b133cc8f2f8d"
     },
     {
       "region": "九州・沖縄",
@@ -354554,7 +354737,7 @@
       "interest_rate": "店頭表示金利＋年0.1％",
       "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
       "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
-      "deposit_amount": "1円以上・300万円未満／300万円以上の階層別",
+      "deposit_amount": "1円以上300万円未満",
       "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
       "status": "開催中",
       "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
@@ -354577,7 +354760,8 @@
           "term": "2年以上3年未満",
           "base_months": 24,
           "min_months": 24,
-          "max_months": 36
+          "max_months": 36,
+          "amount": "1円以上300万円未満"
         },
         "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
       },
@@ -354602,7 +354786,71 @@
       },
       "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
       "maturity_type": "SELECTABLE_AFTER_LOCKUP",
-      "campaign_record_id": "A53_C_7df4145ba2c835a5eb71ad2e"
+      "campaign_record_id": "A53_C_2622b2b24dac8eb2bcf608b4"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "沖縄県",
+      "institution_name": "琉球銀行",
+      "institution_type": "地銀",
+      "product_type": "定期預金",
+      "campaign_name": "りゅうぎんナイスプラン特別金利キャンペーン",
+      "campaign_start_date": "2026-11-02",
+      "campaign_end_date": "2027-07-30",
+      "term": "2年以上3年未満",
+      "interest_rate": "店頭表示金利＋年0.1％",
+      "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
+      "deposit_amount": "300万円以上",
+      "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "status": "開催中",
+      "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "renewal_stage": 1,
+      "ranking_eligible": false,
+      "rate_formula": "店頭表示金利＋年0.1％",
+      "margin_rate": 0.1,
+      "subscription_limit_yen": 100000000000,
+      "evidence": {
+        "official_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+        "sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+        "document_id": "cafa0dda8f880b3f22",
+        "verified_on": "2026-11-24",
+        "variant": {
+          "months": null,
+          "rate": null,
+          "margin": 0.1,
+          "term": "2年以上3年未満",
+          "base_months": 24,
+          "min_months": 24,
+          "max_months": 36,
+          "amount": "300万円以上"
+        },
+        "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
+      },
+      "term_months": null,
+      "term_min_months": 24,
+      "term_max_months": 36,
+      "rate_measure_type": "NOMINAL_INTEREST_RATE",
+      "source_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "source_sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+      "source_reviewed_on": "2026-11-24",
+      "source_evidence_locator": "公式商品概要の金利・年限・取扱期間・対象者・金額欄を資料単位で照合。PDFはページ画像とOCRを併用。",
+      "source_document_id": "cafa0dda8f880b3f22",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
+      "review_required": false,
+      "item_confidence": {
+        "rate": "HIGH",
+        "term": "HIGH",
+        "start_date": "AS_PUBLISHED",
+        "end_date": "HIGH",
+        "eligibility": "HIGH",
+        "amount": "AS_PUBLISHED_NOT_INFERRED"
+      },
+      "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
+      "maturity_type": "SELECTABLE_AFTER_LOCKUP",
+      "campaign_record_id": "A53_C_9234302864f92f26077312e7"
     },
     {
       "region": "九州・沖縄",
@@ -354617,7 +354865,7 @@
       "interest_rate": "店頭表示金利＋年0.1％",
       "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
       "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
-      "deposit_amount": "1円以上・300万円未満／300万円以上の階層別",
+      "deposit_amount": "1円以上300万円未満",
       "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
       "status": "開催中",
       "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
@@ -354640,7 +354888,8 @@
           "term": "3年以上4年未満",
           "base_months": 36,
           "min_months": 36,
-          "max_months": 48
+          "max_months": 48,
+          "amount": "1円以上300万円未満"
         },
         "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
       },
@@ -354665,7 +354914,71 @@
       },
       "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
       "maturity_type": "SELECTABLE_AFTER_LOCKUP",
-      "campaign_record_id": "A53_C_1a0222d592aaab16a0907857"
+      "campaign_record_id": "A53_C_3ad94cb91098203e5d353863"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "沖縄県",
+      "institution_name": "琉球銀行",
+      "institution_type": "地銀",
+      "product_type": "定期預金",
+      "campaign_name": "りゅうぎんナイスプラン特別金利キャンペーン",
+      "campaign_start_date": "2026-11-02",
+      "campaign_end_date": "2027-07-30",
+      "term": "3年以上4年未満",
+      "interest_rate": "店頭表示金利＋年0.1％",
+      "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
+      "deposit_amount": "300万円以上",
+      "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "status": "開催中",
+      "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "renewal_stage": 1,
+      "ranking_eligible": false,
+      "rate_formula": "店頭表示金利＋年0.1％",
+      "margin_rate": 0.1,
+      "subscription_limit_yen": 100000000000,
+      "evidence": {
+        "official_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+        "sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+        "document_id": "cafa0dda8f880b3f22",
+        "verified_on": "2026-11-24",
+        "variant": {
+          "months": null,
+          "rate": null,
+          "margin": 0.1,
+          "term": "3年以上4年未満",
+          "base_months": 36,
+          "min_months": 36,
+          "max_months": 48,
+          "amount": "300万円以上"
+        },
+        "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
+      },
+      "term_months": null,
+      "term_min_months": 36,
+      "term_max_months": 48,
+      "rate_measure_type": "NOMINAL_INTEREST_RATE",
+      "source_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "source_sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+      "source_reviewed_on": "2026-11-24",
+      "source_evidence_locator": "公式商品概要の金利・年限・取扱期間・対象者・金額欄を資料単位で照合。PDFはページ画像とOCRを併用。",
+      "source_document_id": "cafa0dda8f880b3f22",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
+      "review_required": false,
+      "item_confidence": {
+        "rate": "HIGH",
+        "term": "HIGH",
+        "start_date": "AS_PUBLISHED",
+        "end_date": "HIGH",
+        "eligibility": "HIGH",
+        "amount": "AS_PUBLISHED_NOT_INFERRED"
+      },
+      "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
+      "maturity_type": "SELECTABLE_AFTER_LOCKUP",
+      "campaign_record_id": "A53_C_5ffdc5e2a12ee2245b92c0ec"
     },
     {
       "region": "九州・沖縄",
@@ -354680,7 +354993,7 @@
       "interest_rate": "店頭表示金利＋年0.1％",
       "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
       "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
-      "deposit_amount": "1円以上・300万円未満／300万円以上の階層別",
+      "deposit_amount": "1円以上300万円未満",
       "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
       "status": "開催中",
       "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
@@ -354703,7 +355016,8 @@
           "term": "4年以上5年未満",
           "base_months": 48,
           "min_months": 48,
-          "max_months": 60
+          "max_months": 60,
+          "amount": "1円以上300万円未満"
         },
         "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
       },
@@ -354728,7 +355042,71 @@
       },
       "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
       "maturity_type": "SELECTABLE_AFTER_LOCKUP",
-      "campaign_record_id": "A53_C_e7ee163a6b1a7010cbe05498"
+      "campaign_record_id": "A53_C_941b3411ea6b8ab41f5c26cd"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "沖縄県",
+      "institution_name": "琉球銀行",
+      "institution_type": "地銀",
+      "product_type": "定期預金",
+      "campaign_name": "りゅうぎんナイスプラン特別金利キャンペーン",
+      "campaign_start_date": "2026-11-02",
+      "campaign_end_date": "2027-07-30",
+      "term": "4年以上5年未満",
+      "interest_rate": "店頭表示金利＋年0.1％",
+      "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
+      "deposit_amount": "300万円以上",
+      "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "status": "開催中",
+      "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "renewal_stage": 1,
+      "ranking_eligible": false,
+      "rate_formula": "店頭表示金利＋年0.1％",
+      "margin_rate": 0.1,
+      "subscription_limit_yen": 100000000000,
+      "evidence": {
+        "official_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+        "sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+        "document_id": "cafa0dda8f880b3f22",
+        "verified_on": "2026-11-24",
+        "variant": {
+          "months": null,
+          "rate": null,
+          "margin": 0.1,
+          "term": "4年以上5年未満",
+          "base_months": 48,
+          "min_months": 48,
+          "max_months": 60,
+          "amount": "300万円以上"
+        },
+        "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
+      },
+      "term_months": null,
+      "term_min_months": 48,
+      "term_max_months": 60,
+      "rate_measure_type": "NOMINAL_INTEREST_RATE",
+      "source_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "source_sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+      "source_reviewed_on": "2026-11-24",
+      "source_evidence_locator": "公式商品概要の金利・年限・取扱期間・対象者・金額欄を資料単位で照合。PDFはページ画像とOCRを併用。",
+      "source_document_id": "cafa0dda8f880b3f22",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
+      "review_required": false,
+      "item_confidence": {
+        "rate": "HIGH",
+        "term": "HIGH",
+        "start_date": "AS_PUBLISHED",
+        "end_date": "HIGH",
+        "eligibility": "HIGH",
+        "amount": "AS_PUBLISHED_NOT_INFERRED"
+      },
+      "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
+      "maturity_type": "SELECTABLE_AFTER_LOCKUP",
+      "campaign_record_id": "A53_C_28ea122ea6cf999dfb22c73e"
     },
     {
       "region": "九州・沖縄",
@@ -354743,7 +355121,7 @@
       "interest_rate": "店頭表示金利＋年0.1％",
       "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
       "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
-      "deposit_amount": "1円以上・300万円未満／300万円以上の階層別",
+      "deposit_amount": "1円以上300万円未満",
       "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
       "status": "開催中",
       "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
@@ -354762,7 +355140,8 @@
         "variant": {
           "months": 60,
           "rate": null,
-          "margin": 0.1
+          "margin": 0.1,
+          "amount": "1円以上300万円未満"
         },
         "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
       },
@@ -354787,7 +355166,67 @@
       },
       "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
       "maturity_type": "SELECTABLE_AFTER_LOCKUP",
-      "campaign_record_id": "A53_C_341d24691ef69e81767b9a39"
+      "campaign_record_id": "A53_C_59646cbb6fe2e7d0d65ccaa6"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "沖縄県",
+      "institution_name": "琉球銀行",
+      "institution_type": "地銀",
+      "product_type": "定期預金",
+      "campaign_name": "りゅうぎんナイスプラン特別金利キャンペーン",
+      "campaign_start_date": "2026-11-02",
+      "campaign_end_date": "2027-07-30",
+      "term": "5年",
+      "interest_rate": "店頭表示金利＋年0.1％",
+      "rate_condition": "税引前年率。店頭表示金利＋年0.1％。最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "eligibility_conditions": "個人・窓口預入のみ。6か月据置後は一部払戻も可能。",
+      "deposit_amount": "300万円以上",
+      "product_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "status": "開催中",
+      "review_notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "renewal_stage": 1,
+      "ranking_eligible": false,
+      "rate_formula": "店頭表示金利＋年0.1％",
+      "margin_rate": 0.1,
+      "subscription_limit_yen": 100000000000,
+      "evidence": {
+        "official_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+        "sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+        "document_id": "cafa0dda8f880b3f22",
+        "verified_on": "2026-11-24",
+        "variant": {
+          "months": 60,
+          "rate": null,
+          "margin": 0.1,
+          "amount": "300万円以上"
+        },
+        "notes": "最長5年の満期選択型。実際の預入期間に応じ6段階の利率を預入日に遡及適用する。固定年限の当初保証金利として混ぜない。6か月複利。"
+      },
+      "term_months": 60,
+      "term_min_months": 60,
+      "term_max_months": 60,
+      "rate_measure_type": "NOMINAL_INTEREST_RATE",
+      "source_url": "https://www.ryugin.co.jp/common/uploads/niceplancp2026.pdf",
+      "source_sha256": "c84ade0c0e91a8faa750f5611f5901e1471546ac2c2a967175e5369ffe26fca9",
+      "source_reviewed_on": "2026-11-24",
+      "source_evidence_locator": "公式商品概要の金利・年限・取扱期間・対象者・金額欄を資料単位で照合。PDFはページ画像とOCRを併用。",
+      "source_document_id": "cafa0dda8f880b3f22",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
+      "review_required": false,
+      "item_confidence": {
+        "rate": "HIGH",
+        "term": "HIGH",
+        "start_date": "AS_PUBLISHED",
+        "end_date": "HIGH",
+        "eligibility": "HIGH",
+        "amount": "AS_PUBLISHED_NOT_INFERRED"
+      },
+      "comparison_exclusion_reason": "満期選択型・実際の経過期間により遡及利率が変わるため固定年限ランキングと分離",
+      "maturity_type": "SELECTABLE_AFTER_LOCKUP",
+      "campaign_record_id": "A53_C_a2d266eccb74686bc5c4013f"
     },
     {
       "region": "九州・沖縄",
@@ -357001,6 +357440,123 @@
       "maximum_rate": "1％",
       "comparison_rate_percent": 1,
       "campaign_record_id": "A53_C_22342fd7ba01974a6b7d9a9f"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "大分県",
+      "institution_name": "大分県信用組合",
+      "institution_type": "信用組合",
+      "product_type": "定期預金",
+      "campaign_name": "健康寿命日本一おうえん定期預金「あるとっく」",
+      "campaign_start_date": "2026-04-01",
+      "campaign_end_date": "2027-03-31",
+      "term": "1年",
+      "interest_rate": "店頭表示金利＋年0.2％",
+      "rate_condition": "税引前年率。店頭表示金利＋年0.2％。公式現行条件はスーパー定期1年もの店頭金利＋0.20％。過去に算出した0.575％を現在の金利と決めつけない。初回のみ。",
+      "eligibility_conditions": "大分県民で大分県公式健康アプリ「あるとっく」令和7年4月リニューアル版をダウンロードした方。新規資金のみ。",
+      "deposit_amount": "1口10万円以上1,000万円未満・1人2,000万円以内",
+      "product_url": "https://www.oita-kenshin.co.jp/deposit/limited_altok.html",
+      "status": "開催中",
+      "review_notes": "公式現行条件はスーパー定期1年もの店頭金利＋0.20％。過去に算出した0.575％を現在の金利と決めつけない。初回のみ。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "renewal_stage": 1,
+      "ranking_eligible": false,
+      "rate_formula": "店頭表示金利＋年0.2％",
+      "margin_rate": 0.2,
+      "subscription_limit_yen": null,
+      "evidence": {
+        "official_url": "https://www.oita-kenshin.co.jp/deposit/limited_altok.html",
+        "sha256": "7b3e73a4dd1cd35a16d9507245509358e4021b82c7eeb6bfc6da825d28bfe6e3",
+        "document_id": "a0da8199dcc636c735",
+        "verified_on": "2026-11-24",
+        "variant": {
+          "months": 12,
+          "rate": null,
+          "margin": 0.2
+        },
+        "notes": "公式現行条件はスーパー定期1年もの店頭金利＋0.20％。過去に算出した0.575％を現在の金利と決めつけない。初回のみ。"
+      },
+      "term_months": 12,
+      "term_min_months": 12,
+      "term_max_months": 12,
+      "rate_measure_type": "NOMINAL_INTEREST_RATE",
+      "source_url": "https://www.oita-kenshin.co.jp/deposit/limited_altok.html",
+      "source_sha256": "7b3e73a4dd1cd35a16d9507245509358e4021b82c7eeb6bfc6da825d28bfe6e3",
+      "source_reviewed_on": "2026-11-24",
+      "source_evidence_locator": "公式商品概要の金利・年限・取扱期間・対象者・金額欄を資料単位で照合。PDFはページ画像とOCRを併用。",
+      "source_document_id": "a0da8199dcc636c735",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
+      "review_required": false,
+      "item_confidence": {
+        "rate": "HIGH",
+        "term": "HIGH",
+        "start_date": "AS_PUBLISHED",
+        "end_date": "HIGH",
+        "eligibility": "HIGH",
+        "amount": "AS_PUBLISHED_NOT_INFERRED"
+      },
+      "campaign_record_id": "A53_C_836986d09b4c7a95835ae9f7"
+    },
+    {
+      "region": "九州・沖縄",
+      "prefecture": "福岡県",
+      "institution_name": "大牟田柳川信用金庫",
+      "institution_type": "信用金庫",
+      "product_type": "定期積金",
+      "campaign_name": "子育て応援定期積金",
+      "campaign_start_date": "2026-04-01",
+      "campaign_end_date": "2027-03-31",
+      "term": "3年～5年（36回～60回）",
+      "interest_rate": "店頭表示金利＋年0.1％",
+      "rate_condition": "税引前年率。店頭表示金利＋年0.1％。店頭表示金利＋0.10％の給付補てん率。3～5年の契約回数を勝手に年限単位へ丸めない。",
+      "eligibility_conditions": "契約時に18歳未満の子供を扶養する個人・個人事業主、またはその18歳未満の子供。毎月自動振替。先掛け不可。",
+      "deposit_amount": "1口1,000円以上・1,000円単位",
+      "product_url": "https://www.shinkin.co.jp/omuta/save/pdf/osusume_child.pdf",
+      "status": "開催中",
+      "review_notes": "店頭表示金利＋0.10％の給付補てん率。3～5年の契約回数を勝手に年限単位へ丸めない。",
+      "currency": "JPY",
+      "tax_basis": "PRE_TAX",
+      "renewal_stage": 1,
+      "ranking_eligible": false,
+      "rate_formula": "店頭表示金利＋年0.1％",
+      "margin_rate": 0.1,
+      "subscription_limit_yen": 2500000000,
+      "evidence": {
+        "official_url": "https://www.shinkin.co.jp/omuta/save/pdf/osusume_child.pdf",
+        "sha256": "d9dfb98cfa8824e394128fa52ff936ae15b8db3ad1d9e0e1391b26c9ecb2ffe2",
+        "document_id": "a1cd6f89c88f13aaf1",
+        "verified_on": "2026-11-24",
+        "variant": {
+          "months": null,
+          "rate": null,
+          "margin": 0.1,
+          "term": "3年～5年（36回～60回）",
+          "min_months": 36,
+          "max_months": 60
+        },
+        "notes": "店頭表示金利＋0.10％の給付補てん率。3～5年の契約回数を勝手に年限単位へ丸めない。"
+      },
+      "term_months": null,
+      "term_min_months": 36,
+      "term_max_months": 60,
+      "rate_measure_type": "BENEFIT_COMPENSATION_RATE",
+      "source_url": "https://www.shinkin.co.jp/omuta/save/pdf/osusume_child.pdf",
+      "source_sha256": "d9dfb98cfa8824e394128fa52ff936ae15b8db3ad1d9e0e1391b26c9ecb2ffe2",
+      "source_reviewed_on": "2026-11-24",
+      "source_evidence_locator": "公式商品概要の金利・年限・取扱期間・対象者・金額欄を資料単位で照合。PDFはページ画像とOCRを併用。",
+      "source_document_id": "a1cd6f89c88f13aaf1",
+      "publication_id": "ADDED53_OFFICIAL_REVIEW_20261124",
+      "review_required": false,
+      "item_confidence": {
+        "rate": "HIGH",
+        "term": "HIGH",
+        "start_date": "AS_PUBLISHED",
+        "end_date": "HIGH",
+        "eligibility": "HIGH",
+        "amount": "AS_PUBLISHED_NOT_INFERRED"
+      },
+      "campaign_record_id": "A53_C_2e1106995609f8810edf6640"
     }
   ]
 }
