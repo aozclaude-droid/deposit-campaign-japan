@@ -921,3 +921,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 
 /* Current comparable deposit conditions. */
 .comparison-conditions{display:block;font-size:12px!important;line-height:1.6;white-space:normal!important;overflow-wrap:anywhere;color:#52657d;font-weight:normal}.r1-matrix-cell .comparison-conditions{max-width:320px;margin:5px auto}
+
+/* Keep release summaries readable when many institutions change. */
+.latest-update-compact {flex-wrap:wrap;align-items:flex-start;}
+.latest-update-summary-text {flex:1 1 300px;min-width:0;}
+.latest-update-region-list {flex:1 1 420px;min-width:0;}
+.latest-update-region-list span {white-space:normal;overflow-wrap:anywhere;}

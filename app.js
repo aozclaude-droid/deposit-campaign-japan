@@ -18,7 +18,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
 }
 
 
-const APP_VERSION = "2026.11.20.4";
+const APP_VERSION = "2026.11.24.2";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -53,31 +53,137 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261124-1";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261124-1";
+const DATA_URL = "campaign_all.json?v=20261124-2";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261124-2";
 const LATEST_UPDATE = {
   "publishedOn": "2026-11-24",
-  "label": "2026年11月24日 唐津信用金庫の公式再調査を反映",
-  "expectedTotalRecords": 17460,
-  "addedStartIndex": 17453,
-  "addedCount": 4,
-  "updatedCount": 0,
-  "movedToBaseHistoryCount": 0,
+  "label": "2026年11月24日 追加URL53先の公式照査を反映",
+  "expectedTotalRecords": 17552,
+  "addedStartIndex": 17457,
+  "addedCount": 92,
+  "updatedCount": 69,
+  "movedToBaseHistoryCount": 15,
   "ordinaryCampaignRetainedCount": 3,
-  "ordinaryBaseAddedCount": 0,
-  "baseHistoryTotalCount": 30458,
-  "reviewedInstitutionCount": 1,
+  "ordinaryBaseAddedCount": 146,
+  "baseHistoryTotalCount": 30604,
+  "reviewedInstitutionCount": 53,
   "withheldInstitutionCount": 0,
-  "segmentLabel": "唐津信用金庫・公式再調査",
+  "segmentLabel": "キャンペーンURL追加53先・公式照査",
   "segmentMetricLabel": "照査した金融機関",
-  "primaryMetricLabel": "キャンペーン条件を追加",
-  "leadText": "冬の定期預金（1・3・5年）と12月1日開始予定の復興応援定期積金を追加。通常金利49条件も再確認し、金額別の表記を整理しました。通常金利の適用日は9月14日で、今回の金利改定ではありません。",
-  "compactText": "新規2商品・4条件／通常金利49条件を再確認（数値変更なし）",
+  "primaryMetricLabel": "キャンペーン明細を追加",
+  "leadText": "追加URL53先を巡回し、金利・年限・募集期間・対象者・金額条件を照合。早期終了、段階金利、常設優遇商品の分類を反映しました。",
+  "compactText": "追加92条件・既存69条件を確認／通常金利146条件",
   "featuredInstitutions": [
-    "唐津信用金庫"
+    "JAいぶすき",
+    "JAごとう",
+    "JAさつま日置",
+    "JA佐賀市中央",
+    "JA対馬",
+    "JA柳川",
+    "JA福岡市東部",
+    "JA筑紫",
+    "JA菊池",
+    "たちばな信用金庫",
+    "九州労働金庫",
+    "伊万里信用金庫",
+    "佐賀銀行",
+    "大分県信用組合",
+    "大牟田柳川信用金庫",
+    "沖縄海邦銀行",
+    "琉球銀行",
+    "福岡ひびき信用金庫",
+    "福岡信用金庫",
+    "遠賀信用金庫",
+    "長崎銀行",
+    "飯塚信用金庫",
+    "高鍋信用金庫",
+    "鹿児島信用金庫"
   ],
-  "ordinaryAddedInstitutions": [],
-  "updatedRecordKeys": []
+  "ordinaryAddedInstitutions": [
+    "JAさつま日置",
+    "JA粕屋",
+    "コザ信用金庫",
+    "佐賀信用金庫",
+    "佐賀東信用組合",
+    "大分県信用組合",
+    "宮崎太陽銀行",
+    "宮崎県南部信用組合",
+    "福岡県信用組合",
+    "遠賀信用金庫",
+    "長崎三菱信用組合",
+    "鹿児島県医師信用組合"
+  ],
+  "updatedRecordKeys": [
+    "佐賀共栄銀行␟きょうぎんプレミアム定期預金「ひろげて」␟2026-09-07␟2026-11-10␟1年␟1.65%␟初回満期日以降は、店頭金利とさせていただきます。␟https://www.kyogin.co.jp/uploads/files/campaign/premiumteiki.pdf",
+    "佐賀共栄銀行␟きょうぎんプレミアム定期預金「ひろげて」␟2026-09-07␟2026-11-10␟1年␟1.65%␟初回満期日以降は、店頭金利とさせていただきます。␟https://www.kyogin.co.jp/uploads/files/campaign/premiumteiki.pdf",
+    "佐賀共栄銀行␟ニュースリリース キャンペーン定期預金の取扱い開始について␟2026-09-07␟2027-01-29␟1年␟2.00％␟当行は、各営業店窓口でのご相談対応とは別に、本店におけるご相談窓口として、以下の担当部署を設置しております。 / インターネットモバイルバンキングサービス(以下、IBサービス)、および店頭窓口からのお預入に限ります。ATMでのお取扱いはできません。 / 募集総額に達した場合や、金利情勢の変化、その他の事由等によりお取扱いを変更・中止させていただく場合がございます。 / ・店頭窓口、およびインターネットモバイルバンキングサービス(以下、IBサービス)からのお預入に限ります。 / ・ 店頭窓口からのお預入に限ります。 / 店頭窓口からのお預入に限ります。ATMでのお取扱いはできません。␟https://www.kyogin.co.jp/uploads/files/20260903campaignteikinotoriatsukai.pdf",
+    "佐賀共栄銀行␟ニュースリリース キャンペーン定期預金の取扱い開始について␟2026-09-07␟2026-11-09␟2年␟1.70％␟当行は、各営業店窓口でのご相談対応とは別に、本店におけるご相談窓口として、以下の担当部署を設置しております。 / インターネットモバイルバンキングサービス(以下、IBサービス)、および店頭窓口からのお預入に限ります。ATMでのお取扱いはできません。 / 募集総額に達した場合や、金利情勢の変化、その他の事由等によりお取扱いを変更・中止させていただく場合がございます。 / ・店頭窓口、およびインターネットモバイルバンキングサービス(以下、IBサービス)からのお預入に限ります。 / ・ 店頭窓口からのお預入に限ります。 / 店頭窓口からのお預入に限ります。ATMでのお取扱いはできません。␟https://www.kyogin.co.jp/uploads/files/20260903campaignteikinotoriatsukai.pdf",
+    "佐賀共栄銀行␟佐賀のごほうび定期預金（ふたたび）␟2026-09-07␟2026-11-09␟2年␟1.7%␟特別金利 1.7％（固定）。初回満期日以降は店頭金利とさせていただきます。␟https://www.kyogin.co.jp/ex/internet_bank/files/campaign_gaiyo.pdf",
+    "佐賀共栄銀行␟佐賀のごほうび定期預金（ふたたび）␟2026-09-07␟2026-11-09␟2年␟1.7%␟特別金利 1.7％（固定）。初回満期日以降は店頭金利とさせていただきます。␟https://www.kyogin.co.jp/ex/internet_bank/files/campaign_gaiyo.pdf",
+    "佐賀共栄銀行␟特別金利定期預金「あらたに」␟2026-09-07␟2027-01-29␟1年␟2.0%␟税引前年率。。大口定期・自動継続単利型。初回満期まで固定2.0％。␟https://www.kyogin.co.jp/uploads/files/campaign/tokubetsuteiki.pdf",
+    "佐賀銀行␟さぎんプレミアムパック ハーモニー␟2026-09-01␟2027-08-31␟3か月␟年利3.0％（税引前）␟税引前年率。。円定期預金部分の税引前年率。投資商品購入必須で、別途手数料・元本割れリスクがある。投資商品の利回りではない。␟https://www.sagabank.co.jp/kojin/save/harmony.html",
+    "佐賀銀行␟さぎんプレミアムパック ハーモニー␟2026-09-01␟2027-08-31␟6か月␟年利2.0％（税引前）␟税引前年率。。円定期預金部分の税引前年率。投資商品購入必須で、別途手数料・元本割れリスクがある。投資商品の利回りではない。␟https://www.sagabank.co.jp/kojin/save/harmony.html",
+    "佐賀銀行␟さぎんプレミアムパック ハーモニー グローバル␟2026-09-01␟2027-08-31␟3か月␟4.0％␟税引前年率。。4.0％・2.5％はセット商品の円定期部分。外貨部分の金利・為替差損益とは分離。為替リスク商品契約が必須。␟https://www.sagabank.co.jp/kojin/save/harmony-global.html",
+    "佐賀銀行␟さぎんプレミアムパック ハーモニー グローバル␟2026-09-01␟2027-08-31␟6か月␟2.5％␟税引前年率。。4.0％・2.5％はセット商品の円定期部分。外貨部分の金利・為替差損益とは分離。為替リスク商品契約が必須。␟https://www.sagabank.co.jp/kojin/save/harmony-global.html",
+    "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟1年␟年率1.60%（税引き前）␟税引前年率。。Aコース：55歳以上の年金予約、当行公的年金受取、または他行から公的年金受取口座を変更。1年単利・3年半年複利。初回満期まで。␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
+    "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟3年␟年率1.80%（税引き前）␟税引前年率。。Aコース：55歳以上の年金予約、当行公的年金受取、または他行から公的年金受取口座を変更。1年単利・3年半年複利。初回満期まで。␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
+    "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟1年␟年率1.40%（税引き前）␟税引前年率。。Bコース：Aコース以外の個人。1年単利・3年半年複利。初回満期まで。␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
+    "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟3年␟年率1.60%（税引き前）␟税引前年率。。Bコース：Aコース以外の個人。1年単利・3年半年複利。初回満期まで。␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
+    "大分県信用組合␟退職者専用定期預金「彩～いろどり」␟2026-03-02␟2027-02-26␟1年␟年0.70％␟税引前年率。。年金契約・予約なし。初回1年のみ。出資加入店舗で取扱。␟https://www.oita-kenshin.co.jp/deposit/limited_irodori.html",
+    "大分県信用組合␟退職者専用定期預金「彩～いろどり」␟2026-03-02␟2027-02-26␟1年␟年1.00％␟税引前年率。。公的年金受取契約・予約あり。初回1年のみ。出資加入店舗で取扱。␟https://www.oita-kenshin.co.jp/deposit/limited_irodori.html",
+    "肥後銀行␟肥後福祉年金定期預金␟2026-04-01␟2027-03-31␟1年␟店頭表示金利＋年0.1％␟税引前年率。店頭表示金利＋年0.1％。1年のみ。自動継続不可。␟https://www.higobank.co.jp/individual/pdf/nenkinteiki_fukushi.pdf",
+    "JA福岡市東部␟貯めドキ 定期貯金␟2026-10-01␟2027-03-31␟6か月␟1.8%␟税引前年率。。組合員加入なし。新規資金のみ。既存定期からの預け替え不可。出資金は預金金利ではない。␟https://ja-fukutou.or.jp/wp-content/uploads/2026/09/c8581291ab8f6aa3abd59f54e48c60c7.pdf",
+    "JA福岡市東部␟貯めドキ 定期貯金␟2026-10-01␟2027-03-31␟6か月␟2.1%␟税引前年率。。組合員または同時加入。新規資金のみ。既存定期からの預け替え不可。出資金は預金金利ではない。␟https://ja-fukutou.or.jp/wp-content/uploads/2026/09/c8581291ab8f6aa3abd59f54e48c60c7.pdf",
+    "田川信用金庫␟定期預金キャンペーン ドリームOne␟2026-10-01␟2026-12-30␟1年␟1.0%␟税引前年率。。␟https://www.tagawashinkin.co.jp/2026/09/%e5%ae%9a%e6%9c%9f%e9%a0%90%e9%87%91%e3%82%ad%e3%83%a3%e3%83%b3%e3%83%9a%e3%83%bc%e3%83%b3%e3%81%ae%e3%81%8a%e7%9f%a5%e3%82%89%e3%81%9b/",
+    "福岡信用金庫␟にこにこ定期預金1プラス／にこにこ定期預金1␟2026-10-05␟2027-03-31␟1年␟年1.0％（税引後　年0.796％）␟税引前年率。。新たな資金以外・にこにこ1。年金は公的年金だけでなくiDeCo・企業年金・個人年金等も対象。初回のみ。␟https://www.fukuoka-shinkin.co.jp/dt_fix_niconico.html#nenkinsnack",
+    "福岡信用金庫␟にこにこ定期預金1プラス／にこにこ定期預金1␟2026-10-05␟2027-03-31␟1年␟年1.2％（税引後　年0.956％）␟税引前年率。。新たな資金・にこにこ1プラス。年金は公的年金だけでなくiDeCo・企業年金・個人年金等も対象。初回のみ。␟https://www.fukuoka-shinkin.co.jp/dt_fix_niconico.html#nenkinsnack",
+    "福岡信用金庫␟もっときになる定期預金␟2026-10-05␟2026-12-30␟1年␟年1.0%␟税引前年率。。個人・個人事業主（1年単利・3年と5年複利）。同じ税引前年率でも個人・法人で複利計算と利払方法が異なるため別行に分離。␟https://www.fukuoka-shinkin.co.jp/dt_fix_mottokininaru.html",
+    "福岡信用金庫␟もっときになる定期預金␟2026-10-05␟2026-12-30␟3年␟年1.5%␟税引前年率。。個人・個人事業主（1年単利・3年と5年複利）。同じ税引前年率でも個人・法人で複利計算と利払方法が異なるため別行に分離。␟https://www.fukuoka-shinkin.co.jp/dt_fix_mottokininaru.html",
+    "福岡信用金庫␟もっときになる定期預金␟2026-10-05␟2026-12-30␟5年␟年1.8%␟税引前年率。。個人・個人事業主（1年単利・3年と5年複利）。同じ税引前年率でも個人・法人で複利計算と利払方法が異なるため別行に分離。␟https://www.fukuoka-shinkin.co.jp/dt_fix_mottokininaru.html",
+    "たちばな信用金庫␟トリプル3ステップ定期預金␟2026-10-15␟2026-12-30␟1年␟1.50%␟税引前年率。。契約は1年ごとの元利金継続。1年目1.50％・2年目1.60％・3年目1.70％。後続年の金利を当初1年・3年確定金利としてランキングに混ぜない。␟https://www.tachibana-shinkin.jp/files/uploads/campaign_008.pdf",
+    "たちばな信用金庫␟トリプル3ステップ定期預金␟2026-10-15␟2026-12-30␟2年目␟1.60%␟当初3年間適用金利（2年目：年1.60%）。税引前・複利。1年ごとの自動継続（最長3年）。4年目以降は継続日における店頭表示利率を適用。␟https://www.tachibana-shinkin.jp/files/uploads/campaign_008.pdf",
+    "たちばな信用金庫␟トリプル3ステップ定期預金␟2026-10-15␟2026-12-30␟3年目␟1.70%␟当初3年間適用金利（3年目：年1.70%）。税引前・複利。1年ごとの自動継続（最長3年）。4年目以降は継続日における店頭表示利率を適用。␟https://www.tachibana-shinkin.jp/files/uploads/campaign_008.pdf",
+    "JAさつま日置␟退職金専用定期貯金␟␟␟3ヶ月␟年利1.0％（税引前）␟特別金利は、初回満期日とし自動継続後の適用金利は継続日の店頭表示金利を適用します。中途解約の場合は、初回金利は適用されず、中途解約利率を適用します。初回満期日以降、窓口で継続手続きされた場合、期間に関係なく0.01％上乗せいたします。お預入れ時に「年金口座指定」「組合員新規加入」「ＪＡカード新規お申込み」のいずれか1つご契約でさらに0.01%上乗せ。␟https://ja-satsumahioki.or.jp/wp-content/uploads/2026/01/退職金専用定期貯金（ダウンロード）.pdf",
+    "鹿児島信用金庫␟かしんウィンターキャンペーン「かごしま応援定期預金～鹿児島を旅しよう～」␟2026-10-15␟2027-01-29␟1年␟0.8％␟税引前年率。。既存預金＋新規資金10％以上かつ10万円以上。抽選名産品と銀行負担の寄付0.01％を利率に含めない。␟https://www.shinkin.co.jp/kashin/_news/contents/223.html",
+    "鹿児島信用金庫␟かしんウィンターキャンペーン「かごしま応援定期預金～鹿児島を旅しよう～」␟2026-10-15␟2027-01-29␟1年␟1.0％␟税引前年率。。全額新規資金。抽選名産品と銀行負担の寄付0.01％を利率に含めない。␟https://www.shinkin.co.jp/kashin/_news/contents/223.html",
+    "福岡県信用組合␟すこやかバンザイ␟␟␟1年␟店頭表示金利＋年0.10％␟しんくみの年金サービス対象商品。␟https://kenshin-f.jp/nenkin/",
+    "福岡県信用組合␟すこやかステップ␟␟␟6か月以上5年以下␟1年もの店頭表示金利＋年0.30％␟しんくみの年金サービス対象商品。␟https://kenshin-f.jp/nenkin/",
+    "福岡県信用組合␟すこやかゴールド␟␟␟1年␟店頭表示金利＋年0.40％␟しんくみの年金サービス対象商品。␟https://kenshin-f.jp/nenkin/",
+    "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟1年␟年1.60％␟Aコース␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
+    "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟3年␟年1.80％␟Aコース␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
+    "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟1年␟年1.40％␟Bコース␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
+    "佐賀銀行␟さぎんネオ・ウェルカム定期␟2026-10-01␟2027-03-31␟3年␟年1.60％␟Bコース␟https://www.sagabank.co.jp/news/recommend/cam-neowelcome.php",
+    "たちばな信用金庫␟長崎ミュージックフェスマラソン応援定期預金␟2026-06-01␟2027-01-29␟1年␟年0.55%␟税引前年率。。寄付0.01％は金庫負担であり金利に加算しない。初回1年0.55％。␟https://www.tachibana-shinkin.jp/files/uploads/nagasaki_music_festival.pdf",
+    "長崎銀行␟ながさきプレミアム法人定期預金 第3弾␟2026-11-02␟2027-01-29␟1年␟年0.90%␟税引前年率。。大口定期。初回満期まで固定。␟https://www.nagasakibank.co.jp/top/pdf/nagasaki_premium_houzin3.pdf",
+    "JAさつま日置␟定期貯金 冬のありがとうキャンペーン␟2026-11-02␟2026-12-30␟1年␟年0.8%␟税引前年率。。個人・一般。金利優遇は初回1年のみ。抽選商品券は金利に含めない。␟https://ja-satsumahioki.or.jp/wp-content/uploads/2026/10/定期貯金冬のありがとうキャンペーンチラシ.pdf",
+    "JAさつま日置␟定期貯金 冬のありがとうキャンペーン␟2026-11-02␟2026-12-30␟1年␟年0.83%␟税引前年率。。個人・年金友の会員。金利優遇は初回1年のみ。抽選商品券は金利に含めない。␟https://ja-satsumahioki.or.jp/wp-content/uploads/2026/10/定期貯金冬のありがとうキャンペーンチラシ.pdf",
+    "JA鹿児島いずみ␟定期貯金 ウインターキャンペーン␟2026-11-02␟2027-01-29␟1年␟年1.00％␟税引前年率。。組合員（同居家族含む）・年金友の会員・給与受取者。初回満期まで。抽選商品券の価値を金利に含めない。␟https://ja-izumi.or.jp/wp/wp-content/uploads/2026/11/ウインターキャンペーンチラシ-683x1024.jpg",
+    "JA鹿児島いずみ␟定期貯金 ウインターキャンペーン␟2026-11-02␟2027-01-29␟1年␟年0.85％␟税引前年率。。その他の個人。初回満期まで。抽選商品券の価値を金利に含めない。␟https://ja-izumi.or.jp/wp/wp-content/uploads/2026/11/ウインターキャンペーンチラシ-683x1024.jpg",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟1年␟年1.00％␟税引前年率。。定期貯金新規契約・10万円以上。追加取引上乗せなし。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟1年␟年1.10％␟税引前年率。。定期貯金新規契約・10万円以上。年金受取・JAカード・投資信託のいずれか契約（新規申込も可）で0.10％上乗せ。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟2年␟年1.15％␟税引前年率。。定期貯金新規契約・10万円以上。追加取引上乗せなし。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟2年␟年1.25％␟税引前年率。。定期貯金新規契約・10万円以上。年金受取・JAカード・投資信託のいずれか契約（新規申込も可）で0.10％上乗せ。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟3年␟年1.30％␟税引前年率。。定期貯金新規契約・10万円以上。追加取引上乗せなし。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟3年␟年1.40％␟新規資金。年金受取・JAカード・投資信託のいずれかを利用または新規申込で年0.10％上乗せ␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟4年␟年1.50％␟税引前年率。。定期貯金新規契約・10万円以上。追加取引上乗せなし。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟4年␟年1.60％␟税引前年率。。定期貯金新規契約・10万円以上。年金受取・JAカード・投資信託のいずれか契約（新規申込も可）で0.10％上乗せ。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟5年␟年1.70％␟税引前年率。。定期貯金新規契約・10万円以上。追加取引上乗せなし。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟5年␟年1.80％␟税引前年率。。定期貯金新規契約・10万円以上。年金受取・JAカード・投資信託のいずれか契約（新規申込も可）で0.10％上乗せ。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟1年␟年0.90％␟税引前年率。。既存定期貯金を10万円以上増額。追加取引上乗せなし。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟1年␟年1.00％␟税引前年率。。既存定期貯金を10万円以上増額。年金受取・JAカード・投資信託のいずれか契約（新規申込も可）で0.10％上乗せ。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟2年␟年1.05％␟税引前年率。。既存定期貯金を10万円以上増額。追加取引上乗せなし。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟2年␟年1.15％␟既存定期からの増額分。年金受取・JAカード・投資信託のいずれかを利用または新規申込で年0.10％上乗せ␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟3年␟年1.20％␟税引前年率。。既存定期貯金を10万円以上増額。追加取引上乗せなし。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟3年␟年1.30％␟税引前年率。。既存定期貯金を10万円以上増額。年金受取・JAカード・投資信託のいずれか契約（新規申込も可）で0.10％上乗せ。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟4年␟年1.40％␟税引前年率。。既存定期貯金を10万円以上増額。追加取引上乗せなし。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟4年␟年1.50％␟税引前年率。。既存定期貯金を10万円以上増額。年金受取・JAカード・投資信託のいずれか契約（新規申込も可）で0.10％上乗せ。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟5年␟年1.60％␟税引前年率。。既存定期貯金を10万円以上増額。追加取引上乗せなし。公式HTML本文の新規／増額別5年限と追加取引条件を別行に展開。投資信託が必須ではなく年金・JAカードでも上乗せ可能。␟https://jakikuchi.jp/175786.html",
+    "JA菊池␟Winter Campaign 2026␟2026-11-09␟2027-01-29␟5年␟年1.70％␟既存定期からの増額分。年金受取・JAカード・投資信託のいずれかを利用または新規申込で年0.10％上乗せ␟https://jakikuchi.jp/175786.html",
+    "南日本銀行␟なんぎん 地元応援定期預金␟2026-11-19␟2027-03-31␟1年␟年0.75％␟税引前年率。。既存定期からの振替は新規資金または普通預金から10万円以上追加が必要。初回のみ。寄付0.01％は銀行負担であり金利ではない。␟https://nangin.jp/information/contents/RELEASE_20261119_local_support.pdf",
+    "南日本銀行␟なんぎん 地元応援定期預金␟2026-11-19␟2027-03-31␟3年␟年1.25％␟税引前年率。。既存定期からの振替は新規資金または普通預金から10万円以上追加が必要。初回のみ。寄付0.01％は銀行負担であり金利ではない。␟https://nangin.jp/information/contents/RELEASE_20261119_local_support.pdf",
+    "遠賀信用金庫␟熊本県復旧・復興応援定期預金␟2026-11-02␟2027-02-26␟1年␟1％␟税引前年率。。最新の募集総額増額通知により10億円→30億円。通常商品一覧の10億円表記より新しい通知を採用。␟https://www.shinkin.co.jp/onga/img/news/20261116_detail.pdf",
+    "JA対馬␟特典付き定期貯金キャンペーン␟2026-11-02␟2026-12-30␟1年以上␟預入時の店頭表示金利␟20万円ごと現金1,000円␟https://ja-tsushima.or.jp/wp-content/uploads/2026/11/「特典付き定期貯金キャンペーン」チラシ.pdf"
+  ]
 };
 let TODAY_ISO = localIso(new Date());
 const DATE_ISSUE_PAGE_SIZE = 50;
@@ -1153,9 +1259,9 @@ function renderLatestUpdate() {
   $("#latestUpdateCompact").innerHTML = `<div class="latest-update-summary-text">
     <strong>${LATEST_UPDATE.compactText || `${LATEST_UPDATE.segmentLabel}${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}先・${fmt(LATEST_UPDATE.ordinaryBaseAddedCount)}明細を普通預金金利履歴へ追加`}</strong>
   </div><div class="latest-update-region-list" aria-label="今回の整理内容">
-    <span>今回追加 ${fmt(LATEST_UPDATE.reviewedInstitutionCount)}金融機関・${fmt(new Set(added.map(row => row.source_document_id || [row.institution_name,row.campaign_name].join("|"))).size)}募集情報</span>
-    <span>通常定期5金融機関・190明細を追加</span>
-    <span>対象金融機関：${(LATEST_UPDATE.featuredInstitutions || latestInstitutionItems.map(([institution]) => institution)).map(esc).join("、")}</span>
+    <span>今回追加 ${fmt(new Set(added.map(row => row.institution_name)).size)}金融機関・${fmt(new Set(added.map(row => row.source_document_id || [row.institution_name,row.campaign_name].join("|"))).size)}募集情報</span>
+    <span>通常金利・常設優遇 ${fmt(LATEST_UPDATE.ordinaryBaseAddedCount || 0)}条件を収録</span>
+    <span>対象金融機関：${(LATEST_UPDATE.featuredInstitutions || latestInstitutionItems.map(([institution]) => institution)).slice(0,5).map(esc).join("、")}${(LATEST_UPDATE.featuredInstitutions || []).length > 5 ? " ほか" : ""}</span>
   </div>`;
 
   const detailsToggle = $("#latestUpdateDetailsToggle");
