@@ -1,11 +1,11 @@
 {
   "status": "R1_RELEASE_CURRENT",
-  "release_version": "20261128-5",
+  "release_version": "20261128-6",
   "r1_collection_complete": true,
   "resolved_campaign_count": 468,
   "unresolved_campaign_count": 1316,
   "history_linked_campaign_count": 44,
-  "base_rate_history_record_count": 32721,
+  "base_rate_history_record_count": 32722,
   "base_rate_institution_count": 771,
   "bank_ordinary_institution_count": 115,
   "source_final_freeze_status": "PASS_DATED_ADDITIONS_WITH_SEPARATE_EVIDENCE_INSUFFICIENT_LEDGER",
@@ -112,6 +112,13 @@
     "institutions": 1018,
     "campaign_added": 4,
     "campaign_updated": 1,
-    "normal_added": 33
+    "normal_added": 34
+  },
+  "last_user_rate_correction": {
+    "institution": "JAアルプス",
+    "term_months": 84,
+    "rate_percent": "0.85",
+    "date": "2026-11-28",
+    "basis": "EXPLICIT_USER_INSTRUCTION"
   }
 }
