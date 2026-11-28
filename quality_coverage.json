@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-28T18:00:26+09:00",
+  "generated_at": "2026-11-28T18:51:41+09:00",
   "population": 1018,
   "latest_complete_session": "collect_20261031_113741",
   "summary": [
@@ -2971,7 +2971,7 @@
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
-      "ordinary_recorded": false,
+      "ordinary_recorded": true,
       "unacquired": false,
       "inaccessible": false
     },
@@ -8457,7 +8457,7 @@
       "structured_success": true,
       "production_recorded": true,
       "campaign_recorded": true,
-      "ordinary_recorded": false,
+      "ordinary_recorded": true,
       "unacquired": false,
       "inaccessible": false
     },
