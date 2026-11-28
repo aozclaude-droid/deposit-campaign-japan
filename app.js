@@ -18,7 +18,7 @@ function filterSupersededBaseRateRowsV20261119(rows) {
 }
 
 
-const APP_VERSION = "2026.11.28.4";
+const APP_VERSION = "2026.11.28.5";
 const PREFECTURE_ORDER = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
   "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
@@ -53,8 +53,8 @@ const REGION_ALIASES = new Map([
 function canonicalRegion(region, prefecture) {
   return PREFECTURE_REGION.get(text(prefecture).trim()) || REGION_ALIASES.get(text(region).trim()) || text(region).trim();
 }
-const DATA_URL = "campaign_all.json?v=20261128-4";
-const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261128-4";
+const DATA_URL = "campaign_all.json?v=20261128-5";
+const BASE_RATE_HISTORY_URL = "r1_data/base_rate_history.json?v=20261128-5";
 const LATEST_UPDATE = {
   "publishedOn": "2026-11-28",
   "label": "2026年11月28日 追加照査の確定情報を反映",
@@ -64,15 +64,15 @@ const LATEST_UPDATE = {
   "updatedCount": 1,
   "movedToBaseHistoryCount": 0,
   "ordinaryCampaignRetainedCount": 3,
-  "ordinaryBaseAddedCount": 31,
-  "baseHistoryTotalCount": 32719,
+  "ordinaryBaseAddedCount": 33,
+  "baseHistoryTotalCount": 32721,
   "reviewedInstitutionCount": 9,
   "withheldInstitutionCount": 0,
   "segmentLabel": "全国・キャンペーン／普通預金／通常定期預金",
   "segmentMetricLabel": "巡回対象の金融機関",
   "primaryMetricLabel": "キャンペーン条件を追加",
   "leadText": "残る候補を追加照査し、公式資料の金利・商品条件を再確認。確定した通常金利を履歴へ追加し、旧条件・原本を保持しています。",
-  "compactText": "キャンペーン追加4条件・既存更新1条件／通常金利追加31条件",
+  "compactText": "キャンペーン追加4条件・既存更新1条件／通常金利追加33条件",
   "featuredInstitutions": [
     "石巻商工信用組合",
     "福井県医師信用組合"
