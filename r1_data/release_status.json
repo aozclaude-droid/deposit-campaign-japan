@@ -1,11 +1,11 @@
 {
   "status": "R1_RELEASE_CURRENT",
-  "release_version": "20261128-1",
+  "release_version": "20261128-2",
   "r1_collection_complete": true,
   "resolved_campaign_count": 468,
   "unresolved_campaign_count": 1316,
   "history_linked_campaign_count": 44,
-  "base_rate_history_record_count": 31865,
+  "base_rate_history_record_count": 32270,
   "base_rate_institution_count": 771,
   "bank_ordinary_institution_count": 115,
   "source_final_freeze_status": "PASS_DATED_ADDITIONS_WITH_SEPARATE_EVIDENCE_INSUFFICIENT_LEDGER",
@@ -27,7 +27,7 @@
   "base_rate_pending_campaign_candidates": 0,
   "base_rate_latest_standard_rows_added": 16,
   "base_rate_latest_reference_rows_added": 275,
-  "campaign_record_count": 17670,
+  "campaign_record_count": 17693,
   "campaign_resumed_review_added": 5,
   "campaign_resumed_review_date": "2026-11-20",
   "base_rate_final_individual_review_completed": true,
@@ -41,12 +41,12 @@
   "base_rate_comparison_snapshot_records": 7826,
   "base_rate_reference_reclassification_unexamined": 0,
   "campaign_event_record_count": 3,
-  "campaign_visible_record_count": 17673,
+  "campaign_visible_record_count": 17696,
   "campaign_last_release": "2026-11-28",
   "campaign_new_offers_added": 100,
   "campaign_new_institutions_added": 84,
   "campaign_new_condition_rows_added": 272,
-  "campaign_last_release_version": "20261128-1",
+  "campaign_last_release_version": "20261128-2",
   "normal_term_added_institutions": 5,
   "normal_term_added_records": 190,
   "normal_term_updated_on": "2026-11-22",
@@ -110,8 +110,8 @@
   "nationwide_review": {
     "date": "2026-11-28",
     "institutions": 1018,
-    "campaign_added": 113,
-    "campaign_updated": 15,
-    "normal_added": 1261
+    "campaign_added": 23,
+    "campaign_updated": 6,
+    "normal_added": 405
   }
 }

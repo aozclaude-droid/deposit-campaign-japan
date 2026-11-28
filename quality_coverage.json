@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-28T16:30:42+09:00",
+  "generated_at": "2026-11-28T18:00:26+09:00",
   "population": 1018,
   "latest_complete_session": "collect_20261031_113741",
   "summary": [
@@ -188,7 +188,7 @@
       "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
-      "campaign_recorded": false,
+      "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
       "inaccessible": false
@@ -3217,7 +3217,7 @@
       "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
-      "campaign_recorded": false,
+      "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
       "inaccessible": false
