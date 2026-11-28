@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-11-28T18:51:41+09:00",
-  "population": 1018,
+  "generated_at": "2026-11-28T19:55:13+09:00",
+  "population": 1017,
   "latest_complete_session": "collect_20261031_113741",
   "summary": [
     {
       "industry": "JA",
-      "population": 484,
+      "population": 483,
       "url_configured": 477,
-      "normal_fetch": 479,
+      "normal_fetch": 478,
       "structured_success": 479,
       "production_recorded": 380,
-      "unacquired": 5,
+      "unacquired": 4,
       "inaccessible": 5
     },
     {
@@ -2385,7 +2385,7 @@
       "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
-      "campaign_recorded": false,
+      "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
       "inaccessible": false
@@ -2886,19 +2886,6 @@
     },
     {
       "institution_name": "JAあきた白神",
-      "industry": "JA",
-      "prefecture": "秋田県",
-      "url_configured": true,
-      "normal_fetch": true,
-      "structured_success": true,
-      "production_recorded": true,
-      "campaign_recorded": false,
-      "ordinary_recorded": true,
-      "unacquired": false,
-      "inaccessible": false
-    },
-    {
-      "institution_name": "JAうご",
       "industry": "JA",
       "prefecture": "秋田県",
       "url_configured": true,
@@ -7143,7 +7130,7 @@
       "normal_fetch": true,
       "structured_success": true,
       "production_recorded": true,
-      "campaign_recorded": false,
+      "campaign_recorded": true,
       "ordinary_recorded": true,
       "unacquired": false,
       "inaccessible": false
@@ -12833,13 +12820,13 @@
       "institution_name": "JA北さつま",
       "industry": "JA",
       "prefecture": "鹿児島県",
-      "url_configured": false,
+      "url_configured": true,
       "normal_fetch": false,
-      "structured_success": false,
-      "production_recorded": false,
+      "structured_success": true,
+      "production_recorded": true,
       "campaign_recorded": false,
-      "ordinary_recorded": false,
-      "unacquired": true,
+      "ordinary_recorded": true,
+      "unacquired": false,
       "inaccessible": true
     },
     {
